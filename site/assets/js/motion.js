@@ -255,11 +255,18 @@
     $$("[data-count]").forEach(function (el) {
       var end = parseFloat(el.getAttribute("data-count"));
       var suffix = el.getAttribute("data-count-suffix") || "";
+      /* Zero-pad the counted run so a figure split across static and animated
+         digits (the "20" + "17" of a year) never shows a ragged width. */
+      var pad = parseInt(el.getAttribute("data-count-pad"), 10) || 0;
       var o = { v: 0 };
       gsap.to(o, {
         v: end, duration: 1.6, ease: "power2.out",
         scrollTrigger: { trigger: el, start: "top 92%", once: true },
-        onUpdate: function () { el.textContent = Math.round(o.v) + suffix; }
+        onUpdate: function () {
+          var t = String(Math.round(o.v));
+          while (t.length < pad) { t = "0" + t; }
+          el.textContent = t + suffix;
+        }
       });
     });
 

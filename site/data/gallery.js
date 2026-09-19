@@ -8,11 +8,20 @@
 
 window.SITE_GALLERY = {
 
-  /* The moving strip on the home page. Keep 8–14 for a good rhythm. */
+  /* The moving strip on the home page. Keep 8–14 for a good rhythm.
+     A photo only gets in here if it still reads at 150–300px tall and moving.
+     That rules out the certificate and banner shots (the LAU step-and-repeat,
+     the Water Diplomacy word wall, the Shanghai and graduation backdrops) and
+     the big group photos: at this size the subject disappears and you are left
+     with a coloured rectangle of unreadable type, which is also where the
+     palette clashes came from. Those photographs are not weak — they are shown
+     large and captioned on the Public Health page, which is where they mean
+     something. What is left is one register: daylight, running, faces you can
+     actually see. */
   marquee: [
-    "track-race", "sotr-girls-wide", "china-summer-school", "ph-unicef-hug",
-    "sotr-yoga", "journey-2016", "ph-water", "sotr-jackets-wide",
-    "ph-unicef-tent", "china-graduation", "journey-2022", "ph-qudwa"
+    "track-race", "sotr-girls-wide", "run-road-detail", "ph-unicef-pair",
+    "sotr-yoga", "track-duo", "sotr-jackets-wide", "sotr-unicef-run",
+    "journey-2022", "sotr-pair", "track-relay", "sotr-runlikeagirl"
   ],
 
   /* The pinned horizontal run on the SheOnTheRun page. */

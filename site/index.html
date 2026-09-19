@@ -1,29 +1,69 @@
 <!doctype html>
-<html lang="en" data-whatsapp="9611234567">
+<html lang="en">
 <head>
-<script>document.documentElement.classList.add('js');</script>
+<script>document.documentElement.className += " js";</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fatima Mouzahem — Licensed Dietitian &amp; Sports Nutritionist, Beirut</title>
-<meta name="description" content="Licensed dietitian, certified sports nutritionist and public health professional in Beirut. Personalised nutrition consultations in person and online, plus the SheOnTheRun women's running community.">
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-<link rel="alternate icon" href="favicon.ico" sizes="16x16 32x32 48x48">
-<meta property="og:title" content="Fatima Mouzahem — Licensed Dietitian &amp; Sports Nutritionist">
-<meta property="og:description" content="Nutrition, movement, wellness and community — brought together by a dietitian, athlete and public health professional in Beirut.">
+<title>Fatima Mouzahem — Licensed Dietitian &amp; Sports Nutritionist in Beirut</title>
+<meta name="description" content="Fatima Mouzahem is a licensed dietitian, certified sports nutritionist and public health professional in Beirut. Nutrition consultations in person and online, and founder of the SheOnTheRun women's running community.">
+<link rel="canonical" href="https://sheontherun.com/">
+<meta name="theme-color" content="#0E2026">
+
 <meta property="og:type" content="website">
+<meta property="og:title" content="Fatima Mouzahem — Licensed Dietitian &amp; Sports Nutritionist, Beirut">
+<meta property="og:description" content="Nutrition, movement and everyday wellbeing. Consultations in Beirut and online. Founder of SheOnTheRun.">
+<meta property="og:url" content="https://sheontherun.com/">
+<meta property="og:image" content="https://sheontherun.com/public/images/hero-road-wide-1440.jpg">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/favicon.ico" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="preload" as="image" fetchpriority="high"
+      imagesrcset="/public/images/hero-road-wide-960.webp 960w, /public/images/hero-road-wide-1440.webp 1440w, /public/images/hero-road-wide-2000.webp 2000w"
+      imagesizes="100vw" type="image/webp">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
+<link rel="stylesheet" href="/assets/css/style.css">
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Fatima Mouzahem",
-  "jobTitle": "Licensed Dietitian, Certified Sports Nutritionist, Public Health Professional",
-  "address": { "@type": "PostalAddress", "addressLocality": "Beirut", "addressCountry": "LB" },
-  "alumniOf": ["Lebanese American University", "American University of Beirut"],
-  "knowsAbout": ["Nutrition", "Sports nutrition", "Public health", "Epidemiology", "Monitoring and evaluation"]
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://sheontherun.com/#fatima",
+      "name": "Fatima Mouzahem",
+      "jobTitle": ["Licensed Dietitian", "Certified Sports Nutritionist", "Public Health Professional"],
+      "description": "Licensed dietitian since 2017, certified sports nutritionist since 2024, and a public health professional with 8+ years across UNICEF, WFP, AUB and Lebanon's Ministry of Public Health. Founder of SheOnTheRun.",
+      "image": "https://sheontherun.com/public/images/portrait-hero-960.jpg",
+      "url": "https://sheontherun.com/",
+      "address": { "@type": "PostalAddress", "addressLocality": "Beirut", "addressCountry": "LB" },
+      "alumniOf": [
+        { "@type": "CollegeOrUniversity", "name": "Lebanese American University" },
+        { "@type": "CollegeOrUniversity", "name": "American University of Beirut" }
+      ],
+      "knowsAbout": ["Dietetics", "Sports nutrition", "Women's nutrition", "Public health", "Epidemiology", "Monitoring and evaluation"]
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://sheontherun.com/#dietontherun",
+      "name": "DietOnTheRun — Fatima Mouzahem, Dietitian",
+      "description": "Personalised, evidence-based nutrition consultations and packages in Beirut and online. Weight management, women's nutrition, and sports and active nutrition.",
+      "url": "https://sheontherun.com/dietontherun.html",
+      "founder": { "@id": "https://sheontherun.com/#fatima" },
+      "areaServed": ["Beirut", "Lebanon", "Worldwide (online)"],
+      "address": { "@type": "PostalAddress", "addressLocality": "Beirut", "addressCountry": "LB" },
+      "priceRange": "$15–$150"
+    },
+    {
+      "@type": "WebSite",
+      "url": "https://sheontherun.com/",
+      "name": "Fatima Mouzahem",
+      "publisher": { "@id": "https://sheontherun.com/#fatima" }
+    }
+  ]
 }
 </script>
 </head>
@@ -32,321 +72,232 @@
 
 <header class="site-header">
   <div class="wrap">
-    <a class="logo" href="index.html">
-      <span class="name">Fatima Mouzahem</span>
-      <span class="sub">DietOnTheRun · SheOnTheRun</span>
+    <a class="brand" href="/index.html">
+      <span class="bn">Fatima Mouzahem</span>
+      <span class="bs">Dietitian · Sports Nutritionist</span>
     </a>
-    <nav class="nav" aria-label="Primary">
-      <a href="index.html" aria-current="page">Home</a>
-      <a href="about.html">About me</a>
-      <a href="nutrition.html">DietOnTheRun</a>
-      <a href="sheontherun.html">SheOnTheRun</a>
-      <a href="public-health.html">Public Health</a>
-      <a href="shop.html">Shop</a>
-      <a class="btn sm" href="connect.html"><span>Let's Connect</span></a>
+    <nav class="nav" data-nav aria-label="Primary">
+      <a href="/about.html">About me</a>
+      <a href="/dietontherun.html">DietOnTheRun</a>
+      <a href="/sheontherun.html">SheOnTheRun</a>
+      <a href="/public-health.html">Public Health</a>
+      <a href="/shop.html">Shop</a>
+      <a class="btn sm" href="/connect.html">Connect with me</a>
     </nav>
-    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav">
-      <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span> Menu
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="drawer">
+      <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span>
     </button>
   </div>
 </header>
 
-<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile" hidden>
-  <a href="index.html">Home</a>
-  <a href="about.html">About me</a>
-  <a href="nutrition.html">DietOnTheRun</a>
-  <a href="sheontherun.html">SheOnTheRun</a>
-  <a href="public-health.html">Public Health</a>
-  <a href="shop.html">Shop</a>
-  <a class="btn" href="connect.html"><span>Let's Connect</span></a>
-</nav>
+<div class="drawer" id="drawer" hidden>
+  <nav data-nav aria-label="Menu">
+    <a href="/index.html">Home</a>
+    <a href="/about.html">About me</a>
+    <a href="/dietontherun.html">DietOnTheRun</a>
+    <a href="/sheontherun.html">SheOnTheRun</a>
+    <a href="/public-health.html">Public Health</a>
+    <a href="/shop.html">Shop</a>
+  </nav>
+  <div class="drawer-foot">
+    <a class="btn block" href="/connect.html">Connect with me <span class="arw" aria-hidden="true">→</span></a>
+    <div class="drawer-meta">
+      <a data-wa="Hi Fatima! I found you through your website." data-interest="general" href="/connect.html">WhatsApp</a>
+      <a data-instagram data-instagram-label href="/connect.html">Instagram</a>
+      <a data-email="Enquiry via your website" href="/connect.html"><span data-email-text>Email</span></a>
+    </div>
+  </div>
+</div>
 
 <main id="main">
 
-  <!-- ============ HERO ============ -->
-  <section class="hero">
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="wrap hero-grid">
-      <div>
-        <span class="pill"><span class="dot" aria-hidden="true"></span>Beirut · In person &amp; online worldwide</span>
-        <h1>Fatima<br>Mouzahem</h1>
-        <p class="credential-line">Licensed Dietitian · Certified Sports Nutritionist<br>Public Health Professional</p>
-        <p class="lede">I help women eat, move and live in a way that actually fits their lives — bringing together evidence-based nutrition, ten years on the track, eight years in public health, and a long-standing curiosity about traditional and holistic approaches to wellbeing.</p>
-        <div class="row">
-          <a class="btn teal lg" href="nutrition.html"><span>Work with me</span><span aria-hidden="true">→</span></a>
-          <a class="btn ghost lg" href="about.html"><span>Get to know me</span><span aria-hidden="true">→</span></a>
-        </div>
-      </div>
+  <!-- ══════════════════════════════════════════════════════════════════════
+       THE STAGE — one photograph, her name, her credentials. Nothing else.
+       ══════════════════════════════════════════════════════════════════ -->
+  <section class="stage">
+    <div class="stage-media" data-parallax="9">
+      <picture>
+        <source media="(max-width: 767px)" type="image/webp"
+                srcset="/public/images/hero-road-tall-480.webp 480w, /public/images/hero-road-tall-960.webp 960w" sizes="100vw">
+        <source media="(max-width: 767px)"
+                srcset="/public/images/hero-road-tall-480.jpg 480w, /public/images/hero-road-tall-960.jpg 960w" sizes="100vw">
+        <source type="image/webp"
+                srcset="/public/images/hero-road-wide-960.webp 960w, /public/images/hero-road-wide-1440.webp 1440w, /public/images/hero-road-wide-2000.webp 2000w" sizes="100vw">
+        <img src="/public/images/hero-road-wide-1440.jpg"
+             srcset="/public/images/hero-road-wide-960.jpg 960w, /public/images/hero-road-wide-1440.jpg 1440w, /public/images/hero-road-wide-2000.jpg 2000w"
+             sizes="100vw" width="2000" height="857"
+             alt="Fatima Mouzahem in running kit on an empty road by the Beirut seafront"
+             fetchpriority="high" decoding="async">
+      </picture>
+    </div>
 
-      <div class="hero-media">
-        <div class="ph r45">
-          <span class="cap">Photo — hero portrait, 4:5, natural light</span>
-        </div>
-        <div class="float-card">
-          <span class="fc-num">10<span style="font-size:.6em">+</span></span>
-          <span class="fc-label">Years competing<br>400m &amp; 400m hurdles</span>
-        </div>
+    <div class="wrap">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Beirut · In person &amp; online</p>
+      <h1 data-split>Fatima<br>Mouzahem</h1>
+
+      <ul class="creds">
+        <li><span class="c-role">Licensed Dietitian</span><span class="c-since">Since 2017</span></li>
+        <li><span class="c-role">Certified Sports Nutritionist</span><span class="c-since">Since 2024</span></li>
+        <li><span class="c-role">Public Health Professional</span><span class="c-since">8+ years</span></li>
+      </ul>
+
+      <div class="hero-actions">
+        <a class="btn lg" href="/dietontherun.html">Work with me <span class="arw" aria-hidden="true">→</span></a>
+        <a class="btn ghost lg" href="/about.html">Get to know me <span class="arw" aria-hidden="true">→</span></a>
       </div>
     </div>
+
+    <div class="stage-scroll" aria-hidden="true"><span></span></div>
   </section>
 
-  <!-- ============ CREDENTIAL MARQUEE ============ -->
-  <div class="marquee" aria-label="Credentials">
-    <div class="marquee-track">
-      <div class="marquee-group">
-        <span>Licensed Dietitian</span>
-        <span>Certified Sports Nutritionist</span>
-        <span>MPH — American University of Beirut</span>
-        <span>Former National Athlete</span>
-        <span>UNICEF</span>
-        <span>World Food Programme</span>
-        <span>Ministry of Public Health</span>
-        <span>Founder of SheOnTheRun</span>
-        <span>TCM Studies — Shanghai</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ STATS ============ -->
-  <section class="tight">
+  <!-- ═══════════════════════════ THE NUMBERS ═════════════════════════════ -->
+  <section>
     <div class="wrap">
       <div class="stats">
-        <div class="stat t">
-          <div class="num"><span data-count="10">10</span><span class="suffix">+</span></div>
-          <div class="label">Years on the track</div>
-        </div>
-        <div class="stat l">
-          <div class="num"><span data-count="8">8</span><span class="suffix">+</span></div>
-          <div class="label">Years in public health<br>&amp; humanitarian work</div>
-        </div>
-        <div class="stat o">
-          <div class="num"><span data-count="4">4</span></div>
-          <div class="label">UN, government<br>&amp; academic partners</div>
+        <div class="stat">
+          <span class="s-n num"><span data-count="10" data-count-suffix="+">10+</span></span>
+          <span class="s-l measured">Years on the track<br>400m &amp; hurdles</span>
         </div>
         <div class="stat">
-          <div class="num"><span data-count="2">2</span></div>
-          <div class="label">Peer-reviewed<br>publications</div>
+          <span class="s-n num">2<span data-count="17">17</span></span>
+          <span class="s-l measured">Licensed<br>dietitian since</span>
+        </div>
+        <div class="stat">
+          <span class="s-n num"><span data-count="8" data-count-suffix="+">8+</span></span>
+          <span class="s-l measured">Years in public health<br>UNICEF · WFP · AUB · MoPH</span>
+        </div>
+        <div class="stat">
+          <span class="s-n num"><span data-count="2">2</span></span>
+          <span class="s-l measured">Peer-reviewed papers<br>BMJ Open · Public Health</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ FOUR DOORS ============ -->
-  <section class="ruled flush-top">
+  <!-- ═══════════════════════════ THE STRIP ═══════════════════════════════ -->
+  <div class="marquee" data-marquee></div>
+
+  <!-- ═══════════════════════════ WHO ════════════════════════════════════ -->
+  <section class="band">
     <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow">My areas of work</span>
-        <h2>Four areas, one approach to <span class="grad">health</span></h2>
-        <p>Nutrition, public health, movement and community. Each has its own space — all of it built on the same belief that feeling your best comes from how you eat, how you move, and how you live.</p>
-      </div>
-
-      <div class="doors">
-        <a class="door t" href="nutrition.html">
-          <div class="ph r32 t"><span class="cap">Photo — consultation</span></div>
-          <div class="door-body">
-            <h3>Nutrition &amp; Dietetics</h3>
-            <p>Personalised nutrition consultations, packages and programmes — in person in Beirut or online.</p>
-            <span class="textlink">Work With Me <span class="arw" aria-hidden="true">→</span></span>
+      <div class="duo">
+        <div class="duo-media">
+          <div class="duo-stack">
+            <div class="fig r-tall" data-img="track-race-tall" data-sizes="(min-width: 860px) 34vw, 92vw" data-parallax="7"></div>
+            <div class="fig r-11" data-img="portrait-close" data-sizes="(min-width: 860px) 22vw, 46vw"></div>
+            <div class="fig r-11" data-img="nature-lotus" data-sizes="(min-width: 860px) 22vw, 46vw"></div>
           </div>
-        </a>
-
-        <a class="door o" href="public-health.html">
-          <div class="ph r32 o"><span class="cap">Photo — field work</span></div>
-          <div class="door-body">
-            <h3>Public Health</h3>
-            <p>Consulting across health systems, research, data, monitoring &amp; evaluation, and humanitarian programmes.</p>
-            <span class="textlink">Explore Public Health <span class="arw" aria-hidden="true">→</span></span>
+        </div>
+        <div class="duo-text">
+          <span class="measured">01 — Who</span>
+          <p class="pull mt-s">A dietitian who came to nutrition through sport, and to public health through wanting it to reach more than one room at a time.</p>
+          <div class="prose mt-m">
+            <p>Ten years on the track. A licence, a Master's, eight years of fieldwork. A month in Shanghai studying Traditional Chinese Medicine, because I was curious.</p>
+            <p>All of it points one way: <strong>helping women feel stronger, healthier and more at home in their own bodies.</strong></p>
           </div>
-        </a>
-
-        <a class="door l" href="sheontherun.html">
-          <div class="ph r32 l"><span class="cap">Photo — group run</span></div>
-          <div class="door-body">
-            <h3>SheOnTheRun</h3>
-            <p>Running community, group runs, classes, events, challenges and community activities.</p>
-            <span class="textlink">Join SheOnTheRun <span class="arw" aria-hidden="true">→</span></span>
-          </div>
-        </a>
-
-        <a class="door" href="shop.html">
-          <div class="ph r32"><span class="cap">Photo — product flatlay</span></div>
-          <div class="door-body">
-            <h3>Shop</h3>
-            <p>SheOnTheRun merchandise, wellness tools, personal picks and future activewear.</p>
-            <span class="textlink">Visit the Shop <span class="arw" aria-hidden="true">→</span></span>
-          </div>
-        </a>
+          <a class="tlink mt-m" href="/about.html">Get to know me <span class="arw" aria-hidden="true">→</span></a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ THE THROUGH-LINE ============ -->
-  <section class="surface">
-    <div class="wrap hero-grid">
-      <div class="hero-media">
-        <div class="ph r45 o"><span class="cap">Photo — nature, Lebanese landscape</span></div>
-      </div>
-      <div>
-        <span class="eyebrow l">The through-line</span>
-        <h2>Evidence and traditional wisdom, in the same practice</h2>
-        <p class="lede mt-24">My work combines nutrition, movement, wellness, evidence and research with traditional wisdom, a connection with nature, and practical everyday wellbeing.</p>
-        <p class="lede">Nothing here is one-size-fits-all. No quick fixes, no all-or-nothing rules — just an approach built around your life as it actually is.</p>
-        <a class="btn ghost mt-32" href="about.html"><span>Get to know me</span><span aria-hidden="true">→</span></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ ORGANISATIONS ============ -->
-  <section class="ruled-o">
+  <!-- ═══════════════════════════ AREAS OF WORK ═══════════════════════════ -->
+  <section class="band-tight">
     <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow o">Professional background</span>
-        <h2>Eight years inside the organisations that shape public health</h2>
-        <p>Programme design, monitoring and evaluation, research and emergency response — across UN agencies, government and academia.</p>
-      </div>
-      <div class="orgs">
-        <div class="org">
-          <span class="org-name">UNICEF</span>
-          <span class="org-role">Youth UN Volunteer · IM Consultant</span>
-        </div>
-        <div class="org">
-          <span class="org-name">WFP</span>
-          <span class="org-role">Monitoring &amp; Evaluation Associate</span>
-        </div>
-        <div class="org">
-          <span class="org-name">AUB</span>
-          <span class="org-role">MPH · Research &amp; consulting</span>
-        </div>
-        <div class="org">
-          <span class="org-name">Ministry of Public Health</span>
-          <span class="org-role">Consultant, via AUB</span>
-        </div>
-      </div>
-      <div class="row mt-32">
-        <a class="btn olive" href="public-health.html"><span>See the public health work</span><span aria-hidden="true">→</span></a>
+      <div class="head mb-l">
+        <span class="measured">02 — Where</span>
+        <h2 data-split>My areas of work</h2>
       </div>
     </div>
-  </section>
 
-  <!-- ============ UPCOMING RUNS ============ -->
-  <section class="ruled-l surface-2">
     <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow l">SheOnTheRun</span>
-        <h2>Next with the run club</h2>
-        <p>SheOnTheRun started as a running community and grew into a space for women to move, connect, challenge themselves and enjoy being active together.</p>
-      </div>
-
-      <div class="events">
-        <article class="event">
-          <div class="date">Thu<span class="d">17</span>Sep</div>
-          <div class="info">
-            <h4>Biel Beirut Sunset Run</h4>
-            <p class="meta"><span>6:30 PM</span><span>Biel, Beirut</span><span>Easy pace · 30 min</span></p>
+      <div class="portals">
+        <a class="portal" href="/dietontherun.html">
+          <div class="fig" data-img="dotr-portrait" data-sizes="(min-width: 1100px) 24vw, (min-width: 680px) 48vw, 92vw"></div>
+          <div class="p-body">
+            <span class="measured">01</span>
+            <h3>Nutrition &amp;<br>Dietetics</h3>
+            <p>Consultations, packages and programmes — in Beirut or online.</p>
+            <span class="tlink">Work with me <span class="arw" aria-hidden="true">→</span></span>
           </div>
-          <a class="btn lilac sm" href="https://wa.me/9611234567?text=Hi%21%20I%27d%20like%20to%20join%20the%20Biel%20Beirut%20Sunset%20Run%20on%20Thursday%2017%20September." data-booking="Group run — 17 Sep"><span>Join this run</span><span aria-hidden="true">→</span></a>
-        </article>
-
-        <article class="event">
-          <div class="date">Tue<span class="d">22</span>Sep</div>
-          <div class="info">
-            <h4>Biel Beirut Sunset Run</h4>
-            <p class="meta"><span>6:30 PM</span><span>Biel, Beirut</span><span>Easy pace · 30 min</span></p>
-          </div>
-          <a class="btn lilac sm" href="https://wa.me/9611234567?text=Hi%21%20I%27d%20like%20to%20join%20the%20Biel%20Beirut%20Sunset%20Run%20on%20Tuesday%2022%20September." data-booking="Group run — 22 Sep"><span>Join this run</span><span aria-hidden="true">→</span></a>
-        </article>
-
-        <article class="event">
-          <div class="date">Wed<span class="d">23</span>Sep</div>
-          <div class="info">
-            <h4>Biel Beirut Sunset Run</h4>
-            <p class="meta"><span>6:30 PM</span><span>Biel, Beirut</span><span>Easy pace · 30 min</span></p>
-          </div>
-          <a class="btn lilac sm" href="https://wa.me/9611234567?text=Hi%21%20I%27d%20like%20to%20join%20the%20Biel%20Beirut%20Sunset%20Run%20on%20Wednesday%2023%20September." data-booking="Group run — 23 Sep"><span>Join this run</span><span aria-hidden="true">→</span></a>
-        </article>
-      </div>
-
-      <div class="row mt-32">
-        <a class="btn lilac" href="sheontherun.html"><span>Discover SheOnTheRun</span><span aria-hidden="true">→</span></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ TESTIMONIALS (dark) ============ -->
-  <section class="deep">
-    <div class="wrap">
-      <div class="section-head centered">
-        <span class="eyebrow on-dark">In their words</span>
-        <h2>What working together looks like</h2>
-        <p>Replace with real client quotes and written consent before launch.<span class="todo">Placeholder copy</span></p>
-      </div>
-
-      <div class="testimonials">
-        <div class="testimonial">
-          <blockquote>"I had tried every diet going. This was the first time someone asked what my actual week looked like before telling me what to eat."</blockquote>
-          <p class="who">Client · weight management</p>
-        </div>
-        <div class="testimonial">
-          <blockquote>"I run with SheOnTheRun every Tuesday. It is the only exercise I have ever stuck with, and I genuinely look forward to it."</blockquote>
-          <p class="who">SheOnTheRun member</p>
-        </div>
-        <div class="testimonial">
-          <blockquote>"The Reset gave me structure without it feeling like a diet. Small adjustments, and my energy on long runs completely changed."</blockquote>
-          <p class="who">Client · The Reset package</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ JOURNAL ============ -->
-  <section class="ruled">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow">From the journal</span>
-        <h2>Recent reading</h2>
-      </div>
-
-      <div class="articles">
-        <a class="article-card" href="journal/fuelling-your-first-10k.html">
-          <div class="ph r32 t"><span class="cap">Photo — race morning</span></div>
-          <span class="cat">Running &amp; Fuelling</span>
-          <h3>Fuelling Your First 10K, the Simple Version</h3>
-          <p>What to eat the night before, the morning of, and in the week after — without overcomplicating a distance that doesn't need it.</p>
-          <span class="meta">7 min read</span>
         </a>
 
-        <a class="article-card" href="journal/index.html">
-          <div class="ph r32 t"><span class="cap">Photo — groceries</span></div>
-          <span class="cat">Nutrition</span>
-          <h3>The 7 Secrets to Healthy Grocery Shopping</h3>
-          <p>Healthy eating is mostly decided at the shop, not at the dinner table. A practical list for your next run.</p>
-          <span class="meta">6 min read</span>
+        <a class="portal" href="/public-health.html">
+          <div class="fig" data-img="ph-wids" data-sizes="(min-width: 1100px) 24vw, (min-width: 680px) 48vw, 92vw"></div>
+          <div class="p-body">
+            <span class="measured">02</span>
+            <h3>Public<br>Health</h3>
+            <p>Health systems, research, data, M&amp;E and humanitarian programmes.</p>
+            <span class="tlink">Explore public health <span class="arw" aria-hidden="true">→</span></span>
+          </div>
         </a>
 
-        <a class="article-card" href="journal/index.html">
-          <div class="ph r32 t"><span class="cap">Photo — Shanghai</span></div>
-          <span class="cat">Public Health Notes</span>
-          <h3>What a Month Studying Chinese Medicine Changed About How I Practice</h3>
-          <p>Evidence-based nutrition and traditional wisdom aren't opposites. Notes from a month in Shanghai.</p>
-          <span class="meta">8 min read</span>
+        <a class="portal" href="/sheontherun.html">
+          <div class="fig" data-img="sotr-runlikeagirl" data-sizes="(min-width: 1100px) 24vw, (min-width: 680px) 48vw, 92vw"></div>
+          <div class="p-body">
+            <span class="measured">03</span>
+            <h3>She<br>OnTheRun</h3>
+            <p>A women-only running and wellness community in Beirut.</p>
+            <span class="tlink">Join SheOnTheRun <span class="arw" aria-hidden="true">→</span></span>
+          </div>
         </a>
-      </div>
 
-      <div class="row mt-32">
-        <a class="btn ghost" href="journal/index.html"><span>Read the journal</span><span aria-hidden="true">→</span></a>
+        <a class="portal" href="/shop.html">
+          <div class="fig" data-img="sotr-tote" data-sizes="(min-width: 1100px) 24vw, (min-width: 680px) 48vw, 92vw"></div>
+          <div class="p-body">
+            <span class="measured">04</span>
+            <h3>The<br>Shop</h3>
+            <p>Club kit, wellness tools, my own picks — activewear on the way.</p>
+            <span class="tlink">Visit the shop <span class="arw" aria-hidden="true">→</span></span>
+          </div>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- ============ CLOSING CTA ============ -->
-  <section class="flush-top">
+  <!-- ═══════════════════════════ THE STATEMENT ═══════════════════════════ -->
+  <section class="overlay-quote">
+    <div class="oq-media" data-parallax="8">
+      <div class="fig" data-img="sotr-girls-wide" data-sizes="100vw" style="position:absolute;inset:0"></div>
+    </div>
     <div class="wrap">
-      <div class="cta teal">
-        <span class="eyebrow t">Not sure where to start?</span>
-        <h2>Let's have a quick 15-minute chat</h2>
-        <p>About your goals, what you are looking for, and how I can best support you. I will help you find the right place to start — no pressure, no commitment.</p>
-        <p class="free">15-minute discovery call — free</p>
-        <a class="btn teal lg" href="https://wa.me/9611234567?text=Hi%20Fatima%21%20I%27d%20like%20the%20free%2015-minute%20discovery%20call." data-booking="Discovery call"><span>Find Your Best Fit</span><span aria-hidden="true">→</span></a>
+      <span class="measured">SheOnTheRun</span>
+      <p class="pull mt-s" data-split>Move. Connect. Grow.</p>
+      <p class="lede mt-s" style="color:rgba(255,255,255,.82);max-width:34ch">A space where women show up exactly as they are, and leave a little stronger.</p>
+      <a class="btn lg mt-m" href="/sheontherun.html">Discover SheOnTheRun <span class="arw" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ NEXT RUNS ═══════════════════════════════ -->
+  <section class="band-tight band-sand">
+    <div class="wrap">
+      <div class="duo flip">
+        <div class="duo-media">
+          <div class="fig r-43" data-img="sotr-yoga" data-sizes="(min-width: 860px) 56vw, 92vw" data-parallax="6"></div>
+        </div>
+        <div class="duo-text">
+          <span class="measured">Next on the calendar</span>
+          <div class="events mt-s" data-events="2"></div>
+          <a class="tlink mt-m" href="/sheontherun.html#calendar">The full calendar <span class="arw" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ THE ONE ASK ═════════════════════════════ -->
+  <section class="band-tight" style="padding-bottom:clamp(3.75rem,9vw,8.5rem)">
+    <div class="wrap">
+      <div class="discovery">
+        <div>
+          <p class="free">15-minute discovery call — free</p>
+          <h2 class="mt-s">Not sure where to start?</h2>
+          <p class="prose mt-s">A quick chat about your goals and what you're looking for. I'll help you find the right place to start.</p>
+        </div>
+        <div class="row">
+          <a class="btn lg" data-wa="Hi Fatima! I'd like to book the free 15-minute discovery call." data-interest="nutrition" href="/connect.html">
+            Find your best fit <span class="arw" aria-hidden="true">→</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -356,55 +307,45 @@
 <footer class="site-footer">
   <div class="wrap">
     <div class="foot-top">
-      <h2>Ready when you are.</h2>
-      <div class="row">
-        <a class="btn on-dark" href="nutrition.html"><span>Work with me</span><span aria-hidden="true">→</span></a>
-        <a class="btn on-dark-ghost" href="connect.html"><span>Let's Connect</span></a>
-      </div>
-    </div>
-
-    <div class="foot">
       <div>
-        <a class="logo" href="index.html">
-          <span class="name">Fatima Mouzahem</span>
-          <span class="sub">DietOnTheRun · SheOnTheRun</span>
-        </a>
-        <p class="blurb">Dietitian, athlete, researcher and community builder — bringing together evidence, movement, nature and traditional wisdom.</p>
+        <p class="foot-name">Fatima<br>Mouzahem</p>
+        <p class="foot-sub">Licensed dietitian, certified sports nutritionist and public health professional. Beirut, Lebanon — and online, wherever you are.</p>
+        <div class="lanes" style="max-width:110px;margin-top:1.75rem" aria-hidden="true"></div>
       </div>
-      <div>
-        <h5>Work with me</h5>
+      <div class="foot-col">
+        <h4>Explore</h4>
         <ul>
-          <li><a href="nutrition.html">Nutrition &amp; Dietetics</a></li>
-          <li><a href="nutrition.html#packages">Packages</a></li>
-          <li><a href="public-health.html">Public Health Consulting</a></li>
+          <li><a href="/about.html">About me</a></li>
+          <li><a href="/dietontherun.html">DietOnTheRun</a></li>
+          <li><a href="/sheontherun.html">SheOnTheRun</a></li>
+          <li><a href="/public-health.html">Public Health</a></li>
+          <li><a href="/shop.html">Shop</a></li>
+          <li><a href="/journal/index.html">The Journal</a></li>
         </ul>
       </div>
-      <div>
-        <h5>Community</h5>
+      <div class="foot-col">
+        <h4>Start a conversation</h4>
         <ul>
-          <li><a href="sheontherun.html">SheOnTheRun</a></li>
-          <li><a href="sheontherun.html#upcoming">Upcoming runs</a></li>
-          <li><a href="shop.html">Shop</a></li>
-        </ul>
-      </div>
-      <div>
-        <h5>More</h5>
-        <ul>
-          <li><a href="about.html">About me</a></li>
-          <li><a href="journal/index.html">Journal</a></li>
-          <li><a href="connect.html">Let's Connect</a></li>
-          <li><a href="https://instagram.com/sheontherun">Instagram</a></li>
+          <li><a data-wa="Hi Fatima! I found you through your website." data-interest="general" href="/connect.html">WhatsApp</a></li>
+          <li><a data-email="Enquiry via your website" href="/connect.html"><span data-email-text>Email</span></a></li>
+          <li><a data-instagram data-instagram-label href="/connect.html">Instagram</a></li>
+          <li><a href="/connect.html">Connect with me</a></li>
         </ul>
       </div>
     </div>
-
     <div class="foot-bottom">
-      <span>© <span data-year>2026</span> Fatima Mouzahem · Beirut, Lebanon</span>
-      <span>Nutrition · Movement · Wellness · Community</span>
+      <p>© <span class="num">2026</span> Fatima Mouzahem</p>
+      <p>Beirut, Lebanon</p>
+      <p>Nutrition advice on this site is general. A consultation is personal.</p>
     </div>
   </div>
 </footer>
 
-<script src="assets/js/main.js"></script>
+<script src="/data/config.js"></script>
+<script src="/data/images.js"></script>
+<script src="/data/gallery.js"></script>
+<script src="/data/runs.js"></script>
+<script src="/assets/js/site.js" defer></script>
+<script src="/assets/js/motion.js" defer></script>
 </body>
 </html>

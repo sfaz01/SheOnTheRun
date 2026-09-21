@@ -4,14 +4,14 @@ Licensed dietitian · certified sports nutritionist · public health professiona
 SheOnTheRun. Beirut, Lebanon.
 
 Plain HTML, one stylesheet, two scripts, and a handful of data files you edit yourself.
-No build step, no framework, no npm. Upload the `site/` folder to any host (Netlify, Vercel,
-Cloudflare Pages, GitHub Pages, or ordinary shared hosting) and it runs.
+No build step, no framework, no npm. Pushing to `main` publishes it to GitHub Pages (see §11);
+it also runs as-is on Netlify, Vercel, Cloudflare Pages or ordinary shared hosting.
 
 ---
 
 ## 1. Before you launch — two things to fill in
 
-Open **`site/data/config.js`** and replace the two placeholders:
+Open **`data/config.js`** and replace the two placeholders:
 
 ```js
 whatsapp: "[[WHATSAPP NUMBER]]",   →   whatsapp: "96170123456"
@@ -36,7 +36,7 @@ Then check `instagram`, `linkedin` (leave `""` to hide it) and `location` in the
 each spot they appear in, and saved at four widths in two formats, so a phone downloads a
 small file and a laptop downloads a sharp one.
 
-They live in `site/public/images/` and are named `slot-width.format`, e.g.
+They live in `public/images/` and are named `slot-width.format`, e.g.
 
 ```
 hero-road-wide-480.webp    hero-road-wide-480.jpg
@@ -45,24 +45,24 @@ hero-road-wide-1440.webp   hero-road-wide-1440.jpg
 hero-road-wide-2000.webp   hero-road-wide-2000.jpg
 ```
 
-**`site/data/images.js` is the index of all of them.** Every photo is listed once with its
+**`data/images.js` is the index of all of them.** Every photo is listed once with its
 alt text — the description a screen reader reads aloud and Google indexes. If a description
 is wrong, fix it there and it's fixed everywhere that photo appears.
 
 **To swap a photo:** replace the files for that slot, keeping the same names and sizes.
-**To change where photos appear:** `site/data/gallery.js` holds the photo runs — the moving
+**To change where photos appear:** `data/gallery.js` holds the photo runs — the moving
 strip on the home page, the pinned run on SheOnTheRun, the album, the public-health
 fieldwork grid, the China set. Reorder the names, add one, remove one; the page follows.
 
 A few spots still show a designed placeholder rather than a photo — the wellness tools and
 My Picks products in the shop. They're waiting on product shots. Drop images in and list
-them in `site/data/products.js` and the placeholders disappear.
+them in `data/products.js` and the placeholders disappear.
 
 ---
 
 ## 3. What you edit, and where
 
-Everything that changes lives in **`site/data/`**. Plain text files with instructions at the
+Everything that changes lives in **`data/`**. Plain text files with instructions at the
 top of each. You never need to touch the HTML.
 
 | File | Controls |
@@ -88,11 +88,11 @@ weekly "Sunset runs, Tuesdays & Thursdays" block is separate and always shows.
 
 ## 4. Two things to deal with before you go live
 
-**Testimonials are samples.** The three quotes in `site/data/testimonials.js` are layout
-samples — nobody said those words. They carry a visible amber *"Sample — replace before
-launch"* label so they can't go live pretending to be real. Replace them and delete
-`sample: true` from each. Or empty the list (`window.SITE_TESTIMONIALS = [];`) and the whole
-section removes itself.
+**Testimonials are samples.** The three quotes in `data/testimonials.js` are layout
+samples — nobody said those words. They are marked `sample: true`, which means they show
+(with an amber *"Sample"* label) only on your own computer, and **never on the live site**.
+Until real quotes are added, the "What clients say" section simply doesn't appear online.
+Add real client words (with their permission) and leave out `sample: true`.
 
 **The Journal article.** *Fuelling your first 10k* was drafted for you, not by you. The
 advice follows standard sports-nutrition guidance, but it publishes under your licence and
@@ -163,21 +163,21 @@ saved.
 
 | Path | What it is |
 | --- | --- |
-| `site/index.html` | Home — the road portrait, credentials, the four areas |
-| `site/about.html` | About me — The Human / The Professional Me / 2014→2026 |
-| `site/dietontherun.html` | The practice — approach, services, packages, challenge, journal |
-| `site/sheontherun.html` | The community — story, pinned photo run, calendar, album |
-| `site/public-health.html` | Consulting — expertise, fieldwork, the path, publications |
-| `site/shop.html` | Shop — categories, products, WhatsApp ordering |
-| `site/connect.html` | Connect — interest selector, form, direct routes |
-| `site/journal/` | The Journal — index and articles |
-| `site/data/` | **Everything you edit** |
-| `site/public/images/` | **Your photographs**, at four widths each |
-| `site/assets/css/style.css` | The whole design system |
-| `site/assets/js/site.js` | Content, images, WhatsApp links, the mode switch |
-| `site/assets/js/motion.js` | Movement and the photo viewer |
+| `index.html` | Home — the road portrait, credentials, the four areas |
+| `about.html` | About me — The Human / The Professional Me / 2014→2026 |
+| `dietontherun.html` | The practice — approach, services, packages, challenge, journal |
+| `sheontherun.html` | The community — story, pinned photo run, calendar, album |
+| `public-health.html` | Consulting — expertise, fieldwork, the path, publications |
+| `shop.html` | Shop — categories, products, WhatsApp ordering |
+| `connect.html` | Connect — interest selector, form, direct routes |
+| `journal/` | The Journal — index and articles |
+| `data/` | **Everything you edit** |
+| `public/images/` | **Your photographs**, at four widths each |
+| `assets/css/style.css` | The whole design system |
+| `assets/js/site.js` | Content, images, WhatsApp links, the mode switch |
+| `assets/js/motion.js` | Movement and the photo viewer |
 | `serve.py` | Local preview server |
-| `site/robots.txt`, `sitemap.xml`, `404.html` | Search and error handling |
+| `robots.txt`, `sitemap.xml`, `404.html` | Search and error handling |
 
 ---
 
@@ -192,4 +192,63 @@ rebuilding the shop.
 ## 10. Domain
 
 Canonical URLs, the sitemap and the social-preview tags use `https://sheontherun.com`. If the
-site lands on a different domain, search for that string across `site/` and replace it.
+site lands on a different domain, search for that string across the project and replace it (and in `tools/build.js`).
+
+
+---
+
+## 11. Publishing
+
+Pushing to `main` runs `.github/workflows/deploy.yml`, which:
+
+1. copies only the website into a clean folder (no README, `serve.py`, `tools/` or editor files);
+2. runs `tools/build.js`, which writes the Journal's **RSS feed** (`feed.xml`) and a fresh
+   **sitemap** from `data/posts.js` — so a new article only needs adding in one place;
+3. publishes to GitHub Pages.
+
+**Custom domain.** Every canonical link points at `https://sheontherun.com`. When that
+domain is ready, add a file called `CNAME` at the project root containing just
+`sheontherun.com`, and point the domain's DNS at GitHub Pages. Until then the site lives at
+`https://sfaz01.github.io/SheOnTheRun/`, and all internal links work there too.
+
+---
+
+## 12. Switches in `config.js`
+
+Everything below is off until you paste a value in, and the site works without any of them.
+
+| Setting | What it turns on |
+| --- | --- |
+| `formEndpoint` | The Connect form sends messages straight to your inbox (free at formspree.io) and shows a thank-you, instead of opening the visitor's email app. |
+| `bookingUrl` | Every "Book" button and the discovery call open your real calendar (Cal.com or Calendly) instead of WhatsApp. |
+| `newsletterEndpoint` | A "Letters from the run" sign-up appears in the footer of every page (Buttondown, MailerLite or Substack). |
+| `plausibleDomain` / `cloudflareToken` | Visitor statistics. Both are cookie-free, so no consent banner is needed. Never runs on your own machine. |
+
+---
+
+## 13. What's new on the pages
+
+- **The lap** (home) — your story as one 400m in four hundreds, with a runner that goes round
+  as the page scrolls. The About timeline now shows the year you're on large over the photo,
+  with a rail that fills as you read.
+- **Find your best fit** (DietOnTheRun) — three or four questions that end on one
+  recommendation, its price and a booking button. The questions and the reasons it gives live
+  in `data/packages.js` under `fit`.
+- **Before you book** — an FAQ, from `data/faq.js`, also given to Google as FAQ data. The
+  answers only use what the site already said; add the ones people really ask you (payment,
+  cancellations, what to bring).
+- **Trained & worked with** — a single line of institutions on the home page.
+- **Calendar** — every run has "Add to calendar" (Google, Apple, Outlook). Add `spots: 8` to
+  an event in `data/runs.js` to show "8 places left" (`0` shows "Fully booked").
+- **The shop bag** — people add several things and send one WhatsApp order listing them all,
+  sizes included. Remembered on their own phone only.
+- **Journal** — a reading-progress line, an automatic "In this article" list, share buttons
+  (WhatsApp, copy link), category filters once there's more than one kind of article, and
+  the RSS feed.
+- **Arabic home page** — `ar/index.html`, right-to-left, with Arabic type (Noto Naskh Arabic
+  and IBM Plex Sans Arabic) and Arabic WhatsApp messages. The switch is in the header. It
+  links into the English pages for now. **Please have the Arabic read by you or a native
+  speaker before launch** — it speaks for you and your licence.
+- **Feel** — pages cross-fade into each other instead of flashing white, links start loading
+  when you hover them, one button colour everywhere, the shop opens on a photograph like
+  every other page, and an app icon for phones' home screens.

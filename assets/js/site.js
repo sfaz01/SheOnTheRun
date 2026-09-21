@@ -34,8 +34,13 @@
   var RAW_EMAIL = String(CFG.email || "");
   var EMAIL_READY = /^[^\s@\[]+@[^\s@\]]+\.[^\s@\]]+$/.test(RAW_EMAIL);
 
-  var isJournal = window.location.pathname.indexOf("/journal/") !== -1;
-  var rootRel = isJournal ? "../" : "";
+  var IS_LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
+
+  var isJournal = !document.querySelector("base[data-root]") &&
+                  window.location.pathname.indexOf("/journal/") !== -1;
+  /* Pages one folder down (the Journal, the Arabic site) reach the root with
+     "../". A page can also say so itself with <html data-root="../">. */
+  var rootRel = document.documentElement.getAttribute("data-root") || (isJournal ? "../" : "");
 
   /* Every booking button on the site comes through here. If the number isn't
      configured yet the button still works — it lands on Connect with the right
@@ -45,6 +50,12 @@
     return rootRel + "connect.html?interest=" + encodeURIComponent(interest || "nutrition") +
            "&note=" + encodeURIComponent(message);
   }
+
+  /* Consultations and packages go to a real calendar once she has one; until
+     then they fall back to WhatsApp like everything else. */
+  var BOOK_URL = /^https:\/\//.test(String(CFG.bookingUrl || "")) ? CFG.bookingUrl : "";
+  function bookLink(message, interest) { return BOOK_URL || waLink(message, interest); }
+  function bookAttrs() { return BOOK_URL || WA_READY ? ' target="_blank" rel="noopener"' : ""; }
 
   function mailLink(subject, body) {
     if (!EMAIL_READY) return rootRel + "connect.html";
@@ -61,7 +72,7 @@
 
   /* --------------------------------------------------------------- media -- */
   var IMAGES = window.SITE_IMAGES || {};
-  var IMG_BASE = isJournal ? "../public/images/" : "public/images/";
+  var IMG_BASE = rootRel + "public/images/";
 
   /* Every photograph goes through here: WebP with a JPEG fallback, the right
      width for the device, and alt text pulled from the image library so it is
@@ -335,7 +346,7 @@
           '<div class="s-row"><dt>Format</dt><dd>' + (mode === "online" ? "Video call" : "Beirut clinic") + "</dd></div>" +
         "</dl>" +
         '<span class="price"><sup>$</sup>' + esc(s.price) + "</span>" +
-        '<a class="btn block" href="' + esc(waLink(msg, "nutrition")) + '"' + waAttrs() + ">" +
+        '<a class="btn block" href="' + esc(bookLink(msg, "nutrition")) + '"' + bookAttrs() + ">" +
           esc(s.cta) + ' <span class="arw" aria-hidden="true">→</span></a>' +
       "</article>";
     }).join("");
@@ -378,12 +389,151 @@
         '<p class="p-line">' + esc(p.line) + "</p>" +
         '<p class="p-price"><sup>$</sup>' + esc(p.price) + "</p>" +
         '<ul class="p-inc">' + inc.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + "</ul>" +
-        '<a class="btn' + (p.featured ? "" : " ghost") + ' block" href="' + esc(waLink(msg, "nutrition")) + '"' + waAttrs() + ">" +
+        '<a class="btn' + (p.featured ? "" : " ghost") + ' block" href="' + esc(bookLink(msg, "nutrition")) + '"' + bookAttrs() + ">" +
           "Book " + esc(p.name) + ' <span class="arw" aria-hidden="true">→</span></a>' +
       "</article>";
     }).join("");
     observeReveals(host);
   }
+
+  /* ------------------------------------------------------ 3b. FIND YOUR FIT */
+  /* A few questions, one at a time, ending on a single recommendation with a
+     booking button — the "which one do I pick?" answered before it's asked. */
+  (function () {
+    var host = $("[data-fit]");
+    var FIT = OFFER.fit;
+    if (!host || !FIT) return;
+
+    var answers = {};
+
+    function find(id) {
+      if (id === "challenge" && OFFER.challenge) return { kind: "challenge", item: OFFER.challenge };
+      var s = OFFER.services.filter(function (x) { return x.id === id; })[0];
+      if (s) return { kind: "service", item: s };
+      var p = OFFER.packages.filter(function (x) { return x.id === id; })[0];
+      return p ? { kind: "package", item: p } : null;
+    }
+
+    /* Which questions apply depends on earlier answers: the "been here before?"
+       question only matters for a single session, and the group challenge is
+       online, so it skips the format question. */
+    function flow() {
+      var q = [
+        { key: "goal", data: FIT.goal },
+        { key: "support", data: FIT.support }
+      ];
+      if (answers.support === "one" && FIT.returning) q.push({ key: "returning", data: FIT.returning });
+      if (answers.support !== "group") q.push({
+        key: "format",
+        data: { question: "Where would you like to meet?", options: [
+          { id: "in-person", label: "In person, in Beirut" },
+          { id: "online", label: "Online, by video call" }
+        ] }
+      });
+      return q;
+    }
+
+    function opt(list, id) { return (list || []).filter(function (o) { return o.id === id; })[0] || {}; }
+
+    function lanes(step, total) {
+      var out = "";
+      for (var i = 0; i < total; i++) out += '<i class="' + (i < step ? "on" : "") + '"></i>';
+      return '<div class="fit-lanes" aria-hidden="true">' + out + "</div>";
+    }
+
+    function renderStep(i) {
+      var q = flow();
+      if (i >= q.length) return renderResult();
+      var cur = q[i];
+      host.innerHTML =
+        '<div class="fit-q" data-step="' + i + '">' +
+          '<div class="fit-top"><span class="measured">Question ' + (i + 1) + " of " + q.length + "</span>" +
+            lanes(i, q.length) + "</div>" +
+          '<h3 class="fit-question" tabindex="-1">' + esc(cur.data.question) + "</h3>" +
+          '<div class="fit-opts" role="group" aria-label="' + esc(cur.data.question) + '">' +
+            cur.data.options.map(function (o) {
+              var chosen = answers[cur.key] === o.id;
+              return '<button type="button" class="fit-opt" data-key="' + esc(cur.key) + '" data-val="' + esc(o.id) +
+                '" aria-pressed="' + chosen + '"><span>' + esc(o.label) + '</span><span class="arw" aria-hidden="true">→</span></button>';
+            }).join("") +
+          "</div>" +
+          (i > 0 ? '<button type="button" class="fit-back tlink" data-back="' + (i - 1) + '"><span class="arw" aria-hidden="true">←</span> Back</button>' : "") +
+        "</div>";
+    }
+
+    function renderResult() {
+      var sup = opt(FIT.support.options, answers.support);
+      var pickId = sup.pick;
+      if (answers.support === "one" && answers.returning) {
+        pickId = opt(FIT.returning.options, answers.returning).pick || pickId;
+      }
+      var found = find(pickId);
+      if (!found) { renderStep(0); return; }
+      var it = found.item;
+      var mode = answers.format || "online";
+      var goal = opt(FIT.goal.options, answers.goal);
+
+      var inc = (it.includes || []).slice();
+      if (mode === "online") {
+        (it.omitOnline || []).forEach(function (l) { var k = inc.indexOf(l); if (k > -1) inc.splice(k, 1); });
+        (it.addOnline || []).forEach(function (l, n) { if (inc.indexOf(l) === -1) inc.splice(Math.min(n + 1, inc.length), 0, l); });
+      }
+
+      var name = it.title || it.name;
+      var length = it.duration || it.length || it.dates || "";
+      var where = found.kind === "challenge" ? "Online, in a group" : mode === "online" ? "Online" : "In person, Beirut";
+      var msg = found.kind === "challenge"
+        ? "Hi Fatima! I'd like to join " + name + ". The quiz on your website suggested it."
+        : bookingMessage((found.kind === "package" ? name + " package" : "the " + name), mode).replace(
+            ". I found you through your website.", ". The quiz on your website suggested it.");
+      var href = found.kind === "challenge" ? waLink(msg, "nutrition") : bookLink(msg, "nutrition");
+      var attrs = found.kind === "challenge" ? waAttrs() : bookAttrs();
+
+      /* Body composition needs the clinic, so an online visitor never gets
+         recommended it. Nothing in the quiz picks it today — this keeps it so. */
+      host.innerHTML =
+        '<div class="fit-result" role="status">' +
+          '<div class="fit-top"><span class="measured">Your best fit</span>' + lanes(4, 4) + "</div>" +
+          '<h3 class="fit-name" tabindex="-1">' + esc(name) + "</h3>" +
+          '<p class="fit-why">' + (goal.why ? "Because " + esc(goal.why) + "." : "") + "</p>" +
+          '<dl class="fit-meta">' +
+            '<div><dt>Price</dt><dd>$' + esc(it.price) + (it.priceNote ? " " + esc(it.priceNote) : "") + "</dd></div>" +
+            (length ? "<div><dt>" + (found.kind === "service" ? "Length" : "Runs") + "</dt><dd>" + esc(length) + "</dd></div>" : "") +
+            "<div><dt>Where</dt><dd>" + esc(where) + "</dd></div>" +
+          "</dl>" +
+          '<ul class="fit-inc">' + inc.slice(0, 5).map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") + "</ul>" +
+          '<div class="row mt-m">' +
+            '<a class="btn lg" href="' + esc(href) + '"' + attrs + ">" +
+              (found.kind === "challenge" ? "Join " : "Book ") + esc(name) + ' <span class="arw" aria-hidden="true">→</span></a>' +
+            '<a class="btn ghost lg" href="' + esc(BOOK_URL || waLink("Hi Fatima! I'd like to book the free 15-minute discovery call.", "nutrition")) + '"' + bookAttrs() + ">Talk it through first — free</a>" +
+          "</div>" +
+          '<button type="button" class="fit-back tlink mt-m" data-restart><span class="arw" aria-hidden="true">↺</span> Start again</button>' +
+        "</div>";
+
+      /* The services and packages below follow the answer. */
+      if (answers.format && switchEl) setMode(answers.format);
+      var h = $(".fit-name", host);
+      if (h) h.focus({ preventScroll: true });
+    }
+
+    host.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-val]");
+      if (b) {
+        answers[b.getAttribute("data-key")] = b.getAttribute("data-val");
+        if (b.getAttribute("data-key") === "support") { delete answers.returning; }
+        var step = +b.closest("[data-step]").getAttribute("data-step");
+        renderStep(step + 1);
+        var q = $(".fit-question", host);
+        if (q) q.focus({ preventScroll: true });
+        return;
+      }
+      var back = e.target.closest("[data-back]");
+      if (back) { renderStep(+back.getAttribute("data-back")); return; }
+      if (e.target.closest("[data-restart]")) { answers = {}; renderStep(0); }
+    });
+
+    renderStep(0);
+  })();
 
   function waAttrs() {
     return WA_READY ? ' target="_blank" rel="noopener"' : "";
@@ -429,8 +579,11 @@
     var host = $("[data-quotes]");
     if (!host) return;
     var section = host.closest("[data-quotes-section]") || host;
-    if (!QUOTES.length) { section.remove(); return; }
-    host.innerHTML = QUOTES.map(function (q) {
+    /* Sample quotes are layout filler. They show on a local preview, labelled,
+       and never on the live site. */
+    var list = QUOTES.filter(function (q) { return !q.sample || IS_LOCAL; });
+    if (!list.length) { section.remove(); return; }
+    host.innerHTML = list.map(function (q) {
       return '<figure class="quote reveal">' +
         (q.sample ? '<span class="q-sample">Sample — replace before launch</span>' : "") +
         "<blockquote>" + esc(q.quote) + "</blockquote>" +
@@ -438,6 +591,29 @@
         '<span class="measured q-detail">' + esc(q.detail) + "</span></figcaption>" +
       "</figure>";
     }).join("");
+  })();
+
+  /* ---------------------------------------------------------------- 6b. FAQ */
+  (function () {
+    var host = $("[data-faq]");
+    if (!host) return;
+    var FAQ = window.SITE_FAQ || [];
+    if (!FAQ.length) { (host.closest("[data-faq-section]") || host).remove(); return; }
+    host.innerHTML = FAQ.map(function (f, i) {
+      return '<details class="faq-item"' + (i === 0 ? " open" : "") + ">" +
+        "<summary><span>" + esc(f.q) + '</span><span class="e-sign" aria-hidden="true"></span></summary>' +
+        '<div class="faq-a"><p>' + esc(f.a) + "</p></div></details>";
+    }).join("");
+    /* The same answers, as structured data for search engines. */
+    var ld = document.createElement("script");
+    ld.type = "application/ld+json";
+    ld.textContent = JSON.stringify({
+      "@context": "https://schema.org", "@type": "FAQPage",
+      mainEntity: FAQ.map(function (f) {
+        return { "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } };
+      })
+    });
+    document.head.appendChild(ld);
   })();
 
   /* ----------------------------------------------------- 7. RUNS & EVENTS -- */
@@ -480,14 +656,61 @@
         dateBlock +
         "<div><h3>" + esc(e.title) + "</h3>" +
           (e.detail ? '<p class="e-detail">' + esc(e.detail) + "</p>" : "") +
-          '<p class="measured e-where">' + esc(e.place) + (e.note ? " · " + esc(e.note) : "") + "</p></div>" +
+          '<p class="measured e-where">' + esc(e.place) + (e.note ? " · " + esc(e.note) : "") + "</p>" +
+          (typeof e.spots === "number"
+            ? '<p class="e-spots' + (e.spots <= 3 ? " low" : "") + '">' +
+              (e.spots > 0 ? esc(e.spots) + (e.spots === 1 ? " place" : " places") + " left" : "Fully booked — ask for the waitlist") + "</p>"
+            : "") +
+          (e.kind !== "challenge" ? calLinks(e) : "") +
+        "</div>" +
         (e.link
-          ? '<a class="btn ghost sm" href="' + esc(e.link) + '">Details <span class="arw" aria-hidden="true">→</span></a>'
+          ? '<a class="btn ghost sm" href="' + esc(/^(https?:|#|\.\.\/)/.test(e.link) ? e.link : rootRel + e.link) + '">Details <span class="arw" aria-hidden="true">→</span></a>'
           : '<a class="btn ghost sm" href="' + esc(waLink(msg, "sheontherun")) + '"' + waAttrs() +
             '>Join <span class="arw" aria-hidden="true">→</span></a>') +
       "</article>";
     }).join("");
   })();
+
+  /* Add-to-calendar, in Beirut time wherever the visitor's phone is set. */
+  function calStamp(s) { return String(s || "").replace(/[-:]/g, "") + "00"; }
+  function calLinks(e) {
+    if (!e.starts) return "";
+    var end = e.ends || e.starts;
+    var g = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+      "&text=" + encodeURIComponent(e.title) +
+      "&dates=" + calStamp(e.starts) + "/" + calStamp(end) +
+      "&ctz=Asia/Beirut" +
+      "&details=" + encodeURIComponent((e.detail || "") + " — SheOnTheRun") +
+      "&location=" + encodeURIComponent(e.place || "");
+    return '<p class="e-cal"><span class="measured">Add to calendar</span> ' +
+      '<a href="' + esc(g) + '" target="_blank" rel="noopener">Google</a> · ' +
+      '<a href="#" data-ics="' + esc(e.id || "") + '">Apple / Outlook</a></p>';
+  }
+
+  document.addEventListener("click", function (ev) {
+    var a = ev.target.closest("[data-ics]");
+    if (!a) return;
+    ev.preventDefault();
+    var e = (RUNS.events || []).filter(function (x) { return x.id === a.getAttribute("data-ics"); })[0];
+    if (!e) return;
+    var ics = [
+      "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Fatima Mouzahem//SheOnTheRun//EN",
+      "BEGIN:VEVENT",
+      "UID:" + (e.id || "event") + "@sheontherun.com",
+      "DTSTAMP:" + new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z",
+      "DTSTART;TZID=Asia/Beirut:" + calStamp(e.starts),
+      "DTEND;TZID=Asia/Beirut:" + calStamp(e.ends || e.starts),
+      "SUMMARY:" + e.title,
+      "LOCATION:" + (e.place || "").replace(/,/g, "\\,"),
+      "DESCRIPTION:" + (e.detail || "").replace(/,/g, "\\,"),
+      "END:VEVENT", "END:VCALENDAR"
+    ].join("\r\n");
+    var url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+    var link = document.createElement("a");
+    link.href = url; link.download = (e.id || "event") + ".ics";
+    document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  });
 
   /* --------------------------------------------------- 8. WEEKLY RHYTHM -- */
   (function () {
@@ -519,10 +742,9 @@
 
       var btn = p.soldOut
         ? '<span class="btn ghost block" aria-disabled="true">Sold out</span>'
-        : '<a class="btn ghost block" data-order="' + esc(p.id) + '" data-name="' + esc(p.name) +
-          '" data-cat="' + esc(catName) + '" href="' +
-          esc(waLink(orderMessage(p.name, catName, hasOptions ? p.options[0] : ""), "shop")) + '"' + waAttrs() +
-          '>Order on WhatsApp <span class="arw" aria-hidden="true">→</span></a>';
+        : '<button class="btn ghost block" type="button" data-add="' + esc(p.id) + '" data-name="' + esc(p.name) +
+          '" data-cat="' + esc(catName) + '" data-price="' + esc(p.price == null ? "" : p.price) + '">' +
+          'Add to bag <span class="arw" aria-hidden="true">+</span></button>';
 
       return '<article class="product reveal">' +
         media(p.image, p.name, "r-11", p.name) +
@@ -579,15 +801,102 @@
       });
     }
 
-    /* Keep the order link in step with the chosen size. */
-    host.addEventListener("change", function (e) {
-      var sel = e.target.closest("select[data-option-for]");
-      if (!sel) return;
-      var card = sel.closest(".product");
-      var link = $("a[data-order]", card);
-      if (!link) return;
-      link.href = waLink(orderMessage(link.getAttribute("data-name"), link.getAttribute("data-cat"), sel.value), "shop");
+    /* ---- The bag -------------------------------------------------------
+       Collect several things, then send one WhatsApp message listing them
+       all — how people here actually order. Remembered on this device only. */
+    var BAG_KEY = "sotr_bag";
+    var bag = [];
+    try { bag = JSON.parse(localStorage.getItem(BAG_KEY) || "[]") || []; } catch (err) { bag = []; }
+    function saveBag() { try { localStorage.setItem(BAG_KEY, JSON.stringify(bag)); } catch (err) {} }
+
+    var fab = document.createElement("button");
+    fab.type = "button";
+    fab.className = "bag-fab";
+    fab.setAttribute("aria-haspopup", "dialog");
+    var panel = document.createElement("div");
+    panel.className = "bag";
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-modal", "true");
+    panel.setAttribute("aria-label", "Your bag");
+    panel.hidden = true;
+    document.body.appendChild(fab);
+    document.body.appendChild(panel);
+
+    function bagCount() { return bag.reduce(function (n, x) { return n + x.qty; }, 0); }
+
+    function bagMessage() {
+      return "Hi Fatima! I'd like to order from your shop:\n" + bag.map(function (x) {
+        return "• " + x.qty + " × " + x.name + (x.option ? " (" + x.option + ")" : "");
+      }).join("\n") + "\nIs everything in stock?";
+    }
+
+    function renderBag() {
+      var n = bagCount();
+      fab.hidden = n === 0;
+      fab.innerHTML = 'Your bag <span class="bag-n num">' + n + "</span>";
+      var total = 0, priced = true;
+      bag.forEach(function (x) {
+        if (x.price === "" || x.price == null) priced = false; else total += x.qty * +x.price;
+      });
+      panel.innerHTML =
+        '<div class="bag-card">' +
+          '<div class="bag-head"><h2>Your bag</h2><button type="button" class="bag-close" aria-label="Close">&times;</button></div>' +
+          (bag.length
+            ? '<ul class="bag-list">' + bag.map(function (x, i) {
+                return '<li><div><p class="bag-name">' + esc(x.name) + "</p>" +
+                  '<p class="measured">' + esc(x.option || x.cat) + "</p></div>" +
+                  '<div class="bag-qty">' +
+                    '<button type="button" data-qty="' + i + '" data-d="-1" aria-label="One fewer ' + esc(x.name) + '">−</button>' +
+                    '<span class="num">' + x.qty + "</span>" +
+                    '<button type="button" data-qty="' + i + '" data-d="1" aria-label="One more ' + esc(x.name) + '">+</button>' +
+                  "</div></li>";
+              }).join("") + "</ul>" +
+              '<p class="bag-total">' + (priced ? "Total <b class=\"num\">$" + total + "</b>" :
+                "I'll confirm prices and delivery when you message.") + "</p>" +
+              '<a class="btn block lg" href="' + esc(waLink(bagMessage(), "shop")) + '"' + waAttrs() + ">" +
+                'Send order on WhatsApp <span class="arw" aria-hidden="true">→</span></a>' +
+              '<p class="form-note mt-s">Cash on delivery or transfer. Delivery across Lebanon, or collect at a run.</p>'
+            : '<p class="prose mt-s">Nothing in here yet.</p>') +
+        "</div>";
+    }
+
+    function openBag(open) {
+      panel.hidden = !open;
+      document.body.classList.toggle("locked", open);
+      if (open) { var c = $(".bag-close", panel); if (c) c.focus(); } else fab.focus();
+    }
+
+    host.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-add]");
+      if (!b) return;
+      var sel = $("select[data-option-for]", b.closest(".product"));
+      var option = sel ? sel.value : "";
+      var id = b.getAttribute("data-add");
+      var hit = bag.filter(function (x) { return x.id === id && x.option === option; })[0];
+      if (hit) hit.qty += 1;
+      else bag.push({ id: id, name: b.getAttribute("data-name"), cat: b.getAttribute("data-cat"),
+                      option: option, price: b.getAttribute("data-price"), qty: 1 });
+      saveBag(); renderBag();
+      b.innerHTML = 'Added <span class="arw" aria-hidden="true">✓</span>';
+      setTimeout(function () { b.innerHTML = 'Add to bag <span class="arw" aria-hidden="true">+</span>'; }, 1400);
+      fab.classList.remove("bump"); void fab.offsetWidth; fab.classList.add("bump");
     });
+
+    fab.addEventListener("click", function () { openBag(true); });
+    panel.addEventListener("click", function (e) {
+      if (e.target === panel || e.target.closest(".bag-close")) { openBag(false); return; }
+      var q = e.target.closest("[data-qty]");
+      if (!q) return;
+      var i = +q.getAttribute("data-qty");
+      bag[i].qty += +q.getAttribute("data-d");
+      if (bag[i].qty <= 0) bag.splice(i, 1);
+      saveBag(); renderBag();
+      if (!bag.length) openBag(false);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !panel.hidden) openBag(false);
+    });
+    renderBag();
 
     observeReveals(host);
   })();
@@ -683,8 +992,33 @@
       return;
     }
 
+    /* On the full Journal, once there's more than one kind of article, let
+       readers narrow it down. */
+    var kinds = live.map(function (p) { return p.kicker; })
+      .filter(function (k, i, a) { return k && a.indexOf(k) === i; });
+    if (!(max > 0) && kinds.length > 1) {
+      var bar = document.createElement("div");
+      bar.className = "shop-nav post-filter";
+      bar.setAttribute("role", "group");
+      bar.setAttribute("aria-label", "Filter articles");
+      bar.innerHTML = '<button type="button" data-kind="" aria-pressed="true">Everything</button>' +
+        kinds.map(function (k) {
+          return '<button type="button" data-kind="' + esc(k) + '" aria-pressed="false">' + esc(k) + "</button>";
+        }).join("");
+      host.parentNode.insertBefore(bar, host);
+      bar.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-kind]");
+        if (!b) return;
+        var k = b.getAttribute("data-kind");
+        $$("button", bar).forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        $$(".post", host).forEach(function (el) {
+          el.hidden = !!k && el.getAttribute("data-kind") !== k;
+        });
+      });
+    }
+
     host.innerHTML = live.map(function (p) {
-      return '<a class="post reveal" href="' + (isJournal ? '' : 'journal/') + esc(p.slug) + '.html">' +
+      return '<a class="post reveal" data-kind="' + esc(p.kicker) + '" href="' + (isJournal ? '' : rootRel + 'journal/') + esc(p.slug) + '.html">' +
         media(p.image, p.title, "r-32", p.title) +
         '<div class="p-meta"><span class="measured">' + esc(p.kicker) + "</span>" +
           '<span class="measured">' + esc(dateLong(p.date)) + " · " + esc(p.readingTime) + "</span></div>" +
@@ -693,6 +1027,69 @@
         '<span class="tlink">Read <span class="arw" aria-hidden="true">→</span></span>' +
       "</a>";
     }).join("");
+  })();
+
+  /* ------------------------------------------------- 10b. READING AN ARTICLE */
+  (function () {
+    var article = $(".article");
+    var prose = article && $(".prose", article);
+    if (!prose) return;
+
+    /* A hairline across the top that fills as you read. */
+    var bar = document.createElement("div");
+    bar.className = "read-progress";
+    bar.setAttribute("aria-hidden", "true");
+    bar.innerHTML = "<span></span>";
+    document.body.appendChild(bar);
+    var fill = bar.firstChild;
+    var tick = false;
+    function progress() {
+      tick = false;
+      var r = prose.getBoundingClientRect();
+      var total = r.height - window.innerHeight * .6;
+      var done = Math.min(1, Math.max(0, (window.innerHeight * .4 - r.top) / Math.max(1, total)));
+      fill.style.transform = "scaleX(" + done + ")";
+    }
+    window.addEventListener("scroll", function () {
+      if (!tick) { tick = true; requestAnimationFrame(progress); }
+    }, { passive: true });
+    progress();
+
+    /* "In this article" — built from the headings, so it never goes stale. */
+    var heads = $$("h2", prose);
+    if (heads.length >= 3) {
+      var toc = document.createElement("nav");
+      toc.className = "toc mt-l";
+      toc.setAttribute("aria-label", "In this article");
+      toc.innerHTML = '<p class="measured">In this article</p><ol>' + heads.map(function (h, i) {
+        if (!h.id) h.id = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "s" + i;
+        return '<li><a href="#' + esc(h.id) + '"><span class="num">' + String(i + 1).padStart(2, "0") +
+               "</span>" + esc(h.textContent) + "</a></li>";
+      }).join("") + "</ol>";
+      prose.parentNode.insertBefore(toc, prose);
+    }
+
+    /* Sharing: WhatsApp is how things travel here; the rest is a copy. */
+    var title = ($("h1", article) || {}).textContent || document.title;
+    var url = location.href.split("#")[0];
+    var share = document.createElement("div");
+    share.className = "share mt-l";
+    share.innerHTML = '<span class="measured">Share this</span>' +
+      '<a class="btn ghost sm" target="_blank" rel="noopener" href="https://wa.me/?text=' +
+        esc(encodeURIComponent(title + " — " + url)) + '">WhatsApp</a>' +
+      '<button class="btn ghost sm" type="button" data-copy>Copy link</button>' +
+      (navigator.share ? '<button class="btn ghost sm" type="button" data-share>More…</button>' : "");
+    prose.parentNode.insertBefore(share, prose.nextSibling);
+    share.addEventListener("click", function (e) {
+      var c = e.target.closest("[data-copy]");
+      if (c && navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(function () {
+          c.textContent = "Link copied";
+          setTimeout(function () { c.textContent = "Copy link"; }, 1800);
+        });
+      }
+      if (e.target.closest("[data-share]")) navigator.share({ title: title, url: url }).catch(function () {});
+    });
   })();
 
   /* ----------------------------------------------------- 11. PUBLICATIONS */
@@ -731,8 +1128,10 @@
   $$("[data-wa]").forEach(function (a) {
     var msg = a.getAttribute("data-wa") || "Hi Fatima! I found you through your website.";
     var interest = a.getAttribute("data-interest") || "general";
-    a.setAttribute("href", waLink(msg, interest));
-    if (WA_READY) { a.setAttribute("target", "_blank"); a.setAttribute("rel", "noopener"); }
+    /* data-book marks a booking (the discovery call) rather than a chat. */
+    var book = a.hasAttribute("data-book") && BOOK_URL;
+    a.setAttribute("href", book ? BOOK_URL : waLink(msg, interest));
+    if (book || WA_READY) { a.setAttribute("target", "_blank"); a.setAttribute("rel", "noopener"); }
   });
 
   $$("[data-email]").forEach(function (a) {
@@ -776,6 +1175,7 @@
       var message = ($("#message", form) || {}).value || "";
       var email = ($("#email", form) || {}).value || "";
       return {
+        name: name, email: email, interest: interestLabel, message: message,
         subject: interestLabel + " — enquiry from " + (name || "your website"),
         body: "Hi Fatima,\n\n" + message +
           "\n\n—\nName: " + name +
@@ -785,11 +1185,55 @@
       };
     }
 
+    var ENDPOINT = /^https:\/\//.test(String(CFG.formEndpoint || "")) ? CFG.formEndpoint : "";
+    var submitBtn = $('button[type="submit"]', form);
+    var noteEl = $(".form-note", form);
+    if (ENDPOINT) {
+      /* With a real endpoint the reply address matters, so ask for it. */
+      var emailField = $("#email", form);
+      if (emailField) emailField.required = true;
+      if (submitBtn) submitBtn.innerHTML = 'Send message <span class="arw" aria-hidden="true">→</span>';
+      if (noteEl) noteEl.textContent = "Your message comes straight to my inbox. I usually reply within a day.";
+    }
+
+    function sent() {
+      var c = compose();
+      form.innerHTML = '<div class="form-done" role="status" tabindex="-1">' +
+        '<span class="measured">Message received</span>' +
+        '<p class="pull mt-s">Thank you' + (c.name ? ", " + esc(c.name.split(" ")[0]) : "") + '.</p>' +
+        '<p class="prose mt-s">I read every message myself and usually reply within a day. ' +
+        'If it&rsquo;s urgent, WhatsApp is the fastest way to reach me.</p></div>';
+      var done = $(".form-done", form);
+      if (done) done.focus();
+    }
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!form.reportValidity()) return;
       var c = compose();
-      window.location.href = mailLink(c.subject, c.body);
+      if (!ENDPOINT) { window.location.href = mailLink(c.subject, c.body); return; }
+
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Sending…"; }
+      fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: c.name, email: c.email, about: c.interest,
+          message: c.message, _subject: c.subject
+        })
+      }).then(function (r) {
+        if (!r.ok) throw new Error("status " + r.status);
+        sent();
+      }).catch(function () {
+        /* The service is down or blocked: never lose the message — hand it to
+           the visitor's email app instead. */
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Send message <span class="arw" aria-hidden="true">→</span>';
+        }
+        if (noteEl) noteEl.textContent = "That didn't go through. Opening your email app with the message written out instead…";
+        setTimeout(function () { window.location.href = mailLink(c.subject, c.body); }, 900);
+      });
     });
 
     var waBtn = $("[data-connect-wa]", form);
@@ -805,11 +1249,36 @@
     }
   })();
 
+  /* --------------------------------------------------- 14b. NEWSLETTER -- */
+  /* Only appears once there's somewhere for the address to go. The form posts
+     straight to her newsletter provider — nothing passes through this site. */
+  (function () {
+    var url = String(CFG.newsletterEndpoint || "");
+    var foot = $(".site-footer .wrap");
+    if (!/^https:\/\//.test(url) || !foot) return;
+    var box = document.createElement("div");
+    box.className = "newsletter";
+    box.innerHTML =
+      '<div><p class="measured on-deep">Letters from the run</p>' +
+      '<p class="nl-title">One short email a month: what I&rsquo;m reading, cooking and running — and the next dates.</p></div>' +
+      '<form class="nl-form" method="post" action="' + esc(url) + '" target="_blank">' +
+        '<label class="vh" for="nl-email">Your email</label>' +
+        '<input class="nl-input" id="nl-email" type="email" name="email" required autocomplete="email" placeholder="you@example.com">' +
+        '<button class="btn on-deep" type="submit">Subscribe <span class="arw" aria-hidden="true">→</span></button>' +
+      "</form>";
+    foot.insertBefore(box, foot.firstChild);
+    $("form", box).addEventListener("submit", function () {
+      var f = this;
+      setTimeout(function () {
+        f.innerHTML = '<p class="nl-done">Thank you — check your inbox to confirm.</p>';
+      }, 50);
+    });
+  })();
+
   /* ------------------------------------------------- 15. SETUP REMINDER -- */
   /* Only ever shows on a local machine, so it can't reach a visitor. */
   (function () {
-    var local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
-    if (!local) return;
+    if (!IS_LOCAL) return;
     if (sessionStorage.getItem("hide_setup_banner")) return;
     var missing = [];
     if (!WA_READY) missing.push("<code>whatsapp</code>");
@@ -825,6 +1294,38 @@
       bar.remove();
     });
     document.body.appendChild(bar);
+  })();
+
+  /* ------------------------------------------------- 15b. INSTANT PAGES -- */
+  /* Start fetching a page the moment someone hovers or presses its link, so
+     the click lands on something already loaded. Browsers that don't know
+     speculation rules ignore this entirely. */
+  (function () {
+    if (!(window.HTMLScriptElement && HTMLScriptElement.supports &&
+          HTMLScriptElement.supports("speculationrules"))) return;
+    var rules = document.createElement("script");
+    rules.type = "speculationrules";
+    rules.textContent = JSON.stringify({
+      prefetch: [{ where: { and: [{ href_matches: "/*" }, { not: { href_matches: "*.jpg" } }] }, eagerness: "moderate" }]
+    });
+    document.head.appendChild(rules);
+  })();
+
+  /* --------------------------------------------------- 15c. ANALYTICS ---- */
+  /* Off unless configured, never on her own machine, and cookie-free either
+     way — so there is no consent banner to show anyone. */
+  (function () {
+    if (IS_LOCAL) return;
+    var s = document.createElement("script");
+    s.defer = true;
+    if (CFG.plausibleDomain) {
+      s.src = "https://plausible.io/js/script.js";
+      s.setAttribute("data-domain", CFG.plausibleDomain);
+    } else if (CFG.cloudflareToken) {
+      s.src = "https://static.cloudflareinsights.com/beacon.min.js";
+      s.setAttribute("data-cf-beacon", JSON.stringify({ token: CFG.cloudflareToken }));
+    } else return;
+    document.head.appendChild(s);
   })();
 
   /* ------------------------------------------------------------- 16. BOOT */

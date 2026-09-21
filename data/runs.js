@@ -16,6 +16,8 @@
        place: "Biel, Beirut",
        detail: "30 minutes, easy pace. All paces welcome.",
        note:  "",                 // optional small line, e.g. "Limited places"
+       spots: 12,                 // optional: places left. 0 = "Fully booked".
+                                  // Leave the line out to show no count.
        featured: false            // true = shown large at the top
      },
 
@@ -93,7 +95,7 @@ window.SITE_RUNS = {
       detail: "A 6-week group nutrition challenge to help you build healthier habits, stay accountable, and feel better — with support along the way.",
       note: "$40 for 6 weeks",
       featured: true,
-      link: "/dietontherun.html#backontherun"
+      link: "dietontherun.html#backontherun"
     }
 
   ]

@@ -302,6 +302,16 @@
     var tlStage = $("[data-tl-stage]");
     if (tlStage) {
       var frames = $$("[data-tl-frame]", tlStage);
+      var nowEl = $("[data-tl-now]");
+
+      /* How far round the lap: a rail beside the years that fills as you read. */
+      var rail = $("[data-tl-rail]");
+      if (rail) {
+        gsap.fromTo(rail, { scaleY: 0 }, {
+          scaleY: 1, ease: "none",
+          scrollTrigger: { trigger: ".timeline", start: "top 62%", end: "bottom 62%", scrub: .3 }
+        });
+      }
       $$("[data-tl-year]").forEach(function (item, i) {
         ST.create({
           trigger: item,
@@ -313,10 +323,27 @@
               gsap.to(f, { autoAlpha: j === i ? 1 : 0, duration: .5, ease: "power2.out" });
               f.style.zIndex = j === i ? 2 : 1;
             });
+            /* The big year on the photograph, and the year in the list. */
+            var yearEl = item.querySelector(".tl-year");
+            if (nowEl && yearEl && nowEl.textContent !== yearEl.textContent) {
+              gsap.fromTo(nowEl, { yPercent: 40, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: .5, ease: "power3.out" });
+              nowEl.textContent = yearEl.textContent;
+            }
+            $$("[data-tl-year]").forEach(function (x) { x.classList.toggle("is-now", x === item); });
           }
         });
       });
     }
+
+    /* ------------------------------------------------------- the lap ----- */
+    /* The runner goes round as the four splits scroll past. */
+    $$("[data-lap]").forEach(function (lap) {
+      var fill = $("[data-lap-fill]", lap);
+      var runner = $("[data-lap-runner]", lap);
+      var st = { trigger: lap, start: "top 78%", end: "bottom 70%", scrub: .5 };
+      if (fill) gsap.fromTo(fill, { scaleX: 0 }, { scaleX: 1, ease: "none", scrollTrigger: st });
+      if (runner) gsap.fromTo(runner, { left: "0%" }, { left: "100%", ease: "none", scrollTrigger: Object.assign({}, st) });
+    });
 
     /* ------------------------------------------------ header hide/show --- */
     var header = $(".site-header");

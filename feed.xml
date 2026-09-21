@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>The Journal — Fatima Mouzahem</title>
+    <link>https://sheontherun.com/journal/</link>
+    <atom:link href="https://sheontherun.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Nutrition, running and everyday wellbeing — from a licensed dietitian and sports nutritionist in Beirut.</description>
+    <language>en</language>
+    <item>
+      <title>Fuelling your first 10k</title>
+      <link>https://sheontherun.com/journal/fuelling-your-first-10k.html</link>
+      <guid>https://sheontherun.com/journal/fuelling-your-first-10k.html</guid>
+      <category>Sports &amp; active nutrition</category>
+      <pubDate>Wed, 02 Sep 2026 05:00:00 GMT</pubDate>
+      <description>What to eat the week before, the morning of, and — the part nobody talks about — in the hour after you finish.</description>
+    </item>
+  </channel>
+</rss>

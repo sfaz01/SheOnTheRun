@@ -24,13 +24,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Publish only the website — not the README, preview server, editor
+      # settings or anything else that lives in the repository.
+      - name: Assemble the site
+        run: |
+          rsync -a ./ _site/ \
+            --exclude '.git' --exclude '.github' --exclude '.claude' \
+            --exclude '_site' --exclude 'README.md' --exclude 'serve.py' \
+            --exclude '*.exe' --exclude '.gitignore' --exclude '__pycache__' \
+            --exclude 'tools'
+
+      # The Journal's RSS feed and the sitemap are built from data/posts.js,
+      # so a new article only ever needs adding in one place.
+      - name: Build feed and sitemap
+        run: node tools/build.js _site
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_site'
 
       - name: Deploy to GitHub Pages
         id: deployment

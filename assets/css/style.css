@@ -384,21 +384,9 @@ section { position: relative; }
   background: var(--grad);
   height: 2px;
 }
-.nav .btn {
-  margin-left: .75rem;
-  background: var(--teal-deep);
-  color: #fff;
-  border-color: var(--teal-deep);
-  box-shadow: 0 4px 14px -3px rgba(11, 105, 117, 0.35);
-  transition: all .25s var(--ease);
-}
-.nav .btn:hover {
-  background: #08555f;
-  border-color: #08555f;
-  color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px -3px rgba(11, 105, 117, 0.45);
-}
+.nav .btn { margin-left: .75rem; color: var(--paper); }
+.nav .btn::after { display: none; }
+.nav .btn:hover { color: var(--ink); }
 
 .menu-btn {
   display: inline-flex; align-items: center; gap: .55rem;
@@ -435,12 +423,7 @@ section { position: relative; }
 }
 .drawer nav a[aria-current="page"] { color: var(--teal-deep); }
 .drawer .drawer-foot { margin-top: auto; padding-top: 2rem; }
-.drawer .drawer-foot .btn {
-  width: 100%; justify-content: center;
-  background: var(--teal-deep);
-  color: #fff;
-  border-color: var(--teal-deep);
-}
+.drawer .drawer-foot .btn { width: 100%; justify-content: center; }
 .drawer .drawer-meta { margin-top: 1.25rem; display: grid; gap: .4rem; }
 .drawer .drawer-meta a { font-size: .875rem; color: var(--ink-2); text-decoration: none; }
 
@@ -1089,7 +1072,7 @@ figcaption {
 .band-sand .chip, .chip.light { border-color: var(--line); color: var(--ink-2); }
 
 /* ------------------------------------------------------------- 23. EVENTS */
-.events { display: grid; gap: 1px; background: var(--line); border-block: 1px solid var(--line); }
+.events { display: grid; gap: 1px; background: var(--line); border-block: 1px solid var(--line); container-type: inline-size; }
 .event {
   background: var(--paper);
   display: grid; gap: .75rem;
@@ -1097,7 +1080,9 @@ figcaption {
   align-items: baseline;
 }
 .events > .event { padding-inline: 0; }
-@media (min-width: 860px) {
+/* The calendar sits full-width on SheOnTheRun and in a narrow column on the
+   home page, so the card responds to its own width, not the window's. */
+@container (min-width: 620px) {
   .event { grid-template-columns: 8.5rem minmax(0,1fr) auto; gap: 0 2.5rem; padding: 1.85rem 0; }
 }
 .event .e-date {
@@ -1110,7 +1095,7 @@ figcaption {
 .event .e-detail { margin-top: .45rem; font-size: .9375rem; color: var(--ink-2); max-width: 48ch; }
 .event .e-where { margin-top: .5rem; }
 .event .btn { justify-self: start; }
-@media (min-width: 860px) { .event .btn { justify-self: end; align-self: center; } }
+@container (min-width: 620px) { .event .btn { justify-self: end; align-self: center; } }
 .event.is-featured { background: var(--paper-2); padding-inline: 1.4rem; }
 
 /* Shown only when JavaScript is off, so a visitor still gets the prices and a
@@ -1746,3 +1731,377 @@ picture { display: contents; }
   .site-header, .drawer, .setup-banner, .btn { display: none !important; }
   body { background: #fff; }
 }
+
+/* ═══════════════════════════════ 31. CONVERSION ══════════════════════════ */
+
+/* ---- Find your fit ------------------------------------------------------- */
+.fit-wrap { display: grid; gap: clamp(1.75rem, 4vw, 3rem); }
+@media (min-width: 900px) {
+  .fit-wrap { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); align-items: start; gap: clamp(2.5rem, 5vw, 5rem); }
+  .fit-intro { position: sticky; top: 6.5rem; }
+}
+.fit {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: clamp(1.4rem, 4vw, 2.5rem);
+  min-height: 22rem;
+  box-shadow: 0 24px 48px -36px rgba(23, 50, 58, .35);
+}
+.fit-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+/* Progress as lanes — the same five hairlines as the DietOnTheRun mark. */
+.fit-lanes { display: flex; gap: 4px; }
+.fit-lanes i {
+  display: block; width: 26px; height: 3px; border-radius: 3px;
+  background: var(--line);
+  transition: background .4s var(--ease);
+}
+.fit-lanes i.on { background: var(--grad); }
+.fit-question, .fit-name { margin-top: 1.25rem; font-size: clamp(1.45rem, 2.6vw, 2rem); }
+.fit-question:focus, .fit-name:focus { outline: none; }
+.fit-opts { margin-top: 1.5rem; display: grid; gap: .6rem; }
+.fit-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  width: 100%; text-align: left;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--line); border-radius: 6px;
+  font-size: 1rem; font-weight: 500; color: var(--ink);
+  background: var(--paper);
+  transition: border-color .25s, background .25s, transform .25s var(--ease);
+}
+.fit-opt .arw { color: var(--ink-3); transition: transform .3s var(--ease), color .25s; }
+.fit-opt:hover { border-color: var(--teal); background: var(--paper-2); }
+.fit-opt:hover .arw { transform: translateX(4px); color: var(--teal-deep); }
+.fit-opt[aria-pressed="true"] { border-color: var(--ink); }
+.fit-back { margin-top: 1.4rem; background: none; }
+.fit-back::after { display: none; }
+.fit-why { margin-top: .8rem; color: var(--ink-2); max-width: 44ch; }
+.fit-meta {
+  margin-top: 1.4rem; display: grid; gap: 1px;
+  background: var(--line); border-block: 1px solid var(--line);
+}
+@media (min-width: 560px) { .fit-meta { grid-template-columns: repeat(3, 1fr); } }
+.fit-meta > div { background: var(--paper); padding: .85rem 0; }
+@media (min-width: 560px) { .fit-meta > div + div { padding-left: 1rem; } }
+.fit-meta dt { font-size: .6875rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+.fit-meta dd { margin-top: .25rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.fit-inc { margin-top: 1.25rem; display: grid; gap: .5rem; }
+.fit-inc li { position: relative; padding-left: 1.15rem; font-size: .9375rem; color: var(--ink-2); }
+.fit-inc li::before {
+  content: ""; position: absolute; left: 0; top: .62em;
+  width: 6px; height: 1px; background: var(--teal-deep);
+}
+.fit-q, .fit-result { animation: fitIn .5s var(--ease) both; }
+@keyframes fitIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ---- Contact form, sent ----------------------------------------------------- */
+.form-done { padding: clamp(1.5rem, 4vw, 2.5rem) 0; }
+.form-done:focus { outline: none; }
+.form-done .measured { color: var(--teal-deep); }
+.btn[disabled] { opacity: .6; pointer-events: none; }
+
+/* ---- Newsletter (footer) --------------------------------------------------- */
+.newsletter {
+  display: grid; gap: 1.25rem;
+  padding-bottom: clamp(2.25rem, 5vw, 3.5rem);
+  margin-bottom: clamp(2.25rem, 5vw, 3.5rem);
+  border-bottom: 1px solid var(--deep-line);
+}
+@media (min-width: 900px) {
+  .newsletter { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: 3rem; }
+}
+.nl-title {
+  margin-top: .6rem;
+  font-family: var(--display); font-size: clamp(1.3rem, 2.4vw, 1.75rem); line-height: 1.2;
+  letter-spacing: -.02em; font-variation-settings: "SOFT" 34, "WONK" 1;
+  max-width: 30ch;
+}
+.nl-form { display: flex; flex-wrap: wrap; gap: .75rem; }
+.nl-input {
+  flex: 1 1 14rem;
+  background: transparent; color: var(--paper);
+  border: 0; border-bottom: 1px solid var(--deep-line);
+  padding: .8rem 0; font-size: 1rem;
+}
+.nl-input::placeholder { color: var(--deep-ink-3); }
+.nl-input:focus { outline: none; border-bottom-color: var(--teal); }
+.nl-done { color: var(--deep-ink-2); }
+
+/* ═══════════════════════════════════ 32. TRUST ═══════════════════════════ */
+
+/* ---- Trained & worked with ------------------------------------------------ */
+.worked {
+  display: grid; gap: .9rem;
+  padding-top: 1.5rem;
+}
+@media (min-width: 900px) {
+  .worked { grid-template-columns: 12rem minmax(0, 1fr); align-items: baseline; gap: 2rem; }
+}
+.worked .ledger li { color: var(--ink-2); }
+
+/* ---- FAQ ----------------------------------------------------------------- */
+.faq { border-top: 1px solid var(--line); }
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-item summary {
+  list-style: none; cursor: pointer;
+  display: grid; grid-template-columns: minmax(0, 1fr) 1.5rem; gap: 1rem; align-items: center;
+  padding: 1.35rem 0;
+  font-family: var(--display); font-size: clamp(1.12rem, 1.8vw, 1.35rem); line-height: 1.25;
+  letter-spacing: -.014em; font-variation-settings: "SOFT" 24, "WONK" 0;
+  transition: color .3s;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary:hover { color: var(--teal-deep); }
+.faq-item .e-sign { position: relative; width: 14px; height: 14px; justify-self: end; }
+.faq-item .e-sign::before, .faq-item .e-sign::after {
+  content: ""; position: absolute; inset: 0; margin: auto; background: var(--ink-2);
+}
+.faq-item .e-sign::before { width: 14px; height: 1px; }
+.faq-item .e-sign::after { width: 1px; height: 14px; transition: transform .4s var(--ease); }
+.faq-item[open] .e-sign::after { transform: scaleY(0); }
+.faq-a { padding-bottom: 1.4rem; color: var(--ink-2); max-width: 60ch; }
+.faq-item[open] .faq-a { animation: fitIn .45s var(--ease) both; }
+
+/* ═══════════════════════════════ 33. PAGE TRANSITIONS ════════════════════ */
+/* Moving between pages cross-fades instead of flashing white, and the header
+   stays put, so the site reads as one place rather than nine documents.
+   Browsers without cross-document view transitions simply navigate. */
+@view-transition { navigation: auto; }
+.site-header { view-transition-name: site-header; }
+::view-transition-old(root) { animation: vtOut .28s cubic-bezier(.4, 0, 1, 1) both; }
+::view-transition-new(root) { animation: vtIn .5s var(--ease) both; }
+@keyframes vtOut { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+
+/* ═══════════════════════════════ 34. THE JOURNEY ═════════════════════════ */
+
+/* ---- The lap (home) --------------------------------------------------------
+   A 400m told in four hundreds. The track is the lane motif laid flat; the
+   fill and the runner follow the scroll when motion is on, and sit at the
+   finish when it isn't, so the picture is complete either way. */
+.lap-head { display: grid; gap: 1.25rem; }
+@media (min-width: 900px) {
+  .lap-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: 3rem; }
+  .lap-head .lede { justify-self: end; }
+}
+.lap-track {
+  position: relative;
+  height: 44px;
+  margin: 0 .5rem clamp(1.75rem, 4vw, 2.75rem);
+}
+.lap-lanes, .lap-fill {
+  position: absolute; left: 0; right: 0; top: 8px; height: 13px;
+  -webkit-mask-image: repeating-linear-gradient(to bottom, #000 0 1px, transparent 1px 3px);
+          mask-image: repeating-linear-gradient(to bottom, #000 0 1px, transparent 1px 3px);
+}
+.lap-lanes { background: var(--line); }
+.lap-fill { background: var(--grad); transform-origin: left; }
+.lap-runner {
+  position: absolute; top: 5px; left: 100%;
+  width: 19px; height: 19px; margin-left: -9.5px; border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--lav-deep);
+  box-shadow: 0 0 0 5px rgba(167,155,224,.2);
+}
+.lap-mark { position: absolute; left: var(--at); top: 0; height: 29px; width: 1px; background: var(--ink-3); }
+.lap-mark b {
+  position: absolute; top: 33px; left: 0; transform: translateX(-50%);
+  font-size: .625rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.lap-mark:first-of-type b { transform: none; }
+.lap-mark:last-of-type b { transform: translateX(-100%); }
+
+.lap-splits { display: grid; gap: 2.25rem 1.25rem; }
+@media (min-width: 680px)  { .lap-splits { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1100px) { .lap-splits { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; } }
+.lap-split { position: relative; }
+.lap-split .fig { border-radius: 4px; }
+.lap-when { margin-top: 1rem; }
+.lap-when .num { color: var(--teal-deep); }
+.lap-split h3 { margin-top: .45rem; }
+.lap-split > p:last-child { margin-top: .6rem; font-size: .9375rem; color: var(--ink-2); text-wrap: pretty; }
+/* The four hundreds step down like a staggered start. */
+@media (min-width: 1100px) {
+  .lap-split:nth-child(2) { margin-top: 2rem; }
+  .lap-split:nth-child(3) { margin-top: 4rem; }
+  .lap-split:nth-child(4) { margin-top: 6rem; }
+}
+
+/* ---- About: the year you're on, and how far round the lap you are ---------- */
+.tl-sticky { isolation: isolate; }
+.tl-now {
+  position: absolute; z-index: 3; left: 1.1rem; bottom: .9rem;
+  font-family: var(--display); font-size: clamp(3.2rem, 7vw, 5.5rem); line-height: .9;
+  letter-spacing: -.045em; font-variation-settings: "SOFT" 30, "WONK" 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--paper);
+  text-shadow: 0 2px 30px rgba(8,16,20,.45);
+  pointer-events: none;
+}
+.tl-sticky .tl-stage::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(to top, rgba(8,16,20,.55), transparent 42%);
+}
+.timeline { position: relative; }
+.tl-rail { display: none; }
+@media (min-width: 860px) {
+  .tl-rail {
+    display: block; position: absolute; top: 0; bottom: 0;
+    left: calc(-1 * clamp(1.25rem, 2.5vw, 2.5rem)); width: 2px;
+    background: var(--line);
+  }
+  .tl-rail span {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, var(--teal), var(--lav));
+    transform-origin: top;
+  }
+}
+.tl-item.is-now .tl-year { color: var(--teal-deep); }
+
+/* ═══════════════════════════════════ 35. JOURNAL ═════════════════════════ */
+.read-progress {
+  position: fixed; left: 0; right: 0; top: 0; z-index: 95; height: 2px;
+  pointer-events: none;
+}
+.read-progress span {
+  display: block; height: 100%;
+  background: var(--grad);
+  transform: scaleX(0); transform-origin: left;
+}
+.toc {
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: 1.25rem 0 1.35rem;
+}
+.toc ol { margin-top: .8rem; display: grid; gap: .45rem; }
+@media (min-width: 640px) { .toc ol { grid-template-columns: 1fr 1fr; gap: .45rem 2rem; } }
+.toc a { display: flex; gap: .75rem; align-items: baseline; text-decoration: none; font-size: .9375rem; color: var(--ink-2); }
+.toc a .num { font-size: .6875rem; font-weight: 600; color: var(--teal-deep); letter-spacing: .08em; }
+.toc a:hover { color: var(--ink); }
+.share { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+.share .measured { margin-right: .5rem; }
+.post-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2rem; }
+.post[hidden] { display: none; }
+
+/* ---- Calendar extras -------------------------------------------------------- */
+.event .e-spots {
+  margin-top: .5rem; display: inline-flex; align-items: center; gap: .45rem;
+  font-size: .8125rem; font-weight: 600; color: var(--teal-deep);
+}
+.event .e-spots::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.event .e-spots.low { color: #9A4A12; }
+.event .e-cal { margin-top: .55rem; font-size: .8125rem; color: var(--ink-3); }
+.event .e-cal .measured { margin-right: .35rem; }
+.event .e-cal a { color: var(--ink-2); text-underline-offset: .2em; }
+.event .e-cal a:hover { color: var(--teal-deep); }
+
+/* ═══════════════════════════════════ 36. THE BAG ═════════════════════════ */
+.bag-fab {
+  position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 120;
+  display: inline-flex; align-items: center; gap: .6rem;
+  padding: .85rem 1.1rem .85rem 1.3rem; border-radius: 100px;
+  background: var(--ink); color: var(--paper);
+  font-size: .875rem; font-weight: 600;
+  box-shadow: 0 16px 36px -14px rgba(22,21,26,.55);
+}
+.bag-fab[hidden] { display: none; }
+.bag-fab .bag-n {
+  min-width: 1.6rem; height: 1.6rem; border-radius: 100px; padding: 0 .4rem;
+  display: grid; place-items: center;
+  background: var(--grad); color: var(--ink); font-size: .8125rem;
+}
+.bag-fab.bump { animation: bump .5s var(--ease); }
+@keyframes bump { 40% { transform: scale(1.08); } }
+.bag {
+  position: fixed; inset: 0; z-index: 310;
+  background: rgba(8,16,20,.5);
+  display: flex; justify-content: flex-end;
+}
+.bag[hidden] { display: none; }
+.bag-card {
+  width: min(100%, 26rem); height: 100%; overflow-y: auto;
+  background: var(--paper); padding: 1.5rem clamp(1.25rem, 4vw, 2rem) 2rem;
+  animation: bagIn .45s var(--ease);
+}
+@keyframes bagIn { from { transform: translateX(40px); opacity: 0; } }
+.bag-head { display: flex; align-items: center; justify-content: space-between; }
+.bag-head h2 { font-size: 1.9rem; }
+.bag-close { font-size: 1.6rem; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); }
+.bag-list { margin-top: 1.5rem; border-top: 1px solid var(--line); }
+.bag-list li {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: 1rem 0; border-bottom: 1px solid var(--line);
+}
+.bag-name { font-weight: 600; }
+.bag-qty { display: flex; align-items: center; gap: .6rem; }
+.bag-qty button {
+  width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line);
+  font-size: 1rem; line-height: 1;
+}
+.bag-qty button:hover { border-color: var(--ink-3); }
+.bag-total { margin: 1.25rem 0; color: var(--ink-2); }
+.bag-total b { font-family: var(--display); font-size: 1.6rem; font-weight: 400; color: var(--ink); margin-left: .4rem; }
+
+/* Shop hero: a portrait beside the title rather than a stretched banner. */
+.hero-media .fig { max-height: 72svh; border-radius: 4px; }
+.hero-chip .hc-n { font-size: 1.35rem; }
+
+/* ═══════════════════════════════ 37. ARABIC (RTL) ════════════════════════ */
+/* Fraunces and Instrument Sans have no Arabic, so the Arabic pages swap in a
+   pairing with the same temperament: Noto Naskh (a warm, calligraphic serif)
+   for the lived register, IBM Plex Sans Arabic for the measured one. Latin
+   words inside Arabic text still fall through to the original families. */
+[dir="rtl"] {
+  --display: "Noto Naskh Arabic", "Fraunces", Georgia, serif;
+  --sans: "IBM Plex Sans Arabic", "Instrument Sans", system-ui, sans-serif;
+}
+[dir="rtl"] body { font-size: 1.0938rem; line-height: 1.8; }
+/* Arabic has no capitals and joined letters: tracking tears it apart. */
+[dir="rtl"] .measured, [dir="rtl"] .eyebrow, [dir="rtl"] .creds .c-since,
+[dir="rtl"] .brand .bs, [dir="rtl"] .foot-col h4, [dir="rtl"] .discovery .free,
+[dir="rtl"] .menu-btn, [dir="rtl"] .lap-mark b, [dir="rtl"] .field-label {
+  letter-spacing: 0; text-transform: none;
+}
+[dir="rtl"] .measured { font-size: .78rem; }
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] .pull,
+[dir="rtl"] .foot-name, [dir="rtl"] .brand .bn, [dir="rtl"] .nl-title {
+  letter-spacing: 0; font-weight: 500;
+}
+[dir="rtl"] h1 { line-height: 1.25; }
+[dir="rtl"] h2 { line-height: 1.3; }
+[dir="rtl"] h3, [dir="rtl"] .pull { line-height: 1.45; }
+[dir="rtl"] .foot-name { line-height: 1.3; }
+[dir="rtl"] [data-split] .w { padding-block: .3em; margin-block: -.3em; }
+/* Latin names keep their own face and direction. */
+[dir="rtl"] [lang="en"] { font-family: "Fraunces", Georgia, serif; }
+[dir="rtl"] .measured[lang="en"] { font-family: "Instrument Sans", sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+
+/* Mirror what points or washes one way. */
+[dir="rtl"] .brand { margin-right: 0; margin-left: auto; }
+[dir="rtl"] .nav .btn { margin-left: 0; margin-right: .75rem; }
+[dir="rtl"] .btn::before { transform: translateX(101%); }
+[dir="rtl"] .btn:hover::before, [dir="rtl"] .btn:focus-visible::before { transform: none; }
+[dir="rtl"] .btn:hover .arw, [dir="rtl"] .tlink:hover .arw { transform: translateX(-4px); }
+[dir="rtl"] .tlink::after { transform-origin: left; }
+[dir="rtl"] .nav a::after { transform-origin: right; }
+[dir="rtl"] .stage-media::after {
+  background:
+    linear-gradient(to top, rgba(8,16,20,.90) 0%, rgba(8,16,20,.58) 30%, rgba(8,16,20,.10) 62%, rgba(8,16,20,.16) 100%),
+    linear-gradient(to left, rgba(8,16,20,.72) 0%, rgba(8,16,20,.30) 44%, rgba(8,16,20,0) 74%);
+}
+[dir="rtl"] .overlay-quote .oq-media::after {
+  background: linear-gradient(255deg, rgba(10,18,22,.82) 0%, rgba(10,18,22,.55) 48%, rgba(10,18,22,.22) 100%);
+}
+/* A running track runs right-to-left for a right-to-left reader. */
+[dir="rtl"] .lap-track { transform: scaleX(-1); }
+[dir="rtl"] .lap-mark b { transform: translateX(-50%) scaleX(-1); }
+[dir="rtl"] .lap-mark:first-of-type b { transform: scaleX(-1); }
+[dir="rtl"] .lap-mark:last-of-type b { transform: translateX(-100%) scaleX(-1); }
+[dir="rtl"] .fit-opt, [dir="rtl"] .exp-head { text-align: right; }
+
+/* The language switch in the English header. */
+.nav a.lang { color: var(--ink-3); font-size: .8125rem; }
+.nav a.lang:hover { color: var(--ink); }

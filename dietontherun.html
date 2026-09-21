@@ -12,10 +12,12 @@
 <meta property="og:title" content="DietOnTheRun — Nutrition that works with your life">
 <meta property="og:description" content="Consultations and packages with a licensed dietitian and certified sports nutritionist. Beirut and online.">
 <meta property="og:url" content="https://sheontherun.com/dietontherun.html">
-<meta property="og:image" content="https://sheontherun.compublic/images/dotr-portrait-960.jpg">
+<meta property="og:image" content="https://sheontherun.com/public/images/dotr-portrait-960.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
@@ -28,7 +30,7 @@
   "name": "DietOnTheRun — Fatima Mouzahem, Licensed Dietitian",
   "description": "Personalised, evidence-based nutrition consultations and packages in Beirut and online.",
   "url": "https://sheontherun.com/dietontherun.html",
-  "image": "https://sheontherun.compublic/images/dotr-portrait-960.jpg",
+  "image": "https://sheontherun.com/public/images/dotr-portrait-960.jpg",
   "address": { "@type": "PostalAddress", "addressLocality": "Beirut", "addressCountry": "LB" },
   "areaServed": ["Beirut", "Lebanon", "Online worldwide"],
   "priceRange": "$15–$150",
@@ -124,7 +126,7 @@
 
       <div class="hero-actions">
         <a class="btn lg" href="#services">See services &amp; packages <span class="arw" aria-hidden="true">→</span></a>
-        <a class="btn ghost lg" data-wa="Hi Fatima! I'd like to book the free 15-minute discovery call." data-interest="nutrition" href="connect.html">
+        <a class="btn ghost lg" data-book data-wa="Hi Fatima! I'd like to book the free 15-minute discovery call." data-interest="nutrition" href="connect.html">
           Free 15-min call <span class="arw" aria-hidden="true">→</span>
         </a>
       </div>
@@ -239,6 +241,21 @@
     </div>
   </section>
 
+  <!-- ══════════════════════════════ FIND YOUR FIT ════════════════════════ -->
+  <section class="band-tight band-sand" id="fit">
+    <div class="wrap">
+      <div class="fit-wrap">
+        <div class="fit-intro">
+          <span class="measured">Not sure which to choose?</span>
+          <h2 class="mt-s" data-split>Find your<br>best fit</h2>
+          <p class="lede mt-s">Three or four quick questions and I'll point you to the consultation or package that suits you — with the price, and a button to book it.</p>
+          <p class="measured mt-m">Takes under a minute · Nothing is stored</p>
+        </div>
+        <div class="fit" data-fit aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
   <div class="wrap"><div class="lanes lanes-rule" aria-hidden="true"></div></div>
 
   <!-- ══════════════════════ CHOOSE HOW WE WORK TOGETHER ══════════════════ -->
@@ -330,6 +347,20 @@
     </div>
   </section>
 
+  <!-- ══════════════════════════════════ FAQ ══════════════════════════════ -->
+  <section class="band-tight" data-faq-section>
+    <div class="wrap">
+      <div class="split wide-right">
+        <div class="head">
+          <span class="measured">07 — Questions</span>
+          <h2 class="mt-s" data-split>Before you book</h2>
+          <p class="lede">The things people ask me most. Anything else, just message me.</p>
+        </div>
+        <div class="faq" data-faq></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ══════════════════════════════ DISCOVERY CALL ═══════════════════════ -->
   <section class="band-tight">
     <div class="wrap">
@@ -340,10 +371,10 @@
           <p class="prose mt-s">You don't need to know which consultation or package is right for you. Let's have a quick 15-minute chat about your goals, what you're looking for, and how I can best support you. I'll help you find the right place to start.</p>
         </div>
         <div class="row">
-          <a class="btn lg" data-wa="Hi Fatima! I'd like to book the free 15-minute discovery call." data-interest="nutrition" href="connect.html">
-            Find your best fit <span class="arw" aria-hidden="true">→</span>
+          <a class="btn lg" data-book data-wa="Hi Fatima! I'd like to book the free 15-minute discovery call." data-interest="nutrition" href="connect.html">
+            Book the free call <span class="arw" aria-hidden="true">→</span>
           </a>
-          <a class="btn ghost lg" data-email="Free 15-minute discovery call" href="connect.html">Email instead</a>
+          <a class="btn ghost lg" href="#fit">Take the quiz instead</a>
         </div>
       </div>
     </div>
@@ -353,7 +384,7 @@
   <section class="band-tight" style="padding-bottom:clamp(3.75rem,9vw,8.5rem)" data-posts-section>
     <div class="wrap">
       <div class="head mb-l">
-        <span class="measured">07 — Reading</span>
+        <span class="measured">08 — Reading</span>
         <h2 data-split>From the Journal</h2>
         <p class="lede reveal">Articles, tips and the questions I get asked most.</p>
       </div>
@@ -406,6 +437,7 @@
 <script src="data/gallery.js"></script>
 <script src="data/packages.js"></script>
 <script src="data/testimonials.js"></script>
+<script src="data/faq.js"></script>
 <script src="data/posts.js"></script>
 <script src="assets/js/site.js" defer></script>
 <script src="assets/js/motion.js" defer></script>

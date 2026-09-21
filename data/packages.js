@@ -167,6 +167,40 @@ window.SITE_OFFER = {
     cta: "Join BackOnTheRun"
   },
 
+  /* ------------------------------------------------------- FIND YOUR FIT */
+  /* The four-question quiz on the DietOnTheRun page. Each answer in the
+     "support" question points at a service or package by its id above (or
+     "challenge" for BackOnTheRun). The "goal" answers only change the sentence
+     explaining why it fits — edit the words freely. */
+  fit: {
+    goal: {
+      question: "What brings you here?",
+      options: [
+        { id: "weight",  label: "Losing or gaining weight, sustainably", why: "we'll build a way of eating you can keep, not a diet you'll abandon" },
+        { id: "energy",  label: "More energy and better everyday habits", why: "we'll look at your real week and fix the parts that drain you" },
+        { id: "sport",   label: "Fuelling my running or training", why: "you'll get sports-nutrition guidance built around your training" },
+        { id: "women",   label: "Women's health and feeling at home in my body", why: "women's nutrition is the part of this work I care about most" }
+      ]
+    },
+    support: {
+      question: "How much support would you like?",
+      options: [
+        { id: "one",       label: "One session to get me started",      pick: "initial-consultation" },
+        { id: "month",     label: "A month to build the basics",         pick: "the-start" },
+        { id: "structure", label: "Six weeks of structure and check-ins", pick: "the-reset" },
+        { id: "long",      label: "Long-term change, properly",          pick: "the-journey" },
+        { id: "group",     label: "Doing it alongside other women",      pick: "challenge" }
+      ]
+    },
+    returning: {
+      question: "Have you had a consultation with me before?",
+      options: [
+        { id: "new", label: "No, this would be my first" },
+        { id: "back", label: "Yes, I'm coming back", pick: "follow-up" }
+      ]
+    }
+  },
+
   /* ------------------------------------------------------------ HOW IT WORKS */
   steps: [
     {

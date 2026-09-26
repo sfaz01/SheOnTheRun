@@ -57,9 +57,16 @@
   function bookLink(message, interest) { return BOOK_URL || waLink(message, interest); }
   function bookAttrs() { return BOOK_URL || WA_READY ? ' target="_blank" rel="noopener"' : ""; }
 
-  function mailLink(subject, body) {
-    if (!EMAIL_READY) return rootRel + "connect.html";
-    return "mailto:" + RAW_EMAIL +
+  /* Each Connect subject can have its own inbox (config.js → emails); anything
+     not listed goes to the main address. */
+  function inboxFor(interest) {
+    var to = String(((CFG.emails || {})[interest]) || "");
+    return /^[^\s@\[]+@[^\s@\]]+\.[^\s@\]]+$/.test(to) ? to : RAW_EMAIL;
+  }
+
+  function mailLink(subject, body, to) {
+    if (!EMAIL_READY && !to) return rootRel + "connect.html";
+    return "mailto:" + (to || RAW_EMAIL) +
            "?subject=" + encodeURIComponent(subject || "") +
            "&body=" + encodeURIComponent(body || "");
   }
@@ -617,6 +624,17 @@
   })();
 
   /* ----------------------------------------------------- 7. RUNS & EVENTS -- */
+  /* Runs, classes and events, each tagged, with a filter above the list and a
+     small month calendar beside it. The filter only narrows what is shown. */
+  var KINDS = {
+    run:       { label: "Run",       group: "run" },
+    "class":   { label: "Class",     group: "class" },
+    event:     { label: "Event",     group: "event" },
+    challenge: { label: "Challenge", group: "event" },
+    retreat:   { label: "Retreat",   group: "event" }
+  };
+  function kindOf(e) { return KINDS[e.kind] || KINDS.event; }
+
   (function () {
     var host = $("[data-events]");
     if (!host) return;
@@ -628,7 +646,12 @@
     var max = parseInt(host.getAttribute("data-events"), 10);
     if (max > 0) upcoming = upcoming.slice(0, max);
 
+    var filterHost = $("[data-events-filter]");
+    var calHost = $("[data-minical]");
+
     if (!upcoming.length) {
+      if (filterHost) filterHost.remove();
+      if (calHost) calHost.remove();
       host.classList.remove("events");
       host.innerHTML = '<div class="empty"><p class="measured">Nothing on the calendar</p>' +
         '<p class="mt-s">The next runs are being set. Message me and I\'ll tell you the moment they\'re up — ' +
@@ -638,9 +661,10 @@
       return;
     }
 
-    host.innerHTML = upcoming.map(function (e) {
+    function card(e) {
       var p = parseLocal(e.starts);
       var t = p ? timeLabel(p) : "";
+      var k = kindOf(e);
       var isRange = e.ends && String(e.ends).slice(0, 10) !== String(e.starts).slice(0, 10);
       var dateBlock = isRange
         ? '<span class="e-date">' + esc(p.d + " " + MONTHS[p.mo - 1]) +
@@ -652,9 +676,10 @@
         ? "Hi Fatima! I'd like to join " + e.title + ". I found it on your website."
         : "Hi Fatima! I'd like to join the " + e.title + " on " + dateLong(e.starts) + ".";
 
-      return '<article class="event reveal' + (e.featured ? " is-featured" : "") + '">' +
+      return '<article class="event' + (e.featured ? " is-featured" : "") + '" data-group="' + k.group + '">' +
         dateBlock +
-        "<div><h3>" + esc(e.title) + "</h3>" +
+        '<div><span class="e-kind k-' + k.group + '">' + esc(k.label) + "</span>" +
+          "<h3>" + esc(e.title) + "</h3>" +
           (e.detail ? '<p class="e-detail">' + esc(e.detail) + "</p>" : "") +
           '<p class="measured e-where">' + esc(e.place) + (e.note ? " · " + esc(e.note) : "") + "</p>" +
           (typeof e.spots === "number"
@@ -668,7 +693,74 @@
           : '<a class="btn ghost sm" href="' + esc(waLink(msg, "sheontherun")) + '"' + waAttrs() +
             '>Join <span class="arw" aria-hidden="true">→</span></a>') +
       "</article>";
-    }).join("");
+    }
+
+    var groups = [
+      { id: "all", label: "Everything" },
+      { id: "run", label: "Runs" },
+      { id: "class", label: "Classes" },
+      { id: "event", label: "Events" }
+    ];
+    var current = "all";
+
+    function render() {
+      var list = upcoming.filter(function (e) { return current === "all" || kindOf(e).group === current; });
+      var label = groups.filter(function (g) { return g.id === current; })[0].label.toLowerCase();
+      host.innerHTML = list.length ? list.map(card).join("") :
+        '<div class="empty"><p class="measured">Nothing here yet</p>' +
+        '<p class="mt-s">No ' + esc(label) + " on the calendar right now — the weekly sunset runs are always on.</p></div>";
+      renderCal();
+    }
+
+    /* A small month view: every day with something on gets a dot in its colour. */
+    function renderCal() {
+      if (!calHost) return;
+      var months = [];
+      upcoming.forEach(function (e) {
+        var p = parseLocal(e.starts);
+        var key = p.y + "-" + p.mo;
+        if (months.indexOf(key) === -1 && months.length < 2) months.push(key);
+      });
+      var todayKey = now.slice(0, 10);
+      calHost.innerHTML = months.map(function (key) {
+        var y = +key.split("-")[0], mo = +key.split("-")[1];
+        var lead = (new Date(Date.UTC(y, mo - 1, 1)).getUTCDay() + 6) % 7;   // weeks start on Monday
+        var days = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+        var cells = "";
+        for (var i = 0; i < lead; i++) cells += "<span></span>";
+        for (var d = 1; d <= days; d++) {
+          var iso = y + "-" + String(mo).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+          var on = upcoming.filter(function (e) {
+            var s0 = String(e.starts).slice(0, 10), s1 = String(e.ends || e.starts).slice(0, 10);
+            /* A six-week challenge would fill the month, so mark only its first day. */
+            return s0 === iso || (s0 !== s1 && kindOf(e).group !== "event" && iso > s0 && iso <= s1);
+          });
+          var dots = on.map(function (e) {
+            var g = kindOf(e).group;
+            return '<i class="k-' + g + (current !== "all" && current !== g ? " dim" : "") + '"></i>';
+          }).join("");
+          var cls = (iso === todayKey ? "today" : "") + (iso < todayKey ? " past" : "");
+          cells += '<span' + (cls ? ' class="' + cls.trim() + '"' : "") + ">" + d + (dots ? "<b>" + dots + "</b>" : "") + "</span>";
+        }
+        return '<div class="mc-month"><p class="mc-title">' + MONTHS[mo - 1] + " " + y + "</p>" +
+          '<div class="mc-grid"><em>M</em><em>T</em><em>W</em><em>T</em><em>F</em><em>S</em><em>S</em>' + cells + "</div></div>";
+      }).join("") +
+      '<p class="mc-key"><span><i class="k-run"></i>Runs</span><span><i class="k-class"></i>Classes</span><span><i class="k-event"></i>Events</span></p>';
+    }
+
+    if (filterHost) {
+      filterHost.innerHTML = groups.map(function (g) {
+        return '<button type="button" data-group="' + g.id + '" aria-pressed="' + (g.id === "all") + '">' + esc(g.label) + "</button>";
+      }).join("");
+      filterHost.addEventListener("click", function (ev) {
+        var b = ev.target.closest("button[data-group]");
+        if (!b) return;
+        current = b.getAttribute("data-group");
+        $$("button", filterHost).forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        render();
+      });
+    }
+    render();
   })();
 
   /* Add-to-calendar, in Beirut time wherever the visitor's phone is set. */
@@ -717,97 +809,107 @@
     var host = $("[data-rhythm]");
     if (!host || !RUNS.recurring) return;
     var r = RUNS.recurring;
-    var msg = "Hi Fatima! I'd like to come to a SheOnTheRun sunset run. Can you tell me where to meet?";
+    /* "Join us" goes to the form, with SheOnTheRun already chosen. */
+    var joinHref = rootRel + "connect.html?interest=sheontherun&note=" +
+      encodeURIComponent("Hi Fatima! I'd like to join SheOnTheRun and come to a sunset run.") + "#form";
     host.innerHTML = "<div>" +
         '<span class="measured">Every week, all year</span>' +
         '<p class="r-when">' + esc(r.days) + " · " + esc(r.time) + "</p>" +
         '<p class="mt-s prose">' + esc(r.detail) + " Meeting point: " + esc(r.place) + ".</p>" +
       "</div>" +
-      '<a class="btn" href="' + esc(waLink(msg, "sheontherun")) + '"' + waAttrs() +
-      '>Come to a run <span class="arw" aria-hidden="true">→</span></a>';
+      '<a class="btn lilac" href="' + esc(joinHref) + '">Join us <span class="arw" aria-hidden="true">→</span></a>';
   })();
 
   /* --------------------------------------------------------------- 9. SHOP */
+  /* Every product in one grid, with a category filter on top ("Everything" by
+     default). A cart that remembers itself on this device, and a checkout that
+     asks for name, phone, governorate and address — paid on delivery. */
   (function () {
     var host = $("[data-shop]");
     if (!host) return;
     var navHost = $("[data-shop-nav]");
+    var soonHost = $("[data-shop-soon]");
+    var GOVS = SHOP.governorates || [];
 
-    function productCard(p, catName) {
+    var products = [];
+    SHOP.categories.forEach(function (c) {
+      if (c.comingSoon) return;
+      (c.items || []).forEach(function (p) { products.push({ p: p, cat: c }); });
+    });
+
+    function priceText(p) {
+      return (p.price || p.price === 0) ? "$" + p.price : "";
+    }
+
+    function productCard(x) {
+      var p = x.p, c = x.cat;
       var hasOptions = p.options && p.options.length;
       var selId = "opt-" + p.id;
-      var priceHTML = (p.price || p.price === 0)
-        ? '<span class="pr-price">$' + esc(p.price) + "</span>"
-        : '<span class="pr-price ask">Price on WhatsApp</span>';
-
+      var price = priceText(p);
       var btn = p.soldOut
-        ? '<span class="btn ghost block" aria-disabled="true">Sold out</span>'
-        : '<button class="btn ghost block" type="button" data-add="' + esc(p.id) + '" data-name="' + esc(p.name) +
-          '" data-cat="' + esc(catName) + '" data-price="' + esc(p.price == null ? "" : p.price) + '">' +
-          'Add to bag <span class="arw" aria-hidden="true">+</span></button>';
-
-      return '<article class="product reveal">' +
-        media(p.image, p.name, "r-11", p.name) +
+        ? '<span class="btn ghost sm" aria-disabled="true">Sold out</span>'
+        : '<button class="btn lilac sm" type="button" data-add="' + esc(p.id) + '">Add to cart</button>';
+      return '<article class="product" data-cat-id="' + esc(c.id) + '">' +
+        media(p.image, p.name, "r-11", p.name, "(min-width: 1100px) 22vw, (min-width: 780px) 30vw, 46vw") +
+        '<p class="measured pr-cat">' + esc(c.name) + "</p>" +
         "<h3>" + esc(p.name) + "</h3>" +
         '<p class="pr-blurb">' + esc(p.blurb) + "</p>" +
-        '<div class="pr-foot">' + priceHTML + "</div>" +
         (hasOptions
           ? '<label class="vh" for="' + esc(selId) + '">Option for ' + esc(p.name) + "</label>" +
             '<select id="' + esc(selId) + '" data-option-for="' + esc(p.id) + '">' +
             p.options.map(function (o) { return '<option value="' + esc(o) + '">' + esc(o) + "</option>"; }).join("") +
             "</select>"
           : "") +
-        btn +
+        '<div class="pr-foot">' +
+          (price ? '<span class="pr-price">' + esc(price) + "</span>"
+                 : '<span class="pr-price ask">Price confirmed with your order</span>') +
+          btn +
+        "</div>" +
       "</article>";
     }
 
-    host.innerHTML = SHOP.categories.map(function (c) {
-      if (c.comingSoon) {
-        var msg = "Hi Fatima! Please let me know when the modest activewear launches.";
-        return '<section class="cat reveal" data-cat-id="' + esc(c.id) + '" id="' + esc(c.id) + '">' +
-          '<div class="soon"><div class="soon-grid"><div>' +
-            '<span class="measured">Coming soon</span>' +
-            '<h2 class="mt-s">' + esc(c.name) + "</h2>" +
-            '<p class="lede mt-s">' + esc(c.blurb) + "</p>" +
-            '<a class="btn mt-m" href="' + esc(waLink(msg, "shop")) + '"' + waAttrs() +
-            '>Tell me when it lands <span class="arw" aria-hidden="true">→</span></a>' +
-          "</div><div>" + media("shop-jacket", "", "r-11", "Modest activewear") + "</div></div></div>" +
-        "</section>";
-      }
-      return '<section class="cat" data-cat-id="' + esc(c.id) + '" id="' + esc(c.id) + '">' +
-        '<div class="cat-head reveal"><span class="measured">' + esc(c.items.length) +
-          (c.items.length === 1 ? " item" : " items") + "</span>" +
-          "<h2>" + esc(c.name) + "</h2>" +
-          '<p class="prose">' + esc(c.blurb) + "</p></div>" +
-        '<div class="grid-p">' + c.items.map(function (p) { return productCard(p, c.name); }).join("") + "</div>" +
-      "</section>";
-    }).join("");
+    host.innerHTML = '<div class="grid-p">' + products.map(productCard).join("") + "</div>";
+
+    /* Coming soon — a panel in her logo colours rather than a photograph. */
+    var soon = SHOP.categories.filter(function (c) { return c.comingSoon; })[0];
+    if (soonHost && soon) {
+      var msg = "Hi Fatima! Please let me know when the " + soon.name.toLowerCase() + " launches.";
+      soonHost.innerHTML =
+        '<div class="soon reveal"><div class="soon-grid"><div>' +
+          '<span class="measured">Coming soon</span>' +
+          '<h2 class="mt-s">' + esc(soon.name) + "</h2>" +
+          '<p class="lede mt-s">' + esc(soon.blurb) + "</p>" +
+          '<a class="btn lilac mt-m" href="' + esc(waLink(msg, "shop")) + '"' + waAttrs() +
+          '>Tell me when it lands <span class="arw" aria-hidden="true">→</span></a>' +
+        '</div><div class="soon-art" aria-hidden="true">' +
+          '<span class="sa-she">She</span><span class="sa-run">On the Run</span>' +
+          '<span class="sa-soon">Coming soon</span>' +
+        "</div></div></div>";
+    }
 
     if (navHost) {
+      var cats = SHOP.categories.filter(function (c) { return !c.comingSoon && (c.items || []).length; });
       navHost.innerHTML = '<button type="button" data-filter="all" aria-pressed="true">Everything</button>' +
-        SHOP.categories.map(function (c) {
+        cats.map(function (c) {
           return '<button type="button" data-filter="' + esc(c.id) + '" aria-pressed="false">' + esc(c.name) + "</button>";
         }).join("");
       navHost.addEventListener("click", function (e) {
         var b = e.target.closest("button[data-filter]");
         if (!b) return;
         var f = b.getAttribute("data-filter");
-        $$("button", navHost).forEach(function (x) {
-          x.setAttribute("aria-pressed", String(x === b));
-        });
-        $$("[data-cat-id]", host).forEach(function (sec) {
-          sec.hidden = !(f === "all" || sec.getAttribute("data-cat-id") === f);
+        $$("button", navHost).forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        $$(".product", host).forEach(function (el) {
+          el.hidden = !(f === "all" || el.getAttribute("data-cat-id") === f);
         });
       });
     }
 
-    /* ---- The bag -------------------------------------------------------
-       Collect several things, then send one WhatsApp message listing them
-       all — how people here actually order. Remembered on this device only. */
+    /* ---- The cart ------------------------------------------------------ */
     var BAG_KEY = "sotr_bag";
     var bag = [];
     try { bag = JSON.parse(localStorage.getItem(BAG_KEY) || "[]") || []; } catch (err) { bag = []; }
     function saveBag() { try { localStorage.setItem(BAG_KEY, JSON.stringify(bag)); } catch (err) {} }
+    var view = "cart";   // cart | checkout | done
 
     var fab = document.createElement("button");
     fab.type = "button";
@@ -817,74 +919,178 @@
     panel.className = "bag";
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-modal", "true");
-    panel.setAttribute("aria-label", "Your bag");
+    panel.setAttribute("aria-label", "Your cart");
     panel.hidden = true;
     document.body.appendChild(fab);
     document.body.appendChild(panel);
 
     function bagCount() { return bag.reduce(function (n, x) { return n + x.qty; }, 0); }
-
-    function bagMessage() {
-      return "Hi Fatima! I'd like to order from your shop:\n" + bag.map(function (x) {
-        return "• " + x.qty + " × " + x.name + (x.option ? " (" + x.option + ")" : "");
-      }).join("\n") + "\nIs everything in stock?";
-    }
-
-    function renderBag() {
-      var n = bagCount();
-      fab.hidden = n === 0;
-      fab.innerHTML = 'Your bag <span class="bag-n num">' + n + "</span>";
+    function totals() {
       var total = 0, priced = true;
       bag.forEach(function (x) {
         if (x.price === "" || x.price == null) priced = false; else total += x.qty * +x.price;
       });
+      return { total: total, priced: priced };
+    }
+    function lines() {
+      return bag.map(function (x) {
+        return "• " + x.qty + " × " + x.name + (x.option ? " (" + x.option + ")" : "") +
+          (x.price !== "" && x.price != null ? " — $" + (x.qty * +x.price) : "");
+      }).join("\n");
+    }
+
+    var ORDER_ENDPOINT = [CFG.orderEndpoint, CFG.formEndpoint].filter(function (u) {
+      return /^https:\/\//.test(String(u || ""));
+    })[0] || "";
+
+    function cartHTML() {
+      var t = totals();
+      return bag.length
+        ? '<ul class="bag-list">' + bag.map(function (x, i) {
+            return '<li><div><p class="bag-name">' + esc(x.name) + "</p>" +
+              '<p class="measured">' + esc(x.option || x.cat) +
+              (x.price !== "" && x.price != null ? " · $" + esc(x.price) : "") + "</p></div>" +
+              '<div class="bag-qty">' +
+                '<button type="button" data-qty="' + i + '" data-d="-1" aria-label="One fewer ' + esc(x.name) + '">−</button>' +
+                '<span class="num">' + x.qty + "</span>" +
+                '<button type="button" data-qty="' + i + '" data-d="1" aria-label="One more ' + esc(x.name) + '">+</button>' +
+              "</div></li>";
+          }).join("") + "</ul>" +
+          '<p class="bag-total">' + (t.priced ? "Total <b class=\"num\">$" + t.total + "</b>" :
+            "Prices for some items are confirmed with your order.") + "</p>" +
+          '<p class="pay-note"><span class="pay-dot" aria-hidden="true"></span><span>Payment: <b>cash on delivery</b>, anywhere in Lebanon.</span></p>' +
+          '<button class="btn lilac block lg mt-s" type="button" data-checkout>Checkout <span class="arw" aria-hidden="true">→</span></button>'
+        : '<p class="prose mt-s">Your cart is empty.</p>';
+    }
+
+    function checkoutHTML() {
+      var t = totals();
+      return '<form class="checkout form" data-order novalidate>' +
+        '<button type="button" class="tlink bag-back" data-back-cart><span class="arw" aria-hidden="true">←</span> Back to cart</button>' +
+        '<div class="co-summary"><p class="measured">Your order</p><p class="co-lines">' +
+          esc(lines()).replace(/\n/g, "<br>") + "</p>" +
+          (t.priced ? '<p class="co-total">Total <b class="num">$' + t.total + "</b></p>" : "") + "</div>" +
+        '<div><label class="field-label" for="co-name">Full name</label>' +
+          '<input class="input" id="co-name" name="name" autocomplete="name" required></div>' +
+        '<div><label class="field-label" for="co-phone">Phone number</label>' +
+          '<input class="input" id="co-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required ' +
+          'minlength="7" placeholder="+961 70 123 456"></div>' +
+        '<div><label class="field-label" for="co-gov">Governorate</label>' +
+          '<select class="input select" id="co-gov" name="governorate" required>' +
+            '<option value="">Choose your governorate</option>' +
+            GOVS.map(function (g) { return '<option value="' + esc(g) + '">' + esc(g) + "</option>"; }).join("") +
+          "</select></div>" +
+        '<div><label class="field-label" for="co-address">Detailed address</label>' +
+          '<textarea class="textarea" id="co-address" name="address" required rows="3" ' +
+          'placeholder="Area, street, building, floor — and a landmark if it helps"></textarea></div>' +
+        '<fieldset class="co-pay"><legend class="field-label">Payment</legend>' +
+          '<label class="pay-option"><input type="radio" name="payment" value="Pay on delivery" checked>' +
+          '<span><b>Pay on delivery</b><small>Cash, when your order arrives.</small></span></label></fieldset>' +
+        '<button class="btn lilac block lg" type="submit">Place order <span class="arw" aria-hidden="true">→</span></button>' +
+        '<p class="form-note co-note">' + (ORDER_ENDPOINT
+          ? "I'll call you to confirm before it's sent."
+          : WA_READY ? "Your order opens in WhatsApp, ready to send. I'll confirm before it's sent."
+                     : "Your order opens in your email app, ready to send. I'll confirm before it's sent.") + "</p>" +
+      "</form>";
+    }
+
+    function doneHTML(name) {
+      return '<div class="form-done" role="status" tabindex="-1">' +
+        '<span class="measured">Order received</span>' +
+        '<p class="pull mt-s">Thank you' + (name ? ", " + esc(name.split(" ")[0]) : "") + ".</p>" +
+        '<p class="prose mt-s">I\'ll call you to confirm your order and delivery. You pay in cash when it arrives.</p></div>';
+    }
+
+    function renderBag(name) {
+      var n = bagCount();
+      fab.hidden = n === 0 && view !== "done";
+      fab.innerHTML = 'Cart <span class="bag-n num">' + n + "</span>";
       panel.innerHTML =
         '<div class="bag-card">' +
-          '<div class="bag-head"><h2>Your bag</h2><button type="button" class="bag-close" aria-label="Close">&times;</button></div>' +
-          (bag.length
-            ? '<ul class="bag-list">' + bag.map(function (x, i) {
-                return '<li><div><p class="bag-name">' + esc(x.name) + "</p>" +
-                  '<p class="measured">' + esc(x.option || x.cat) + "</p></div>" +
-                  '<div class="bag-qty">' +
-                    '<button type="button" data-qty="' + i + '" data-d="-1" aria-label="One fewer ' + esc(x.name) + '">−</button>' +
-                    '<span class="num">' + x.qty + "</span>" +
-                    '<button type="button" data-qty="' + i + '" data-d="1" aria-label="One more ' + esc(x.name) + '">+</button>' +
-                  "</div></li>";
-              }).join("") + "</ul>" +
-              '<p class="bag-total">' + (priced ? "Total <b class=\"num\">$" + total + "</b>" :
-                "I'll confirm prices and delivery when you message.") + "</p>" +
-              '<a class="btn block lg" href="' + esc(waLink(bagMessage(), "shop")) + '"' + waAttrs() + ">" +
-                'Send order on WhatsApp <span class="arw" aria-hidden="true">→</span></a>' +
-              '<p class="form-note mt-s">Cash on delivery or transfer. Delivery across Lebanon, or collect at a run.</p>'
-            : '<p class="prose mt-s">Nothing in here yet.</p>') +
+          '<div class="bag-head"><h2>' + (view === "checkout" ? "Checkout" : view === "done" ? "Thank you" : "Your cart") + "</h2>" +
+          '<button type="button" class="bag-close" aria-label="Close">&times;</button></div>' +
+          (view === "checkout" ? checkoutHTML() : view === "done" ? doneHTML(name) : cartHTML()) +
         "</div>";
     }
 
     function openBag(open) {
       panel.hidden = !open;
       document.body.classList.toggle("locked", open);
-      if (open) { var c = $(".bag-close", panel); if (c) c.focus(); } else fab.focus();
+      if (open) { var c = $(".bag-close", panel); if (c) c.focus(); }
+      else {
+        if (view === "done") { view = "cart"; renderBag(); }
+        if (!fab.hidden) fab.focus();
+      }
+    }
+
+    function submitOrder(form) {
+      if (!form.reportValidity()) return;
+      var f = function (n) { return (form.elements[n] || {}).value || ""; };
+      var t = totals();
+      var body = "New order from the website\n\n" + lines() +
+        (t.priced ? "\nTotal: $" + t.total : "\nTotal: to confirm") +
+        "\n\nName: " + f("name") + "\nPhone: " + f("phone") +
+        "\nGovernorate: " + f("governorate") + "\nAddress: " + f("address") +
+        "\nPayment: Pay on delivery";
+      var subject = "Shop order — " + f("name");
+
+      function finish() {
+        var name = f("name");
+        bag = []; saveBag(); view = "done"; renderBag(name);
+        var d = $(".form-done", panel); if (d) d.focus();
+      }
+
+      if (ORDER_ENDPOINT) {
+        var btn = $('button[type="submit"]', form);
+        if (btn) { btn.disabled = true; btn.textContent = "Placing your order…"; }
+        fetch(ORDER_ENDPOINT, {
+          method: "POST",
+          headers: { "Accept": "application/json", "Content-Type": "application/json" },
+          body: JSON.stringify({ _subject: subject, name: f("name"), phone: f("phone"),
+            governorate: f("governorate"), address: f("address"), payment: "Pay on delivery",
+            order: lines(), total: t.priced ? "$" + t.total : "to confirm" })
+        }).then(function (r) {
+          if (!r.ok) throw new Error("status " + r.status);
+          finish();
+        }).catch(function () {
+          if (btn) { btn.disabled = false; btn.innerHTML = 'Place order <span class="arw" aria-hidden="true">→</span>'; }
+          var note = $(".co-note", form);
+          if (note) note.textContent = "That didn't go through. Opening your email app with the order written out instead…";
+          setTimeout(function () { window.location.href = mailLink(subject, body); }, 900);
+        });
+        return;
+      }
+      /* No order inbox configured yet: hand the finished order to WhatsApp or
+         the visitor's email app, already written. */
+      var url = WA_READY ? "https://wa.me/" + WA_DIGITS + "?text=" + encodeURIComponent("Hi Fatima! " + body)
+                         : mailLink(subject, body);
+      if (WA_READY) window.open(url, "_blank", "noopener"); else window.location.href = url;
+      finish();
     }
 
     host.addEventListener("click", function (e) {
       var b = e.target.closest("[data-add]");
       if (!b) return;
+      var id = b.getAttribute("data-add");
+      var x = products.filter(function (y) { return y.p.id === id; })[0];
+      if (!x) return;
       var sel = $("select[data-option-for]", b.closest(".product"));
       var option = sel ? sel.value : "";
-      var id = b.getAttribute("data-add");
-      var hit = bag.filter(function (x) { return x.id === id && x.option === option; })[0];
+      var hit = bag.filter(function (y) { return y.id === id && y.option === option; })[0];
       if (hit) hit.qty += 1;
-      else bag.push({ id: id, name: b.getAttribute("data-name"), cat: b.getAttribute("data-cat"),
-                      option: option, price: b.getAttribute("data-price"), qty: 1 });
-      saveBag(); renderBag();
-      b.innerHTML = 'Added <span class="arw" aria-hidden="true">✓</span>';
-      setTimeout(function () { b.innerHTML = 'Add to bag <span class="arw" aria-hidden="true">+</span>'; }, 1400);
+      else bag.push({ id: id, name: x.p.name, cat: x.cat.name, option: option,
+                      price: x.p.price == null ? "" : x.p.price, qty: 1 });
+      saveBag(); view = "cart"; renderBag();
+      b.textContent = "Added ✓";
+      setTimeout(function () { b.textContent = "Add to cart"; }, 1400);
       fab.classList.remove("bump"); void fab.offsetWidth; fab.classList.add("bump");
     });
 
-    fab.addEventListener("click", function () { openBag(true); });
+    fab.addEventListener("click", function () { if (view === "done") view = "cart"; renderBag(); openBag(true); });
     panel.addEventListener("click", function (e) {
       if (e.target === panel || e.target.closest(".bag-close")) { openBag(false); return; }
+      if (e.target.closest("[data-checkout]")) { view = "checkout"; renderBag(); var n = $("#co-name", panel); if (n) n.focus(); return; }
+      if (e.target.closest("[data-back-cart]")) { view = "cart"; renderBag(); return; }
       var q = e.target.closest("[data-qty]");
       if (!q) return;
       var i = +q.getAttribute("data-qty");
@@ -893,42 +1099,29 @@
       saveBag(); renderBag();
       if (!bag.length) openBag(false);
     });
+    panel.addEventListener("submit", function (e) {
+      var form = e.target.closest("[data-order]");
+      if (!form) return;
+      e.preventDefault();
+      submitOrder(form);
+    });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && !panel.hidden) openBag(false);
     });
     renderBag();
 
-    observeReveals(host);
+    observeReveals();
   })();
-
-  function orderMessage(name, cat, option) {
-    return "Hi Fatima! I'd like to order the " + name +
-      (option ? " (" + option + ")" : "") +
-      (cat ? " from " + cat : "") + ". Is it in stock?";
-  }
 
   /* ------------------------------------------------- 9b. PHOTOGRAPH SETS -- */
   var GAL = window.SITE_GALLERY || {};
 
-  /* The moving strip. Duplicated once so the loop has no seam. */
-  (function () {
-    var host = $("[data-marquee]");
-    if (!host || !(GAL.marquee || []).length) return;
-    var row = GAL.marquee.map(function (n) {
-      var m = IMAGES[n];
-      if (!m) return "";
-      return '<div class="mq-item" style="aspect-ratio:' + m.r + '">' +
-             pic(n, { sizes: "(min-width: 900px) 22vw, 52vw" }) + "</div>";
-    }).join("");
-    host.innerHTML = '<div class="mq-track">' + row + row + "</div>";
-    host.setAttribute("aria-hidden", "true");
-  })();
-
   /* The pinned run of photographs. */
   (function () {
     var track = $("[data-hscroll-track]");
-    if (!track || !(GAL.community || []).length) return;
-    track.innerHTML = GAL.community.map(function (it, i) {
+    var set = track && GAL[track.getAttribute("data-hscroll-track") || "community"];
+    if (!track || !(set || []).length) return;
+    track.innerHTML = set.map(function (it, i) {
       var m = IMAGES[it.img];
       if (!m) return "";
       return '<figure class="hs-item' + (m.r > 1 ? " wide" : "") + '">' +
@@ -940,7 +1133,7 @@
     }).join("");
   })();
 
-  /* Grids of stills — moments, fieldwork, China. */
+  /* Grids of stills. */
   function renderSet(attr, key, ratioClass, withCaptions) {
     var host = $("[" + attr + "]");
     if (!host) return;
@@ -965,14 +1158,42 @@
     var names = (stage.getAttribute("data-frames") || "").split(",").map(function (s) { return s.trim(); });
     stage.innerHTML = names.map(function (n) {
       if (!IMAGES[n]) return "";
+      /* The photo is shown whole (contain) over a blurred copy of itself. */
       return '<div class="tl-frame" data-tl-frame>' +
+             '<img class="tl-blur" src="' + IMG_BASE + n + '-480.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">' +
              pic(n, { sizes: "(min-width: 860px) 42vw, 92vw" }) + "</div>";
     }).join("");
   })();
 
-  renderSet("data-set-moments", "moments", "", false);
   renderSet("data-set-fieldwork", "fieldwork", "", true);
-  renderSet("data-set-china", "china", "", false);
+
+  /* A plain carousel: photographs at one height, swiped or stepped with the
+     arrows. Each still opens in the lightbox. */
+  (function () {
+    var host = $("[data-carousel]");
+    if (!host) return;
+    var list = GAL[host.getAttribute("data-carousel")] || [];
+    host.innerHTML = list.map(function (it) {
+      var m = IMAGES[it.img];
+      if (!m) return "";
+      return '<figure class="car-item" data-caption="' + esc(it.caption || m.alt) + '">' +
+        '<div class="fig" style="aspect-ratio:' + m.r + '">' + pic(it.img, { sizes: "(min-width: 900px) 40vw, 80vw" }) + "</div>" +
+        (it.caption ? '<figcaption class="measured">' + esc(it.caption) + "</figcaption>" : "") +
+      "</figure>";
+    }).join("");
+    var scope = host.closest("section") || document;
+    var prev = $("[data-car-prev]", scope), next = $("[data-car-next]", scope);
+    function step(d) { host.scrollBy({ left: d * host.clientWidth * 0.8, behavior: REDUCED ? "auto" : "smooth" }); }
+    function edges() {
+      if (prev) prev.disabled = host.scrollLeft <= 4;
+      if (next) next.disabled = host.scrollLeft + host.clientWidth >= host.scrollWidth - 4;
+    }
+    if (prev) prev.addEventListener("click", function () { step(-1); });
+    if (next) next.addEventListener("click", function () { step(1); });
+    host.addEventListener("scroll", edges, { passive: true });
+    window.addEventListener("load", edges);
+    edges();
+  })();
 
   /* ---------------------------------------------------------- 10. JOURNAL */
   (function () {
@@ -1098,7 +1319,7 @@
     if (host) {
       host.innerHTML = PUBS.map(function (p) {
         var inner =
-          '<div><span class="measured on-deep">' + esc(p.journal) + " · " + esc(p.year) + "</span></div>" +
+          '<div><span class="measured">' + esc(p.journal) + " · " + esc(p.year) + "</span></div>" +
           "<div><h3>" + esc(p.title) + "</h3>" +
             '<p class="p-sum">' + esc(p.summary) + "</p>" +
             (p.link ? '<a class="tlink mt-s" href="' + esc(p.link) + '" target="_blank" rel="noopener">Read the paper <span class="arw" aria-hidden="true">→</span></a>' : "") +
@@ -1168,6 +1389,15 @@
       if (msgField && !msgField.value) msgField.value = note;
     }
 
+    /* Show where the message will land, and follow the chosen subject. */
+    var routeEl = $("[data-route]", form);
+    function currentInterest() { return ($('input[name="interest"]:checked', form) || {}).value || "general"; }
+    function showRoute() {
+      if (routeEl) routeEl.innerHTML = "Goes to <b>" + esc(inboxFor(currentInterest())) + "</b>";
+    }
+    form.addEventListener("change", function (e) { if (e.target.name === "interest") showRoute(); });
+    showRoute();
+
     function compose() {
       var name = ($("#name", form) || {}).value || "";
       var interest = ($('input[name="interest"]:checked', form) || {}).nextElementSibling;
@@ -1176,6 +1406,7 @@
       var email = ($("#email", form) || {}).value || "";
       return {
         name: name, email: email, interest: interestLabel, message: message,
+        to: inboxFor(currentInterest()),
         subject: interestLabel + " — enquiry from " + (name || "your website"),
         body: "Hi Fatima,\n\n" + message +
           "\n\n—\nName: " + name +
@@ -1211,14 +1442,14 @@
       e.preventDefault();
       if (!form.reportValidity()) return;
       var c = compose();
-      if (!ENDPOINT) { window.location.href = mailLink(c.subject, c.body); return; }
+      if (!ENDPOINT) { window.location.href = mailLink(c.subject, c.body, c.to); return; }
 
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Sending…"; }
       fetch(ENDPOINT, {
         method: "POST",
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: c.name, email: c.email, about: c.interest,
+          name: c.name, email: c.email, about: c.interest, inbox: c.to,
           message: c.message, _subject: c.subject
         })
       }).then(function (r) {
@@ -1232,11 +1463,19 @@
           submitBtn.innerHTML = 'Send message <span class="arw" aria-hidden="true">→</span>';
         }
         if (noteEl) noteEl.textContent = "That didn't go through. Opening your email app with the message written out instead…";
-        setTimeout(function () { window.location.href = mailLink(c.subject, c.body); }, 900);
+        setTimeout(function () { window.location.href = mailLink(c.subject, c.body, c.to); }, 900);
       });
     });
 
+    /* WhatsApp: her new number isn't in yet. Until it is, the WhatsApp button
+       is hidden and the contact line says so, rather than looping back here. */
     var waBtn = $("[data-connect-wa]", form);
+    if (waBtn && !WA_READY) { waBtn.remove(); waBtn = null; }
+    $$("[data-wa-line]").forEach(function (li) {
+      if (WA_READY) return;
+      var a = $("a", li);
+      if (a) a.outerHTML = "<em>New number coming soon</em>";
+    });
     if (waBtn) {
       waBtn.addEventListener("click", function () {
         if (!form.reportValidity()) return;

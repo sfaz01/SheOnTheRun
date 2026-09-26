@@ -7,13 +7,28 @@
 
    whatsapp : your number in full international format, digits only.
               Lebanon example: 96170123456   (961 = country code, no + and no 0)
-   email    : the address you want professional enquiries to arrive at.
+   email    : your main (professional) address. General and research
+              enquiries, and shop orders, arrive here.
+   emails   : the inbox each Connect-form subject goes to. A subject that
+              isn't listed goes to the main address above.
    ========================================================================== */
 
 window.SITE = {
 
   whatsapp: "[[WHATSAPP NUMBER]]",
-  email: "[[EMAIL]]",
+  email: "fatimahmouzahem08@gmail.com",
+
+  emails: {
+    nutrition:   "dietontherun@gmail.com",   // Nutrition consultations
+    sheontherun: "sheonzrun@gmail.com",      // SheOnTheRun
+    events:      "sheonzrun@gmail.com",      // Events / partnerships
+    research:    "fatimahmouzahem08@gmail.com",
+    general:     "fatimahmouzahem08@gmail.com"
+  },
+
+  /* Where she is — shown on the Connect page with a map. */
+  address: "Gemmayze, Accaoui Street, next to Belbol Ameublement, Blue Building, Beirut, Lebanon",
+  mapsUrl: "https://maps.app.goo.gl/m3EG91gCSahm8Har7",
 
   /* Social — leave a value empty ("") to hide that link everywhere. */
   instagram: "https://www.instagram.com/sheontherun.lb/",
@@ -46,8 +61,10 @@ window.SITE = {
   plausibleDomain: "",
   cloudflareToken: "",
 
-  /* Phase 1 checkout. Set to "payments" later when you add a payment provider
-     and the shop buttons switch from WhatsApp to a real checkout. */
-  checkoutMode: "whatsapp"
+  /* Shop orders (cash on delivery). Paste a Formspree endpoint here (it can be
+     the same one as formEndpoint) and orders arrive straight in your inbox.
+     Left "", the order opens in WhatsApp once the number above is set — or,
+     until then, in the customer's email app addressed to you. */
+  orderEndpoint: ""
 
 };

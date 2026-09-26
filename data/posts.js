@@ -26,6 +26,17 @@
 window.SITE_POSTS = [
 
   {
+    slug: "a-month-in-shanghai",
+    title: "A month in Shanghai",
+    kicker: "Traditional wisdom",
+    date: "2026-09-26",
+    readingTime: "3 min",
+    excerpt: "Evidence and tradition were never enemies. One month at the Shanghai University of Traditional Chinese Medicine, following curiosity.",
+    image: "china-summer-school",
+    draft: false
+  },
+
+  {
     slug: "fuelling-your-first-10k",
     title: "Fuelling your first 10k",
     kicker: "Sports & active nutrition",

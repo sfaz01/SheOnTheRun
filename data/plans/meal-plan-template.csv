@@ -1,0 +1,113 @@
+﻿title,Fatima's plate
+target_kcal,1700
+protein_min,110
+protein_max,126
+note,"One pick per meal · 6 starch, 2 milk, 7 protein, 2 snack"
+
+meal,guide,option,kcal,carbs,protein,fat,ingredients
+Breakfast,300 kcal · 1 starch + 2 protein + 1 milk for coffee,Eggs & mushroom scramble + tannour,300,26,22,13,eggs; mushrooms; tannour bread; onion
+Breakfast,,Boiled eggs + bread choice,300,27,21,12,eggs; tannour bread; cucumber; tomato
+Breakfast,,Eggs with kale & garlic + pita,300,24,21,14,eggs; kale; garlic; pita bread
+Breakfast,,Greek yogurt protein pancakes,300,28,24,9,greek yogurt; eggs; oats
+Breakfast,,Protein overnight oats,300,30,23,8,oats; greek yogurt; milk; chia seeds
+Breakfast,,Za'atar labneh wrap,300,26,20,13,pita bread; labneh; cucumber; tomato
+Breakfast,,"Feta, tomato & egg skillet",300,22,21,15,eggs; feta; tomato; tannour bread
+Breakfast,,Halloumi pesto wrap,300,25,22,14,pita bread; halloumi; pesto; lettuce; tomato
+Breakfast,,Cottage cheese & honey toast with walnuts,300,29,22,10,toast bread; cottage cheese; honey; walnuts
+Breakfast,,Turkey & cheese breakfast wrap,300,24,23,13,pita bread; turkey breast; light cheese; lettuce
+Breakfast,,Mini man'oushe (akkawi & za'atar),300,26,20,14,pita bread; akkawi cheese
+Breakfast,,Eggs & avocado sourdough toast,300,24,20,15,sourdough; eggs; avocado
+Snack 1 / coffee,100 kcal · 1 milk exchange,1 cup skimmed milk + coffee,100,12,8,1,milk
+Snack 1 / coffee,,1 cup low-fat Greek yogurt,100,10,14,2,greek yogurt
+Snack 1 / coffee,,1 cup low-fat yogurt (laban),100,12,8,2,laban
+Snack 1 / coffee,,Cappuccino with skimmed milk,100,11,7,2,milk
+Snack 1 / coffee,,Nescafé 2-in-1 (2 cups),100,14,2,4,nescafé sachets
+Snack 1 / coffee,,Skip — black coffee or tea,0,0,0,0,
+Lunch,"500 kcal · 2 starch + 3 protein, or 2 mixed dishes + 1 protein",Tawook skewers with pita & grilled veg,500,45,38,16,chicken breast; pita bread; bell peppers; onion; laban
+Lunch,,One-pan chicken fajita bowl,500,43,35,15,chicken breast; jasmine rice; bell peppers; onion
+Lunch,,Chicken fajita wraps,500,44,34,16,chicken breast; pita bread; bell peppers; onion
+Lunch,,Chicken stir-fry with rice,500,48,34,14,chicken breast; jasmine rice; mushrooms; bell peppers; onion
+Lunch,,Beef kafta with rice & grilled veg,500,44,34,18,minced beef; jasmine rice; onion; bell peppers
+Lunch,,Lemon herb baked chicken & potato,500,42,36,17,chicken legs; potato; garlic
+Lunch,,Sweet potato & chicken leg tray,500,45,35,17,chicken legs; sweet potato; onion; garlic
+Lunch,,Shrimp & garlic rice with peppers,500,50,33,16,shrimp; jasmine rice; bell peppers; garlic
+Lunch,,Tuna & baked potato bowl,460,44,33,14,tuna; potato; bell peppers
+Lunch,,Tuna melt on tannour with mushrooms,420,40,30,12,tuna; tannour bread; mushrooms; onion
+Lunch,,Potato with minced meat & yogurt,500,46,28,18,potato; minced beef; onion; laban
+Lunch,,Burger plate with sweet potato wedges,500,42,32,20,hamburger; sweet potato; kale; onion
+Lunch,,Kale & cauliflower chicken tray,450,30,40,16,chicken breast; cauliflower; kale; onion
+Lunch,,"Mushroom, kale & egg rice skillet",480,52,24,16,jasmine rice; mushrooms; kale; eggs; onion
+Lunch,,Chicken shawarma power bowl,500,46,36,15,chicken breast; jasmine rice; salad greens; pickles
+Lunch,,Grilled chicken fattoush bowl,500,40,36,16,chicken breast; salad greens; cucumber; tomato; radish; pita bread
+Lunch,,Loubieh w rez,500,52,32,16,green beans; minced beef; jasmine rice; laban
+Lunch,,Fasoulya (white beans) with rice,500,58,26,12,white beans; minced beef; jasmine rice
+Lunch,,Mujadara with salad & yogurt,500,62,22,14,lentils; jasmine rice; onion; laban
+Lunch,,Lentil soup with grilled cheese side,500,50,24,16,lentils; toast bread; light cheese
+Lunch,,Coussa mehchi (3 pcs) with yogurt,500,48,30,17,zucchini; jasmine rice; minced beef; tomato sauce; laban
+Lunch,,Baked kibbeh with yogurt side,500,46,30,18,kibbeh; laban; salad greens
+Lunch,,Grilled fish with rice & roasted veg,500,44,34,15,white fish; jasmine rice; mixed vegetables
+Lunch,,Shrimp pasta with red sauce,500,55,28,12,shrimp; whole wheat pasta; tomato sauce
+Lunch,,Tuna pasta salad,500,50,32,14,tuna; whole wheat pasta; cherry tomato; cucumber; olives
+Lunch,,Quinoa tabbouleh with grilled chicken,500,42,35,15,chicken breast; quinoa; parsley; mint; tomato
+Lunch,,Chicken caesar salad with WW croutons,500,34,38,18,chicken breast; romaine; croutons; parmesan
+Lunch,,Turkey & hummus wrap with side salad,500,46,30,15,pita bread; turkey breast; hommos; salad greens
+Lunch,,Baked falafel & salad bowl with tahini,500,52,22,16,falafel; tahini; pita bread; salad greens
+Snack 2,100–150 kcal · 1 fruit or a snack from the list,Hard-boiled egg & fruit,150,15,9,6,eggs; apples
+Snack 2,,Kale chips,100,10,4,5,kale
+Snack 2,,Roasted cauliflower bites,90,14,4,3,cauliflower
+Snack 2,,Pepper strips & yogurt-garlic dip,110,12,8,3,bell peppers; laban; garlic
+Snack 2,,Yogurt & cucumber with mint,110,10,8,3,laban; cucumber; mint
+Snack 2,,1 medium apple or banana,100,25,0,0,fruit
+Snack 2,,12 almonds,100,4,4,9,almonds
+Snack 2,,Labneh & cucumber za'atar bites,110,6,8,6,labneh; cucumber
+Snack 2,,Veggie sticks with hommos,130,14,5,6,carrots; cucumber; bell peppers; hommos
+Snack 2,,Spiced roasted chickpeas,120,18,6,3,chickpeas
+Snack 2,,Termos (lupini beans),119,10,16,3,termos
+Snack 2,,Unshelled edamame,100,10,11,5,edamame
+Snack 2,,Popcorn (3 cups),100,17,2,3,popcorn kernels
+Snack 2,,Jazar w hamod (carrot with lemon),94,24,3,1,carrots
+Snack 2,,Rice cake + labneh,140,16,7,5,rice cakes; labneh
+Snack 2,,Dark chocolate square & almonds,140,12,3,9,dark chocolate; almonds
+Snack 2,,2 fingers mini KitKat,100,12,1,5,kitkat
+Snack 2,,Unica dark chocolate,100,12,1,5,unica
+Snack 2,,Scoop of sorbet,100,22,0,1,sorbet
+Snack 3 / post-workout,100–150 kcal · 1 milk exchange or protein shake,1 cup low-fat Greek yogurt,100,10,14,2,greek yogurt
+Snack 3 / post-workout,,1 cup low-fat yogurt (laban),100,12,8,2,laban
+Snack 3 / post-workout,,2 boiled eggs,140,1,12,10,eggs
+Snack 3 / post-workout,,Yogurt & cucumber with mint,110,10,8,3,laban; cucumber; mint
+Snack 3 / post-workout,,Protein shake,130,6,22,2,protein powder; milk
+Snack 3 / post-workout,,Protein bar (≤200 kcal),180,12,20,5,protein bars
+Snack 3 / post-workout,,Taanayel Greek yogurt drink,110,12,10,2,taanayel yogurt drink
+Snack 3 / post-workout,,Skip this one,0,0,0,0,
+Dinner,"500 kcal · 3 starch + 2 protein, or 2 mixed dishes + 1 protein",Tawook skewers with pita & grilled veg,500,45,38,16,chicken breast; pita bread; bell peppers; onion; laban
+Dinner,,One-pan chicken fajita bowl,500,43,35,15,chicken breast; jasmine rice; bell peppers; onion
+Dinner,,Chicken fajita wraps,500,44,34,16,chicken breast; pita bread; bell peppers; onion
+Dinner,,Chicken stir-fry with rice,500,48,34,14,chicken breast; jasmine rice; mushrooms; bell peppers; onion
+Dinner,,Beef kafta with rice & grilled veg,500,44,34,18,minced beef; jasmine rice; onion; bell peppers
+Dinner,,Lemon herb baked chicken & potato,500,42,36,17,chicken legs; potato; garlic
+Dinner,,Sweet potato & chicken leg tray,500,45,35,17,chicken legs; sweet potato; onion; garlic
+Dinner,,Shrimp & garlic rice with peppers,500,50,33,16,shrimp; jasmine rice; bell peppers; garlic
+Dinner,,Tuna & baked potato bowl,460,44,33,14,tuna; potato; bell peppers
+Dinner,,Tuna melt on tannour with mushrooms,420,40,30,12,tuna; tannour bread; mushrooms; onion
+Dinner,,Potato with minced meat & yogurt,500,46,28,18,potato; minced beef; onion; laban
+Dinner,,Burger plate with sweet potato wedges,500,42,32,20,hamburger; sweet potato; kale; onion
+Dinner,,Kale & cauliflower chicken tray,450,30,40,16,chicken breast; cauliflower; kale; onion
+Dinner,,"Mushroom, kale & egg rice skillet",480,52,24,16,jasmine rice; mushrooms; kale; eggs; onion
+Dinner,,Chicken shawarma power bowl,500,46,36,15,chicken breast; jasmine rice; salad greens; pickles
+Dinner,,Grilled chicken fattoush bowl,500,40,36,16,chicken breast; salad greens; cucumber; tomato; radish; pita bread
+Dinner,,Loubieh w rez,500,52,32,16,green beans; minced beef; jasmine rice; laban
+Dinner,,Fasoulya (white beans) with rice,500,58,26,12,white beans; minced beef; jasmine rice
+Dinner,,Mujadara with salad & yogurt,500,62,22,14,lentils; jasmine rice; onion; laban
+Dinner,,Lentil soup with grilled cheese side,500,50,24,16,lentils; toast bread; light cheese
+Dinner,,Coussa mehchi (3 pcs) with yogurt,500,48,30,17,zucchini; jasmine rice; minced beef; tomato sauce; laban
+Dinner,,Baked kibbeh with yogurt side,500,46,30,18,kibbeh; laban; salad greens
+Dinner,,Grilled fish with rice & roasted veg,500,44,34,15,white fish; jasmine rice; mixed vegetables
+Dinner,,Shrimp pasta with red sauce,500,55,28,12,shrimp; whole wheat pasta; tomato sauce
+Dinner,,Tuna pasta salad,500,50,32,14,tuna; whole wheat pasta; cherry tomato; cucumber; olives
+Dinner,,Quinoa tabbouleh with grilled chicken,500,42,35,15,chicken breast; quinoa; parsley; mint; tomato
+Dinner,,Chicken caesar salad with WW croutons,500,34,38,18,chicken breast; romaine; croutons; parmesan
+Dinner,,Turkey & hummus wrap with side salad,500,46,30,15,pita bread; turkey breast; hommos; salad greens
+Dinner,,Baked falafel & salad bowl with tahini,500,52,22,16,falafel; tahini; pita bread; salad greens
+Dinner,,"Light dinner — yogurt, cucumber & herbs",120,12,9,3,laban; cucumber
+Dinner,,Light dinner — tannour + 50g cheese,200,15,12,10,tannour bread; feta
+Dinner,,Light dinner — rice cakes & tuna,250,33,28,3,rice cakes; tuna

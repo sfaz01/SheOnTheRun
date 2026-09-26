@@ -1,6 +1,15 @@
 /* =============================================================================
    SHOP
    -----------------------------------------------------------------------------
+   All products show together in one grid; the categories below become the
+   filter buttons above it ("Everything" is selected by default).
+   Payment is cash on delivery. Checkout asks for name, phone, governorate
+   (from the list at the bottom of this file) and a detailed address.
+
+   PRICES: give each product a price (a number in USD) so the cart can show a
+   total. Leave price: null and the product shows "Price confirmed with your
+   order" instead.
+
    Categories appear in the order listed here. A category with
    comingSoon: true shows as a "Coming soon" panel; the moment you add
    products to it and set comingSoon: false, it becomes a normal category.
@@ -58,7 +67,7 @@ window.SITE_SHOP = {
         {
           id: "sotr-socks",
           name: "Sports Socks",
-          blurb: "Cushioned, breathable, and the single cheapest upgrade to how a run feels.",
+          blurb: "Cushioned crew socks and grip socks for Pilates — the cheapest upgrade to how a session feels.",
           price: null,
           image: "shop-socks",
           options: ["36–39", "40–43"],
@@ -156,6 +165,18 @@ window.SITE_SHOP = {
       items: []
     }
 
+  ],
+
+  /* Checkout: the governorates a customer can choose from. */
+  governorates: [
+    "Beirut",
+    "Mount Lebanon",
+    "North Lebanon",
+    "Akkar",
+    "Baalbek-Hermel",
+    "Beqaa",
+    "South Lebanon",
+    "Nabatieh"
   ]
 
 };

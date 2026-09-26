@@ -8,41 +8,22 @@
 
 window.SITE_GALLERY = {
 
-  /* The moving strip on the home page. Keep 8–14 for a good rhythm.
-     A photo only gets in here if it still reads at 150–300px tall and moving.
-     That rules out the certificate and banner shots (the LAU step-and-repeat,
-     the Water Diplomacy word wall, the Shanghai and graduation backdrops) and
-     the big group photos: at this size the subject disappears and you are left
-     with a coloured rectangle of unreadable type, which is also where the
-     palette clashes came from. Those photographs are not weak — they are shown
-     large and captioned on the Public Health page, which is where they mean
-     something. What is left is one register: daylight, running, faces you can
-     actually see. */
-  marquee: [
-    "track-race", "sotr-girls-wide", "run-road-detail", "ph-unicef-pair",
-    "sotr-yoga", "track-duo", "sotr-jackets-wide", "sotr-unicef-run",
-    "journey-2022", "sotr-pair", "track-relay", "sotr-runlikeagirl"
-  ],
-
-  /* The pinned horizontal run on the SheOnTheRun page. */
+  /* "Moments on the run" — the pinned horizontal run that closes the
+     SheOnTheRun page. Keep it to the community: groups, pairs, the women
+     together, rather than solo portraits. Eight frames reads best. */
   community: [
-    { img: "sotr-girls",        caption: "Race day, together" },
-    { img: "sotr-runlikeagirl", caption: "Run like a girl" },
-    { img: "sotr-yoga-tall",    caption: "Yoga above the valley" },
-    { img: "sotr-jackets",      caption: "The club jackets" },
-    { img: "sotr-tote",         caption: "In full bloom" },
-    { img: "sotr-pair",         caption: "Nobody runs alone" },
-    { img: "track-bib",         caption: "Number on, nerves in" },
-    { img: "sotr-unicef-run",   caption: "Running for something" }
+    { img: "sotr-girls",         caption: "Race day, together" },
+    { img: "sotr-hike",          caption: "Trail day in the mountains" },
+    { img: "sotr-startline",     caption: "At the start line" },
+    { img: "sotr-yoga-tall",     caption: "Yoga above the valley" },
+    { img: "sotr-selfie-park",   caption: "Everyone in the frame" },
+    { img: "sotr-jackets",       caption: "Arm in arm" },
+    { img: "sotr-picnic",        caption: "The rest stop" },
+    { img: "sotr-selfie-sunset", caption: "Sunset, after the run" }
   ],
 
-  /* The grid lower down the SheOnTheRun page. Opens in a lightbox. */
-  moments: [
-    "sotr-bloom", "sotr-track-duo", "run-crosswalk", "sotr-girls",
-    "sotr-yoga", "sotr-jackets", "sotr-pair", "sotr-runlikeagirl"
-  ],
-
-  /* Public health — the work, in pictures. */
+  /* Public health — eight years in the humanitarian field. Shown as a
+     scrolling carousel at the end of the Public Health page. */
   fieldwork: [
     { img: "ph-unicef-tent",     caption: "UNICEF — for every child" },
     { img: "ph-qudwa",           caption: "QUDWA programme workshop" },
@@ -51,13 +32,11 @@ window.SITE_GALLERY = {
     { img: "ph-training-room",   caption: "Training delivery" },
     { img: "ph-wids",            caption: "Women in Data Science, AUB" },
     { img: "ph-unicef-team",     caption: "The volunteers team" },
+    { img: "ph-unicef-hug",      caption: "We are inspiration in action" },
+    { img: "ph-research-poster", caption: "Research poster, AUB" },
+    { img: "ph-unicef-pair",     caption: "UNICEF colleagues" },
+    { img: "ph-podium",          caption: "Presenting health data" },
     { img: "ph-water-cert",      caption: "Closing ceremony, Water Governance" }
-  ],
-
-  /* Traditional wisdom — China and the natural world. */
-  china: [
-    "china-summer-school", "china-garden", "nature-lotus",
-    "china-pavilion", "nature-lilies", "china-flags"
   ]
 
 };

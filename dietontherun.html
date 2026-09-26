@@ -67,7 +67,7 @@
       <a href="sheontherun.html">SheOnTheRun</a>
       <a href="public-health.html">Public Health</a>
       <a href="shop.html">Shop</a>
-      <a class="btn sm" href="connect.html">Connect with me</a>
+      <a class="btn sm lilac" href="connect.html">Connect with me</a>
     </nav>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="drawer">
       <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span>
@@ -85,7 +85,7 @@
     <a href="shop.html">Shop</a>
   </nav>
   <div class="drawer-foot">
-    <a class="btn block" href="connect.html">Connect with me <span class="arw" aria-hidden="true">→</span></a>
+    <a class="btn lilac block" href="connect.html">Connect with me <span class="arw" aria-hidden="true">→</span></a>
     <div class="drawer-meta">
       <a data-wa="Hi Fatima! I found you through your website." data-interest="general" href="connect.html">WhatsApp</a>
       <a data-instagram data-instagram-label href="connect.html">Instagram</a>
@@ -196,24 +196,21 @@
         </div>
       </div>
 
-      <div class="focus-grid stagger-3">
+      <div class="focus-grid focus-plain">
         <article class="focus reveal">
-          <div class="fig r-45" data-img="focus-weight" data-sizes="(min-width: 860px) 30vw, 92vw"></div>
-          <span class="measured mt-s" style="display:block">01</span>
+          <span class="focus-n" aria-hidden="true">01</span>
           <h3>Weight Management</h3>
           <p>Whether your goal is to lose weight, gain weight, or find a healthy and sustainable balance, we work together to find an approach that works for you.</p>
         </article>
 
         <article class="focus reveal">
-          <div class="fig r-45" data-img="focus-wellbeing" data-sizes="(min-width: 860px) 30vw, 92vw"></div>
-          <span class="measured mt-s" style="display:block">02</span>
+          <span class="focus-n" aria-hidden="true">02</span>
           <h3>Health &amp; Wellbeing</h3>
           <p>Personalised nutrition support to help you improve your energy, habits, and overall wellbeing.</p>
         </article>
 
         <article class="focus reveal">
-          <div class="fig r-45" data-img="focus-sports" data-sizes="(min-width: 860px) 30vw, 92vw"></div>
-          <span class="measured mt-s" style="display:block">03</span>
+          <span class="focus-n" aria-hidden="true">03</span>
           <h3>Sports &amp; Active Nutrition</h3>
           <p>For runners, athletes, and active individuals looking to better fuel training, support recovery, and improve performance.</p>
         </article>
@@ -323,41 +320,14 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════ HOW IT WORKS ═════════════════════════ -->
-  <section class="band-tight">
-    <div class="wrap">
-      <div class="head mb-l">
-        <span class="measured">05 — The process</span>
-        <h2 data-split>How it works</h2>
-      </div>
-    </div>
-    <div class="wrap">
-      <div class="steps" data-steps></div>
-    </div>
-  </section>
-
   <!-- ══════════════════════════════ TESTIMONIALS ═════════════════════════ -->
   <section class="band band-sand" data-quotes-section>
     <div class="wrap">
       <div class="head mb-l">
-        <span class="measured">06 — In their words</span>
+        <span class="measured">05 — In their words</span>
         <h2 data-split>What clients say</h2>
       </div>
       <div class="quotes" data-quotes></div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════ FAQ ══════════════════════════════ -->
-  <section class="band-tight" data-faq-section>
-    <div class="wrap">
-      <div class="split wide-right">
-        <div class="head">
-          <span class="measured">07 — Questions</span>
-          <h2 class="mt-s" data-split>Before you book</h2>
-          <p class="lede">The things people ask me most. Anything else, just message me.</p>
-        </div>
-        <div class="faq" data-faq></div>
-      </div>
     </div>
   </section>
 
@@ -381,15 +351,33 @@
   </section>
 
   <!-- ══════════════════════════════════ JOURNAL ══════════════════════════ -->
-  <section class="band-tight" style="padding-bottom:clamp(3.75rem,9vw,8.5rem)" data-posts-section>
+  <section class="band-tight" data-posts-section>
     <div class="wrap">
       <div class="head mb-l">
-        <span class="measured">08 — Reading</span>
+        <span class="measured">06 — Reading</span>
         <h2 data-split>From the Journal</h2>
         <p class="lede reveal">Articles, tips and the questions I get asked most.</p>
       </div>
       <div class="posts" data-posts="3"></div>
       <a class="tlink mt-l" href="journal/index.html">All articles <span class="arw" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════ MEAL TRACKER ═════════════════════════
+       For clients: the plan I give them becomes a meal and calorie tracker.
+       ══════════════════════════════════════════════════════════════════ -->
+  <section class="band-tight" id="tracker" style="padding-bottom:clamp(3.75rem,9vw,8.5rem)">
+    <div class="wrap">
+      <div class="tracker-cta reveal">
+        <div>
+          <span class="measured">For my clients</span>
+          <h2 class="mt-s">Your plan, as a tracker</h2>
+          <p class="prose mt-s">Upload the meal plan I sent you and it turns into a simple daily tracker: pick a meal for each slot, watch your calories and protein add up, plan the week and get a shopping list. It stays on your phone — nothing is uploaded anywhere.</p>
+        </div>
+        <div class="row">
+          <a class="btn lilac lg" href="tracker.html">Open my meal tracker <span class="arw" aria-hidden="true">→</span></a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -437,7 +425,6 @@
 <script src="data/gallery.js"></script>
 <script src="data/packages.js"></script>
 <script src="data/testimonials.js"></script>
-<script src="data/faq.js"></script>
 <script src="data/posts.js"></script>
 <script src="assets/js/site.js" defer></script>
 <script src="assets/js/motion.js" defer></script>

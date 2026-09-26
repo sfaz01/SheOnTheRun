@@ -15,7 +15,7 @@
 <meta property="og:title" content="Fatima Mouzahem — Licensed Dietitian &amp; Sports Nutritionist, Beirut">
 <meta property="og:description" content="Nutrition, movement and everyday wellbeing. Consultations in Beirut and online. Founder of SheOnTheRun.">
 <meta property="og:url" content="https://sheontherun.com/">
-<meta property="og:image" content="https://sheontherun.com/public/images/hero-road-wide-1440.jpg">
+<meta property="og:image" content="https://sheontherun.com/public/images/portrait-hero-896.jpg">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 
@@ -27,8 +27,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" fetchpriority="high"
-      imagesrcset="public/images/hero-road-wide-960.webp 960w, public/images/hero-road-wide-1440.webp 1440w, public/images/hero-road-wide-2000.webp 2000w"
-      imagesizes="100vw" type="image/webp">
+      imagesrcset="public/images/portrait-hero-480.webp 480w, public/images/portrait-hero-896.webp 896w"
+      imagesizes="(min-width: 768px) 46vw, 100vw" type="image/webp">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
 
@@ -42,7 +42,7 @@
       "name": "Fatima Mouzahem",
       "jobTitle": ["Licensed Dietitian", "Certified Sports Nutritionist", "Public Health Professional"],
       "description": "Licensed dietitian since 2017, certified sports nutritionist since 2024, and a public health professional with 8+ years across UNICEF, WFP, AUB and Lebanon's Ministry of Public Health. Founder of SheOnTheRun.",
-      "image": "https://sheontherun.com/public/images/portrait-hero-960.jpg",
+      "image": "https://sheontherun.com/public/images/portrait-hero-896.jpg",
       "url": "https://sheontherun.com/",
       "address": { "@type": "PostalAddress", "addressLocality": "Beirut", "addressCountry": "LB" },
       "alumniOf": [
@@ -88,7 +88,7 @@
       <a href="public-health.html">Public Health</a>
       <a href="shop.html">Shop</a>
       <a class="lang" href="ar/index.html" lang="ar" hreflang="ar">العربية</a>
-      <a class="btn sm" href="connect.html">Connect with me</a>
+      <a class="btn sm lilac" href="connect.html">Connect with me</a>
     </nav>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="drawer">
       <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span>
@@ -107,7 +107,7 @@
     <a href="ar/index.html" lang="ar" hreflang="ar">العربية</a>
   </nav>
   <div class="drawer-foot">
-    <a class="btn block" href="connect.html">Connect with me <span class="arw" aria-hidden="true">→</span></a>
+    <a class="btn lilac block" href="connect.html">Connect with me <span class="arw" aria-hidden="true">→</span></a>
     <div class="drawer-meta">
       <a data-wa="Hi Fatima! I found you through your website." data-interest="general" href="connect.html">WhatsApp</a>
       <a data-instagram data-instagram-label href="connect.html">Instagram</a>
@@ -121,21 +121,20 @@
   <!-- ══════════════════════════════════════════════════════════════════════
        THE STAGE — one photograph, her name, her credentials. Nothing else.
        ══════════════════════════════════════════════════════════════════ -->
-  <section class="stage">
+  <!-- The portrait sits sharp on the right; a soft, blurred copy of the same
+       photograph fills the rest of the frame so the text has room on the left. -->
+  <section class="stage stage-portrait">
     <div class="stage-media" data-parallax="9">
       <picture>
-        <source media="(max-width: 767px)" type="image/webp"
-                srcset="public/images/hero-road-tall-480.webp 480w, public/images/hero-road-tall-960.webp 960w" sizes="100vw">
-        <source media="(max-width: 767px)"
-                srcset="public/images/hero-road-tall-480.jpg 480w, public/images/hero-road-tall-960.jpg 960w" sizes="100vw">
         <source type="image/webp"
-                srcset="public/images/hero-road-wide-960.webp 960w, public/images/hero-road-wide-1440.webp 1440w, public/images/hero-road-wide-2000.webp 2000w" sizes="100vw">
-        <img src="public/images/hero-road-wide-1440.jpg"
-             srcset="public/images/hero-road-wide-960.jpg 960w, public/images/hero-road-wide-1440.jpg 1440w, public/images/hero-road-wide-2000.jpg 2000w"
-             sizes="100vw" width="2000" height="857"
-             alt="Fatima Mouzahem in running kit on an empty road by the Beirut seafront"
+                srcset="public/images/portrait-hero-480.webp 480w, public/images/portrait-hero-896.webp 896w" sizes="(min-width: 768px) 46vw, 100vw">
+        <img src="public/images/portrait-hero-896.jpg"
+             srcset="public/images/portrait-hero-480.jpg 480w, public/images/portrait-hero-896.jpg 896w"
+             sizes="(min-width: 768px) 46vw, 100vw" width="896" height="1195"
+             alt="Fatima Mouzahem, licensed dietitian and certified sports nutritionist, smiling in a lilac and yellow scarf"
              fetchpriority="high" decoding="async">
       </picture>
+      <img class="stage-fill" src="public/images/portrait-hero-480.jpg" alt="" aria-hidden="true" decoding="async">
     </div>
 
     <div class="wrap">
@@ -192,19 +191,12 @@
     </div>
   </section>
 
-  <!-- ═══════════════════════════ THE STRIP ═══════════════════════════════ -->
-  <div class="marquee" data-marquee></div>
-
   <!-- ═══════════════════════════ WHO ════════════════════════════════════ -->
   <section class="band">
     <div class="wrap">
       <div class="duo">
-        <div class="duo-media">
-          <div class="duo-stack">
-            <div class="fig r-tall" data-img="track-race-tall" data-sizes="(min-width: 860px) 34vw, 92vw" data-parallax="7"></div>
-            <div class="fig r-11" data-img="portrait-close" data-sizes="(min-width: 860px) 22vw, 46vw"></div>
-            <div class="fig r-11" data-img="nature-lotus" data-sizes="(min-width: 860px) 22vw, 46vw"></div>
-          </div>
+        <div class="duo-media duo-single">
+          <div class="fig r-45" data-img="portrait-close" data-sizes="(min-width: 860px) 40vw, 92vw" data-parallax="6"></div>
         </div>
         <div class="duo-text">
           <span class="measured">01 — Who</span>
@@ -244,30 +236,26 @@
           <span class="lap-mark" style="--at:100%"><b>400m</b></span>
         </div>
 
-        <ol class="lap-splits">
+        <ol class="lap-splits lap-titles">
           <li class="lap-split reveal">
-            <div class="fig r-45" data-img="journey-2014" data-sizes="(min-width: 1100px) 22vw, (min-width: 680px) 44vw, 92vw"></div>
             <p class="measured lap-when"><span class="num">0–100m</span> · 2014</p>
-            <h3>The athlete</h3>
-            <p>The 800m, then the 1500m, then the 400m hurdles — and second place nationally. Where I learned that food, rest and consistency count as much as training.</p>
+            <h3>The Athlete</h3>
+            <p>The 800m, the 1500m, then the 400m hurdles — second place nationally.</p>
           </li>
           <li class="lap-split reveal">
-            <div class="fig r-45" data-img="journey-2017" data-sizes="(min-width: 1100px) 22vw, (min-width: 680px) 44vw, 92vw"></div>
             <p class="measured lap-when"><span class="num">100–200m</span> · 2016–17</p>
-            <h3>The dietitian</h3>
-            <p>Nutrition &amp; Dietetics at LAU, a nine-month internship at Rizk Hospital, and a licence in 2017.</p>
+            <h3>The Dietitian</h3>
+            <p>Nutrition &amp; Dietetics at LAU, and a licence in 2017.</p>
           </li>
           <li class="lap-split reveal">
-            <div class="fig r-45" data-img="journey-2018" data-sizes="(min-width: 1100px) 22vw, (min-width: 680px) 44vw, 92vw"></div>
             <p class="measured lap-when"><span class="num">200–300m</span> · 2018–23</p>
-            <h3>Public health</h3>
-            <p>A Master's at AUB, then UNICEF, the World Food Programme and Lebanon's Ministry of Public Health — nutrition, at the scale of a country.</p>
+            <h3>Public Health Professional</h3>
+            <p>A Master's at AUB, then UNICEF, WFP and the Ministry of Public Health.</p>
           </li>
           <li class="lap-split reveal">
-            <div class="fig r-45" data-img="journey-2024" data-sizes="(min-width: 1100px) 22vw, (min-width: 680px) 44vw, 92vw"></div>
             <p class="measured lap-when"><span class="num">300–400m</span> · 2024 →</p>
-            <h3>The home straight</h3>
-            <p>Back on the track, certified in sports nutrition, a month studying in Shanghai — and SheOnTheRun and DietOnTheRun, bringing it all together.</p>
+            <h3>The Home Straight</h3>
+            <p>Sports nutrition, Shanghai — and SheOnTheRun and DietOnTheRun.</p>
           </li>
         </ol>
 
@@ -276,85 +264,45 @@
     </div>
   </section>
 
-  <!-- ═══════════════════════════ AREAS OF WORK ═══════════════════════════ -->
+  <!-- ═══════════════════════════ AREAS OF WORK ═══════════════════════════
+       Simple and light: a photograph of the work (not of her), a title, one
+       line, one button.
+       ══════════════════════════════════════════════════════════════════ -->
   <section class="band-tight">
     <div class="wrap">
       <div class="head mb-l">
         <span class="measured">03 — Where</span>
         <h2 data-split>My areas of work</h2>
       </div>
-    </div>
 
-    <div class="wrap">
-      <div class="portals">
-        <a class="portal" href="dietontherun.html">
-          <div class="fig" data-img="dotr-portrait" data-sizes="(min-width: 1100px) 24vw, (min-width: 680px) 48vw, 92vw"></div>
-          <div class="p-body">
-            <span class="measured">01</span>
-            <h3>Nutrition &amp;<br>Dietetics</h3>
-            <p>Consultations, packages and programmes — in Beirut or online.</p>
-            <span class="tlink">Work with me <span class="arw" aria-hidden="true">→</span></span>
-          </div>
-        </a>
+      <div class="areas">
+        <article class="area reveal">
+          <div class="fig r-43" data-img="shop-portion" data-alt="A balanced plate of salad, grilled chicken and grains" data-sizes="(min-width: 1100px) 22vw, (min-width: 680px) 44vw, 92vw"></div>
+          <h3>Nutrition &amp; Dietetics</h3>
+          <p>Consultations, packages and programmes — in Beirut or online.</p>
+          <a class="btn lilac block" href="dietontherun.html">Work with me</a>
+        </article>
 
-        <a class="portal" href="public-health.html">
-          <div class="fig" data-img="ph-unicef-hug" data-sizes="(min-width: 1100px) 24vw, (min-width: 680px) 48vw, 92vw"></div>
-          <div class="p-body">
-            <span class="measured">02</span>
-            <h3>Public<br>Health</h3>
-            <p>Health systems, research, data, M&amp;E and humanitarian programmes.</p>
-            <span class="tlink">Explore public health <span class="arw" aria-hidden="true">→</span></span>
-          </div>
-        </a>
+        <article class="area reveal">
+          <div class="fig r-43" data-img="ph-unv-training" data-sizes="(min-width: 1100px) 22vw, (min-width: 680px) 44vw, 92vw"></div>
+          <h3>Public Health</h3>
+          <p>Health systems, research, data, M&amp;E and humanitarian programmes.</p>
+          <a class="btn lilac block" href="public-health.html">Learn more</a>
+        </article>
 
-        <a class="portal" href="sheontherun.html">
-          <div class="fig" data-img="sotr-runlikeagirl" data-sizes="(min-width: 1100px) 24vw, (min-width: 680px) 48vw, 92vw"></div>
-          <div class="p-body">
-            <span class="measured">03</span>
-            <h3>She<br>OnTheRun</h3>
-            <p>A women-only running and wellness community in Beirut.</p>
-            <span class="tlink">Join SheOnTheRun <span class="arw" aria-hidden="true">→</span></span>
-          </div>
-        </a>
+        <article class="area reveal">
+          <div class="fig r-43" data-img="sotr-startline" data-sizes="(min-width: 1100px) 22vw, (min-width: 680px) 44vw, 92vw"></div>
+          <h3>SheOnTheRun</h3>
+          <p>A women-only running and wellness community in Beirut.</p>
+          <a class="btn lilac block" href="sheontherun.html">Join us</a>
+        </article>
 
-        <a class="portal" href="shop.html">
-          <div class="fig" data-img="sotr-tote" data-sizes="(min-width: 1100px) 24vw, (min-width: 680px) 48vw, 92vw"></div>
-          <div class="p-body">
-            <span class="measured">04</span>
-            <h3>The<br>Shop</h3>
-            <p>Club kit, wellness tools, my own picks — activewear on the way.</p>
-            <span class="tlink">Visit the shop <span class="arw" aria-hidden="true">→</span></span>
-          </div>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════ THE STATEMENT ═══════════════════════════ -->
-  <section class="overlay-quote">
-    <div class="oq-media" data-parallax="8">
-      <div class="fig" data-img="sotr-girls-wide" data-sizes="100vw" style="position:absolute;inset:0"></div>
-    </div>
-    <div class="wrap">
-      <span class="measured">SheOnTheRun</span>
-      <p class="pull mt-s" data-split>Move. Connect. Grow.</p>
-      <p class="lede mt-s" style="color:rgba(255,255,255,.82);max-width:34ch">A space where women show up exactly as they are, and leave a little stronger.</p>
-      <a class="btn lg mt-m" href="sheontherun.html">Discover SheOnTheRun <span class="arw" aria-hidden="true">→</span></a>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════ NEXT RUNS ═══════════════════════════════ -->
-  <section class="band-tight band-sand">
-    <div class="wrap">
-      <div class="duo flip">
-        <div class="duo-media">
-          <div class="fig r-43" data-img="sotr-yoga" data-sizes="(min-width: 860px) 56vw, 92vw" data-parallax="6"></div>
-        </div>
-        <div class="duo-text">
-          <span class="measured">Next on the calendar</span>
-          <div class="events mt-s" data-events="2"></div>
-          <a class="tlink mt-m" href="sheontherun.html#calendar">The full calendar <span class="arw" aria-hidden="true">→</span></a>
-        </div>
+        <article class="area reveal">
+          <div class="fig r-43" data-img="shop-tee" data-sizes="(min-width: 1100px) 22vw, (min-width: 680px) 44vw, 92vw"></div>
+          <h3>The Shop</h3>
+          <p>Club kit and wellness tools — pay on delivery across Lebanon.</p>
+          <a class="btn lilac block" href="shop.html">Visit the shop</a>
+        </article>
       </div>
     </div>
   </section>
@@ -422,7 +370,6 @@
 <script src="data/config.js"></script>
 <script src="data/images.js"></script>
 <script src="data/gallery.js"></script>
-<script src="data/runs.js"></script>
 <script src="assets/js/site.js" defer></script>
 <script src="assets/js/motion.js" defer></script>
 </body>

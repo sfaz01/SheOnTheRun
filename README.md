@@ -9,14 +9,22 @@ it also runs as-is on Netlify, Vercel, Cloudflare Pages or ordinary shared hosti
 
 ---
 
-## 1. Before you launch — two things to fill in
+## 1. Before you launch — one thing to fill in
 
-Open **`data/config.js`** and replace the two placeholders:
+Open **`data/config.js`**. The emails are already set (main/professional
+`fatimahmouzahem08@gmail.com`, `dietontherun@gmail.com`, `sheonzrun@gmail.com`).
+When the new WhatsApp line is ready, replace the placeholder:
 
 ```js
 whatsapp: "[[WHATSAPP NUMBER]]",   →   whatsapp: "96170123456"
-email:    "[[EMAIL]]",             →   email: "you@yourdomain.com"
 ```
+
+Until then the Connect page says "New number coming soon" and hides its WhatsApp button.
+
+**Which inbox gets what.** The Connect form sends each subject to its own inbox,
+set in `emails` in `config.js`: Nutrition → DietOnTheRun, SheOnTheRun and
+Events → SheOnTheRun, Research and General → the main address. The form shows
+the visitor where their message is going.
 
 The WhatsApp number is **digits only, full international format** — country code, no `+`,
 no leading `0`. Lebanon is `961`.
@@ -50,9 +58,10 @@ alt text — the description a screen reader reads aloud and Google indexes. If 
 is wrong, fix it there and it's fixed everywhere that photo appears.
 
 **To swap a photo:** replace the files for that slot, keeping the same names and sizes.
-**To change where photos appear:** `data/gallery.js` holds the photo runs — the moving
-strip on the home page, the pinned run on SheOnTheRun, the album, the public-health
-fieldwork grid, the China set. Reorder the names, add one, remove one; the page follows.
+**To change where photos appear:** `data/gallery.js` holds the photo runs — "Moments on
+the run" (the pinned run that ends the SheOnTheRun page) and the "8 years in the
+humanitarian field" carousel on Public Health. Reorder the names, add one, remove one;
+the page follows.
 
 A few spots still show a designed placeholder rather than a photo — the wellness tools and
 My Picks products in the shop. They're waiting on product shots. Drop images in and list
@@ -70,7 +79,8 @@ top of each. You never need to touch the HTML.
 | `config.js` | WhatsApp number, email, Instagram, location |
 | `runs.js` | Runs, classes, events — **past dates disappear by themselves** |
 | `packages.js` | Services, prices, packages, BackOnTheRun, the How-it-works steps |
-| `products.js` | Shop categories and products |
+| `products.js` | Shop categories, products, prices and the checkout governorates |
+| `sample-plan.js` | The sample plan on the meal tracker |
 | `testimonials.js` | Client quotes |
 | `posts.js` | The Journal index |
 | `publications.js` | Papers and research interests |
@@ -181,13 +191,19 @@ saved.
 
 ---
 
-## 9. Shop payments, later
+## 9. Shop: cash on delivery
 
-Phase 1 is "Order on WhatsApp", which is how people here actually buy. The structure is ready
-for real payments: `config.js` has a `checkoutMode` value, products already carry `price`,
-`options` and `soldOut`, and every order button comes from one function (`orderMessage` /
-`waLink` in `site.js`). Adding a payment provider means changing that function, not
-rebuilding the shop.
+All products show in one grid with a category filter above it. Customers add to the
+cart, then check out with their name, phone number, governorate (the list is in
+`data/products.js`) and detailed address. Payment is **pay on delivery** only.
+
+**Where orders arrive.** Paste a Formspree endpoint into `orderEndpoint` in
+`config.js` (it can be the same one as `formEndpoint`) and orders land in your inbox
+with every detail. Until then, a placed order opens in WhatsApp (once the number is
+set) or in the customer's email app addressed to your main email.
+
+**Prices.** Products currently have `price: null`, so they show "Price confirmed with
+your order". Give each product a price in `data/products.js` and the cart shows totals.
 
 ## 10. Domain
 
@@ -226,7 +242,20 @@ Everything below is off until you paste a value in, and the site works without a
 
 ---
 
-## 13. What's new on the pages
+## 13. The meal tracker (for DietOnTheRun clients)
+
+`tracker.html` (linked at the end of the DietOnTheRun page) turns a client's meal plan
+into a tracker: one pick per meal slot, calories and protein against their targets, a
+week view and a shopping list. It is saved in the client's own browser only.
+
+**Making a plan for a client:** download `data/plans/meal-plan-template.csv` (also
+linked on the tracker page), open it in Excel or Google Sheets, set the title and
+targets at the top, and list each meal option on its own row: `meal, guide, option,
+kcal, carbs, protein, fat, ingredients` (ingredients separated by `;`). Save as CSV
+and send it to the client; they upload it on the tracker page. The template is
+pre-filled with "Fatima's plate" as an example — replace the rows.
+
+## 14. What's new on the pages
 
 - **The lap** (home) — your story as one 400m in four hundreds, with a runner that goes round
   as the page scrolls. The About timeline now shows the year you're on large over the photo,
@@ -252,3 +281,18 @@ Everything below is off until you paste a value in, and the site works without a
 - **Feel** — pages cross-fade into each other instead of flashing white, links start loading
   when you hover them, one button colour everywhere, the shop opens on a photograph like
   every other page, and an app icon for phones' home screens.
+
+### Version 2 (client feedback round)
+
+- Header name and "Connect with me" in lilac from the SheOnTheRun logo; home hero is the
+  new portrait; home simplified (no photo strip, no calendar, no "Move. Connect. Grow.").
+- About: new intro line, one photo per section, "The Turning Point" (2024), timeline photos
+  shown whole; "A month in Shanghai" moved to the Journal.
+- DietOnTheRun: "Who I work with" without photos; "How it works" and the FAQ removed;
+  stronger lilac–blue gradient; meal tracker at the end.
+- SheOnTheRun: "Come move with us" with Join us → form, a runs/classes/events filter and a
+  month calendar; "Moments on the run" (group photos) closes the page.
+- Public Health: light background; expertise → how I got here → research (no photo) →
+  a carousel of the fieldwork photos.
+- Shop: no hero photo, one filterable grid, cart and cash-on-delivery checkout.
+- Connect: form only, in lilac, routed per subject; "Where I am" with the address and map.

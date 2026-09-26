@@ -275,6 +275,7 @@
       var track = section.querySelector(".hs-track");
       if (!track) return;
       if (window.innerWidth < 760) return;          /* phones just swipe it */
+      section.classList.add("hs-pinned");            /* pinned: the scroll drives it */
       var distance = function () { return Math.max(0, track.scrollWidth - window.innerWidth + 80); };
       var barFill = section.querySelector(".hs-bar-fill");
       gsap.to(track, {

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>document.documentElement.className += " js";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meal Tracker — DietOnTheRun</title>
+<meta name="description" content="For DietOnTheRun clients: upload the meal plan Fatima sent you and track your meals, calories and protein, plan your week and get a shopping list.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://sheontherun.com/tracker.html">
+<meta name="theme-color" content="#FCFBF9">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="bn">Fatima Mouzahem</span>
+      <span class="bs">Dietitian · Sports Nutritionist</span>
+    </a>
+    <nav class="nav" data-nav aria-label="Primary">
+      <a href="about.html">About me</a>
+      <a href="dietontherun.html">DietOnTheRun</a>
+      <a href="sheontherun.html">SheOnTheRun</a>
+      <a href="public-health.html">Public Health</a>
+      <a href="shop.html">Shop</a>
+      <a class="btn sm lilac" href="connect.html">Connect with me</a>
+    </nav>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="drawer">
+      <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span>
+    </button>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" hidden>
+  <nav data-nav aria-label="Menu">
+    <a href="index.html">Home</a>
+    <a href="about.html">About me</a>
+    <a href="dietontherun.html">DietOnTheRun</a>
+    <a href="sheontherun.html">SheOnTheRun</a>
+    <a href="public-health.html">Public Health</a>
+    <a href="shop.html">Shop</a>
+  </nav>
+  <div class="drawer-foot">
+    <a class="btn lilac block" href="connect.html">Connect with me <span class="arw" aria-hidden="true">→</span></a>
+    <div class="drawer-meta">
+      <a data-wa="Hi Fatima! I found you through your website." data-interest="general" href="connect.html">WhatsApp</a>
+      <a data-instagram data-instagram-label href="connect.html">Instagram</a>
+      <a data-email="Enquiry via your website" href="connect.html"><span data-email-text>Email</span></a>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+
+  <section class="shop-top" data-tr-top>
+    <div class="glow left" aria-hidden="true"></div>
+    <div class="wrap">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span>DietOnTheRun · For my clients</p>
+      <h1 class="page-title reveal in">Your meal tracker</h1>
+    </div>
+  </section>
+
+  <section class="band-tight tracker" data-tracker style="padding-top:clamp(1.5rem,3vw,2.25rem)">
+    <div class="wrap">
+
+      <!-- ── Before a plan is loaded ─────────────────────────────────────── -->
+      <div class="tr-empty" data-tr-empty>
+        <label class="tr-drop" data-tr-drop>
+          <input type="file" accept=".csv,.json,.txt,text/csv,application/json" data-tr-file class="vh">
+          <span class="tr-drop-icon" aria-hidden="true">+</span>
+          <span class="tr-drop-title">Upload the plan I sent you</span>
+          <span class="tr-drop-sub">Tap to choose the file, or drop it here · .csv or .json</span>
+        </label>
+        <p class="tr-msg" data-tr-msg role="alert"></p>
+        <div class="tr-empty-side">
+          <p class="prose">Your plan turns into a tracker: pick one meal for each slot, watch calories and protein add up, plan the week and get your shopping list. It's saved on this phone only — nothing is uploaded.</p>
+          <div class="row mt-m">
+            <button class="btn ghost" type="button" data-tr-sample>Try a sample plan</button>
+            <a class="tlink" href="data/plans/meal-plan-template.csv" download>Plan template (for Fatima) <span class="arw" aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── The tracker ──────────────────────────────────────────────────── -->
+      <div class="tr-app" data-tr-app hidden>
+        <div class="tr-head">
+          <div>
+            <h2 data-tr-title></h2>
+            <p class="tr-sub" data-tr-sub></p>
+          </div>
+          <div class="tr-tools">
+            <button class="tlink" type="button" data-tr-export>Save a copy</button>
+            <button class="tlink" type="button" data-tr-reset>Load a different plan</button>
+          </div>
+        </div>
+
+        <div class="tr-tabs" role="group" aria-label="View">
+          <button type="button" data-tr-view="day" aria-pressed="true">Today's plate</button>
+          <button type="button" data-tr-view="week" aria-pressed="false">Whole week</button>
+          <button type="button" data-tr-view="shop" aria-pressed="false">Shopping</button>
+        </div>
+
+        <div data-tr-pane="day">
+          <div class="tr-days" data-tr-days role="group" aria-label="Day"></div>
+          <label class="tr-toggle"><input type="checkbox" data-tr-onlyhave> Only show meals I can make with what's in my kitchen</label>
+          <div class="tr-slots" data-tr-slots></div>
+          <div class="row mt-m">
+            <button class="btn ghost" type="button" data-tr-clear>Clear day</button>
+            <button class="btn lilac" type="button" data-tr-surprise>Surprise me</button>
+          </div>
+        </div>
+
+        <div data-tr-pane="week" hidden><div class="tr-weekgrid" data-tr-week></div></div>
+
+        <div data-tr-pane="shop" hidden>
+          <p class="tr-note" data-tr-shopintro></p>
+          <div data-tr-shop></div>
+        </div>
+
+        <!-- Totals for the chosen day -->
+        <div class="tr-track" aria-live="polite">
+          <div class="tr-bar"><div class="tr-top"><span>Calories</span><b data-tr-cal>0</b></div>
+            <div class="tr-rail"><div class="tr-fill" data-tr-calfill></div></div></div>
+          <div class="tr-bar"><div class="tr-top"><span>Protein</span><b data-tr-pro>0g</b></div>
+            <div class="tr-rail"><div class="tr-fill p" data-tr-profill></div></div></div>
+          <p class="tr-hint" data-tr-hint></p>
+        </div>
+      </div>
+
+      <!-- The picker -->
+      <div class="tr-sheet" data-tr-sheet hidden role="dialog" aria-modal="true" aria-labelledby="tr-sheet-title">
+        <div class="tr-panel">
+          <header>
+            <div class="tr-sheet-top">
+              <h2 id="tr-sheet-title" data-tr-sheet-title></h2>
+              <button class="tr-x" type="button" data-tr-close aria-label="Close">&times;</button>
+            </div>
+            <p class="tr-note" data-tr-sheet-note></p>
+          </header>
+          <div class="tr-options" data-tr-options></div>
+          <div class="tr-sheet-foot"><button class="btn ghost block" type="button" data-tr-remove>Remove this pick</button></div>
+        </div>
+      </div>
+
+      <p class="measured mt-l">General guidance only — follow the plan your dietitian gave you.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <p class="foot-name">Fatima<br>Mouzahem</p>
+        <p class="foot-sub">Licensed dietitian, certified sports nutritionist and public health professional. Beirut, Lebanon — and online, wherever you are.</p>
+        <div class="lanes" style="max-width:110px;margin-top:1.75rem" aria-hidden="true"></div>
+      </div>
+      <div class="foot-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="about.html">About me</a></li>
+          <li><a href="dietontherun.html">DietOnTheRun</a></li>
+          <li><a href="sheontherun.html">SheOnTheRun</a></li>
+          <li><a href="public-health.html">Public Health</a></li>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="journal/index.html">The Journal</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Start a conversation</h4>
+        <ul>
+          <li><a data-wa="Hi Fatima! I found you through your website." data-interest="general" href="connect.html">WhatsApp</a></li>
+          <li><a data-email="Enquiry via your website" href="connect.html"><span data-email-text>Email</span></a></li>
+          <li><a data-instagram data-instagram-label href="connect.html">Instagram</a></li>
+          <li><a href="connect.html">Connect with me</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© <span class="num">2026</span> Fatima Mouzahem</p>
+      <p>Beirut, Lebanon</p>
+      <p>Nutrition advice on this site is general. A consultation is personal.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="data/config.js"></script>
+<script src="data/sample-plan.js"></script>
+<script src="assets/js/site.js" defer></script>
+<script src="assets/js/tracker.js" defer></script>
+<script src="assets/js/motion.js" defer></script>
+</body>
+</html>

@@ -51,7 +51,7 @@
       <a href="sheontherun.html">SheOnTheRun</a>
       <a href="public-health.html">Public Health</a>
       <a href="shop.html">Shop</a>
-      <a class="btn sm" href="connect.html">Connect with me</a>
+      <a class="btn sm lilac" href="connect.html">Connect with me</a>
     </nav>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="drawer">
       <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span>
@@ -69,7 +69,7 @@
     <a href="shop.html">Shop</a>
   </nav>
   <div class="drawer-foot">
-    <a class="btn block" href="connect.html">Connect with me <span class="arw" aria-hidden="true">→</span></a>
+    <a class="btn lilac block" href="connect.html">Connect with me <span class="arw" aria-hidden="true">→</span></a>
     <div class="drawer-meta">
       <a data-wa="Hi Fatima! I found you through your website." data-interest="general" href="connect.html">WhatsApp</a>
       <a data-instagram data-instagram-label href="connect.html">Instagram</a>
@@ -80,34 +80,19 @@
 
 <main id="main">
 
-  <section class="stage" style="min-height:min(72svh,640px)">
-    <div class="stage-media" data-parallax="8">
-      <picture>
-        <source media="(max-width: 767px)" type="image/webp"
-                srcset="public/images/about-cafe-480.webp 480w, public/images/about-cafe-960.webp 960w" sizes="100vw">
-        <source media="(max-width: 767px)"
-                srcset="public/images/about-cafe-480.jpg 480w, public/images/about-cafe-960.jpg 960w" sizes="100vw">
-        <source type="image/webp"
-                srcset="public/images/portrait-studio-960.webp 960w, public/images/portrait-studio-1440.webp 1440w" sizes="100vw">
-        <img src="public/images/portrait-studio-1440.jpg"
-             srcset="public/images/portrait-studio-960.jpg 960w, public/images/portrait-studio-1440.jpg 1440w"
-             sizes="100vw" width="2000" height="1333"
-             alt="Fatima Mouzahem in Beirut at night, the Grand Serail lit behind her"
-             fetchpriority="high" decoding="async">
-      </picture>
-    </div>
+  <section class="shop-top">
+    <div class="glow left" aria-hidden="true"></div>
     <div class="wrap">
       <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Usually replies within a day</p>
-      <h1 class="page-title" data-split>Let's connect</h1>
-      <p class="lede mt-m" style="max-width:40ch">Tell me which part of my work you're here for and I'll come back to you properly, rather than with a form reply.</p>
+      <h1 class="page-title reveal in">Let's connect</h1>
+      <p class="lede mt-m" style="max-width:44ch">Tell me which part of my work you're here for and your message goes straight to the right inbox.</p>
     </div>
   </section>
 
-  <section class="band-tight" style="padding-top:0">
+  <section class="band-tight" style="padding-top:clamp(1.75rem,4vw,2.75rem)">
     <div class="wrap">
-      <div class="split wide-left sticky-left">
-
-        <form class="form" data-connect novalidate>
+      <div class="connect-wrap">
+        <form class="form connect-form" id="form" data-connect novalidate>
           <fieldset style="border:0;padding:0;margin:0">
             <legend class="field-label" style="padding:0">I'm getting in touch about</legend>
             <div class="interests">
@@ -132,6 +117,7 @@
                 <span>General</span>
               </label>
             </div>
+            <p class="route" data-route aria-live="polite"></p>
           </fieldset>
 
           <div class="field-row">
@@ -152,50 +138,45 @@
           </div>
 
           <div class="form-actions">
-            <button class="btn lg" type="submit">Send by email <span class="arw" aria-hidden="true">→</span></button>
+            <button class="btn lilac lg" type="submit">Send by email <span class="arw" aria-hidden="true">→</span></button>
             <button class="btn ghost lg" type="button" data-connect-wa>Send on WhatsApp</button>
           </div>
-          <p class="form-note">Both buttons open your own email app or WhatsApp with the message already written — nothing is stored on this site.</p>
+          <p class="form-note" data-route-note>Your message opens in your email app, already written and addressed to the right inbox — nothing is stored on this site.</p>
         </form>
+      </div>
+    </div>
+  </section>
 
-        <aside>
-          <div class="contact-lines">
-            <div class="contact-line">
-              <span class="measured">WhatsApp</span>
-              <a data-wa="Hi Fatima! I found you through your website." data-interest="general" href="connect.html">Message me directly</a>
-            </div>
-            <div class="contact-line">
-              <span class="measured">Email</span>
-              <a data-email="Enquiry via your website" href="connect.html"><span data-email-text>Email</span></a>
-            </div>
-            <div class="contact-line">
-              <span class="measured">Instagram</span>
-              <a data-instagram data-instagram-label href="connect.html">Instagram</a>
-            </div>
+  <!-- ══════════════════════════════ WHERE I AM ═══════════════════════════ -->
+  <section class="band-tight band-sand" id="where" style="padding-bottom:clamp(3.75rem,9vw,8.5rem)">
+    <div class="wrap">
+      <div class="where">
+        <div>
+          <span class="measured">Where I am</span>
+          <h2 class="mt-s">Gemmayze, Beirut</h2>
+          <div class="prose mt-m">
+            <p>I offer in-person consultations in Lebanon and online services around the world.</p>
+            <p><strong>Address:</strong> Gemmayze, Beirut, Lebanon</p>
+            <p>Gemmayze, Accaoui Street, next to Belbol Ameublement, Blue Building, Beirut, Lebanon</p>
           </div>
+          <a class="btn lilac mt-m" href="https://maps.app.goo.gl/m3EG91gCSahm8Har7" target="_blank" rel="noopener">Open in Google Maps <span class="arw" aria-hidden="true">→</span></a>
 
-          <div class="fig r-43 mt-l" data-img="sotr-bloom" data-sizes="(min-width: 900px) 30vw, 92vw"></div>
-
-          <div class="mt-l">
-            <p class="measured mb-m">Where I am</p>
-            <div class="prose">
-              <p><strong>Beirut, Lebanon.</strong> In-person consultations and body composition testing happen at the clinic — I'll send you the exact address when we book.</p>
-              <p>Online consultations run by video call, so the time zone is the only thing we need to solve.</p>
-              <p>SheOnTheRun runs meet at <strong>Biel, Beirut</strong>, Tuesdays and Thursdays at 6:30 PM.</p>
-            </div>
-          </div>
-
-          <div class="mt-l">
-            <p class="measured mb-m">Quick routes</p>
-            <ul style="display:grid;gap:.75rem">
-              <li><a class="tlink" href="dietontherun.html#services">Services &amp; packages <span class="arw" aria-hidden="true">→</span></a></li>
-              <li><a class="tlink" data-book data-wa="Hi Fatima! I'd like to book the free 15-minute discovery call." data-interest="nutrition" href="connect.html">Free 15-minute discovery call <span class="arw" aria-hidden="true">→</span></a></li>
-              <li><a class="tlink" href="sheontherun.html#calendar">Upcoming runs &amp; events <span class="arw" aria-hidden="true">→</span></a></li>
-              <li><a class="tlink" href="public-health.html">Public health consulting <span class="arw" aria-hidden="true">→</span></a></li>
+          <div class="emails mt-l">
+            <p class="measured mb-m">Email me directly</p>
+            <ul>
+              <li><span>Main &amp; professional</span><a href="mailto:fatimahmouzahem08@gmail.com">fatimahmouzahem08@gmail.com</a></li>
+              <li><span>DietOnTheRun</span><a href="mailto:dietontherun@gmail.com">dietontherun@gmail.com</a></li>
+              <li><span>SheOnTheRun</span><a href="mailto:sheonzrun@gmail.com">sheonzrun@gmail.com</a></li>
+              <li data-wa-line><span>WhatsApp</span><a data-wa="Hi Fatima! I found you through your website." data-interest="general" href="connect.html">Message me</a></li>
+              <li><span>Instagram</span><a data-instagram data-instagram-label href="connect.html">Instagram</a></li>
             </ul>
           </div>
-        </aside>
-
+        </div>
+        <div class="map">
+          <iframe title="Map: Accaoui Street, Gemmayze, Beirut"
+                  src="https://www.google.com/maps?q=Accaoui%20Street%2C%20Gemmayze%2C%20Beirut%2C%20Lebanon&amp;z=16&amp;output=embed"
+                  loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        </div>
       </div>
     </div>
   </section>
@@ -240,7 +221,6 @@
 </footer>
 
 <script src="data/config.js"></script>
-<script src="data/images.js"></script>
 <script src="assets/js/site.js" defer></script>
 <script src="assets/js/motion.js" defer></script>
 </body>

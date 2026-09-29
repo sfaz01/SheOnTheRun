@@ -1,11 +1,15 @@
 /* ============================================================================
-   MEAL TRACKER — tracker.html
+   MEAL TRACKER — the end of the DietOnTheRun page
    ----------------------------------------------------------------------------
-   A client loads the meal plan Fatima sent them (a CSV made in Excel/Google
-   Sheets from data/plans/meal-plan-template.csv, or a plan file saved from
-   this page) and it becomes a tracker: one pick per meal slot, calories and
-   protein adding up against the plan's targets, a week view and a shopping
-   list. Everything is kept in this browser's storage — nothing is uploaded.
+   A client uploads the meal plan Fatima gave them and it opens right there:
+   - a plan page made in Claude (.html, like data/plans/fatimas-plate.html)
+     runs exactly as it did in Claude, inside a sandboxed frame. Claude's
+     window.storage is stood in for, so picks are remembered on this phone;
+   - a spreadsheet plan (.csv from data/plans/meal-plan-template.csv) or a
+     saved copy (.json) becomes the built-in tracker below: one pick per meal
+     slot, calories and protein against the plan's targets, a week view and a
+     shopping list.
+   Everything is kept in this browser's storage — nothing is uploaded.
    ========================================================================== */
 (function () {
   "use strict";
@@ -14,7 +18,50 @@
   if (!app) return;
 
   var KEY = "dotr_tracker_v1";
+  var KEY_HTML = "dotr_plan_html";      // { name, title, html } — a plan made in Claude
+  var KEY_STORE = "dotr_plan_store";    // what that plan saved through window.storage
+  var MAX_HTML = 3 * 1024 * 1024;
   var DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  /* Arabic pages: the tracker's own words. (A plan page made in Claude keeps
+     whatever language it was written in.) */
+  var AR = /^ar/i.test(document.documentElement.getAttribute("lang") || "");
+  var ROOT = document.documentElement.getAttribute("data-root") || "";
+  var DAY_AR = { Mon: "الإثنين", Tue: "الثلاثاء", Wed: "الأربعاء", Thu: "الخميس", Fri: "الجمعة", Sat: "السبت", Sun: "الأحد" };
+  var DAY_AR_SHORT = { Mon: "إثن", Tue: "ثلا", Wed: "أرب", Thu: "خمي", Fri: "جمع", Sat: "سبت", Sun: "أحد" };
+  var UI_AR = {
+    "My meal plan": "خطتي الغذائية",
+    "Your meal plan": "خطتك الغذائية",
+    "I couldn't find the header row. It should start with: meal, guide, option, kcal …": "لم أجد سطر العناوين. يجب أن يبدأ بـ: meal, guide, option, kcal …",
+    "The file has a header row but no meals under it.": "في الملف سطر عناوين لكن لا وجبات تحته.",
+    "This file isn't a meal plan I can read.": "هذا الملف ليس خطة غذائية يمكنني قراءتها.",
+    "That file couldn't be read.": "تعذّرت قراءة هذا الملف.",
+    "That file is too large to open here.": "هذا الملف أكبر من أن يُفتح هنا.",
+    "That doesn't look like a plan page. Try the file exactly as I sent it.": "لا يبدو هذا ملف خطة. جرّب الملف كما أرسلته لك تماماً.",
+    "Opened — but this browser won't let me save it, so you'll need to upload it again next time.": "فُتحت الخطة — لكن هذا المتصفح لا يسمح بحفظها، لذا ستحتاج إلى تحميلها مجدداً في المرة القادمة.",
+    "Target {x} kcal": "الهدف {x} سعرة حرارية",
+    "{x} g protein": "{x} غ بروتين",
+    "Tap to choose": "اضغط للاختيار",
+    "in your kitchen": "متوفّر في مطبخك",
+    "kcal": "سعرة",
+    "Pick a {x} to start.": "اختر وجبة «{x}» للبدء.",
+    "{n} meal left to choose.": "بقيت وجبة واحدة للاختيار.",
+    "{n} meals left to choose.": "بقيت {n} وجبات للاختيار.",
+    "The day's full, but protein is {x}g short — try a higher-protein snack.": "اكتمل اليوم، لكن البروتين ينقصه {x} غ — جرّب وجبة خفيفة غنية بالبروتين.",
+    "{x} kcal over — try a lighter option or drop a snack.": "زيادة {x} سعرة — جرّب خياراً أخفّ أو احذف وجبة خفيفة.",
+    "The day's balanced. Nice one.": "اليوم متوازن. أحسنت.",
+    "{k} kcal · {p}g protein": "{k} سعرة · {p} غ بروتين",
+    "Nothing planned yet.": "لا شيء مخطّط بعد.",
+    "{n} meals planned this week. Tick what you already have — those meals get marked “in your kitchen”.": "{n} وجبات مخطّطة هذا الأسبوع. ضع علامة على ما لديك — وستُعلَّم تلك الوجبات بـ«متوفّر في مطبخك».",
+    "Plan some meals first and this list fills itself.": "خطّط لبعض الوجبات أولاً وستمتلئ هذه القائمة وحدها.",
+    "Nothing here you can make with what's ticked in your shopping list. Untick the filter to see every option.": "لا شيء هنا يمكنك تحضيره بما هو معلَّم في قائمة التسوّق. ألغِ الفلتر لرؤية كل الخيارات.",
+    "Load a different plan? Your picks for this plan will be cleared from this device.": "تحميل خطة مختلفة؟ ستُمحى اختياراتك لهذه الخطة من هذا الجهاز."
+  };
+  function tr(str, vars) {
+    var out = AR && UI_AR[str] != null ? UI_AR[str] : str;
+    if (vars) Object.keys(vars).forEach(function (k) { out = out.split("{" + k + "}").join(vars[k]); });
+    return out;
+  }
   var COLORS = ["#4FC3D6", "#8E82E3", "#BB8ABD", "#96B3DD"];
 
   function $(s, c) { return (c || document).querySelector(s); }
@@ -75,7 +122,7 @@
 
   function planFromCSV(text) {
     var parsed = parseCSV(text), rows = parsed.rows;
-    var plan = { format: "dietontherun-plan", version: 1, title: "My meal plan", note: "", target: {}, slots: [] };
+    var plan = { format: "dietontherun-plan", version: 1, title: tr("My meal plan"), note: "", target: {}, slots: [] };
     var header = null, bySlot = {};
     var ingSplit = parsed.delim === ";" ? /\s*\|\s*/ : /\s*[;|]\s*/;
     rows.forEach(function (r) {
@@ -121,8 +168,8 @@
         i: ing ? ing.split(ingSplit).filter(Boolean).map(function (x) { return x.toLowerCase(); }) : []
       });
     });
-    if (!header) throw new Error("I couldn't find the header row. It should start with: meal, guide, option, kcal …");
-    if (!plan.slots.length) throw new Error("The file has a header row but no meals under it.");
+    if (!header) throw new Error(tr("I couldn't find the header row. It should start with: meal, guide, option, kcal …"));
+    if (!plan.slots.length) throw new Error(tr("The file has a header row but no meals under it."));
     return plan;
   }
 
@@ -130,7 +177,7 @@
     var d = JSON.parse(text);
     if (d && d.plan && validPlan(d.plan)) return d;          // a saved tracker (plan + picks)
     if (validPlan(d)) return d;
-    throw new Error("This file isn't a meal plan I can read.");
+    throw new Error(tr("This file isn't a meal plan I can read."));
   }
 
   function accept(result) {
@@ -138,6 +185,8 @@
       state = { plan: result.plan, picks: result.picks || {}, have: result.have || {} };
       DAYS.forEach(function (d) { if (!state.picks[d]) state.picks[d] = {}; });
     } else state = freshState(result);
+    htmlPlan = null;
+    [KEY_HTML, KEY_STORE].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
     save(); view = "day"; render();
     var top = $("[data-tr-top]"); if (top) top.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -149,14 +198,85 @@
     reader.onload = function () {
       try {
         var text = String(reader.result || "");
-        var isJSON = /\.json$/i.test(file.name) || /^\s*\{/.test(text);
-        accept(isJSON ? planFromJSON(text) : planFromCSV(text));
+        if (/\.html?$/i.test(file.name) || /^\s*</.test(text)) openHTML(text, file.name);
+        else {
+          var isJSON = /\.json$/i.test(file.name) || /^\s*\{/.test(text);
+          accept(isJSON ? planFromJSON(text) : planFromCSV(text));
+        }
         if (msg) msg.textContent = "";
       } catch (err) {
-        if (msg) msg.textContent = (err && err.message) || "That file couldn't be read.";
+        if (msg) msg.textContent = (err && err.message) || tr("That file couldn't be read.");
       }
     };
     reader.readAsText(file);
+  }
+
+  /* ------------------------------------------- a plan made in Claude ---- */
+  /* The page runs in a sandboxed frame (scripts only, no access to this
+     site). Claude's window.storage is replaced by a small stand-in that
+     starts with what was saved last time and posts every save back here. */
+  var htmlPlan = null;
+  var frame = $("[data-tr-iframe]");
+
+  function loadJSON(key) {
+    try { return JSON.parse(localStorage.getItem(key) || "null"); } catch (e) { return null; }
+  }
+  function saveJSON(key, v) {
+    try { localStorage.setItem(key, JSON.stringify(v)); return true; } catch (e) { return false; }
+  }
+
+  function openHTML(html, name) {
+    if (html.length > MAX_HTML) throw new Error(tr("That file is too large to open here."));
+    if (!/<script|<body|<div/i.test(html)) throw new Error(tr("That doesn't look like a plan page. Try the file exactly as I sent it."));
+    var t = (/<title[^>]*>([\s\S]*?)<\/title>/i.exec(html) || [])[1];
+    var tmp = document.createElement("textarea");
+    tmp.innerHTML = t || "";
+    var sameFile = htmlPlan && htmlPlan.html === html;
+    htmlPlan = { name: name || "plan.html", title: tmp.value.trim() || tr("Your meal plan"), html: html };
+    if (!sameFile) saveJSON(KEY_STORE, {});            // a new plan starts fresh
+    if (!saveJSON(KEY_HTML, htmlPlan)) {
+      var msg = $("[data-tr-msg]");
+      if (msg) msg.textContent = tr("Opened — but this browser won't let me save it, so you'll need to upload it again next time.");
+    }
+    state = null; try { localStorage.removeItem(KEY); } catch (e) {}
+    render();
+    var top = $("[data-tr-top]"); if (top) top.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function storageShim() {
+    var saved = loadJSON(KEY_STORE) || {};
+    var init = JSON.stringify(saved).replace(/</g, "\\u003c");
+    return "<script>(function(){var c=" + init + ";" +
+      "function tell(k,v){try{parent.postMessage({dotrPlanStore:1,key:k,value:v},'*')}catch(e){}}" +
+      "window.storage={" +
+        "get:function(k){return Promise.resolve(Object.prototype.hasOwnProperty.call(c,k)?{key:k,value:c[k]}:null)}," +
+        "set:function(k,v){c[k]=String(v);tell(k,c[k]);return Promise.resolve({key:k,value:c[k]})}," +
+        "delete:function(k){delete c[k];tell(k,null);return Promise.resolve({key:k,deleted:true})}," +
+        "list:function(p){p=p||'';return Promise.resolve({keys:Object.keys(c).filter(function(k){return k.indexOf(p)===0})})}" +
+      "};})();<\/script>";
+  }
+
+  function mountFrame() {
+    if (!frame || !htmlPlan) return;
+    frame.srcdoc = storageShim() + htmlPlan.html;
+  }
+
+  window.addEventListener("message", function (e) {
+    if (!frame || e.source !== frame.contentWindow) return;
+    var d = e.data;
+    if (!d || d.dotrPlanStore !== 1 || typeof d.key !== "string") return;
+    var store = loadJSON(KEY_STORE) || {};
+    if (d.value === null) delete store[d.key]; else store[d.key] = String(d.value).slice(0, 500000);
+    saveJSON(KEY_STORE, store);
+  });
+
+  var box = $("[data-tr-framebox]");
+  function setFull(on) {
+    if (!box) return;
+    box.classList.toggle("full", on);
+    document.body.classList.toggle("locked", on);
+    var exit = $(".tr-exit", box); if (exit) exit.hidden = !on;
+    if (on && exit) exit.focus();
   }
 
   /* -------------------------------------------------------- helpers ----- */
@@ -180,16 +300,26 @@
 
   /* --------------------------------------------------------- render ----- */
   function render() {
-    var empty = $("[data-tr-empty]"), main = $("[data-tr-app]");
-    if (!state) { empty.hidden = false; main.hidden = true; document.body.classList.remove("has-track"); return; }
+    var empty = $("[data-tr-empty]"), main = $("[data-tr-app]"), web = $("[data-tr-html]");
+    if (web) web.hidden = !htmlPlan;
+    if (htmlPlan) {
+      empty.hidden = true; main.hidden = true;
+      $("[data-tr-htitle]").textContent = htmlPlan.title;
+      if (frame && frame.getAttribute("data-for") !== htmlPlan.title + htmlPlan.html.length) {
+        frame.setAttribute("data-for", htmlPlan.title + htmlPlan.html.length);
+        mountFrame();
+      }
+      return;
+    }
+    if (frame && frame.getAttribute("data-for")) { frame.removeAttribute("data-for"); frame.removeAttribute("srcdoc"); }
+    if (!state) { empty.hidden = false; main.hidden = true; return; }
     empty.hidden = true; main.hidden = false;
-    document.body.classList.add("has-track");
 
     var P = state.plan, T = P.target || {};
-    $("[data-tr-title]").textContent = P.title || "My meal plan";
+    $("[data-tr-title]").textContent = P.title || tr("My meal plan");
     var bits = [];
-    if (T.kcal) bits.push("Target " + T.kcal + " kcal");
-    if (T.proteinMin) bits.push(T.proteinMin + (T.proteinMax ? "–" + T.proteinMax : "+") + " g protein");
+    if (T.kcal) bits.push(tr("Target {x} kcal", { x: T.kcal }));
+    if (T.proteinMin) bits.push(tr("{x} g protein", { x: T.proteinMin + (T.proteinMax ? "–" + T.proteinMax : "+") }));
     if (P.note) bits.push(P.note);
     $("[data-tr-sub]").textContent = bits.join(" · ");
 
@@ -203,7 +333,7 @@
     $("[data-tr-days]").innerHTML = DAYS.map(function (d) {
       var filled = Object.keys(state.picks[d] || {}).length > 0;
       return '<button type="button" class="tr-day' + (filled ? " filled" : "") + '" data-day="' + d +
-        '" aria-pressed="' + (d === cur) + '">' + d + '<i aria-hidden="true"></i></button>';
+        '" aria-pressed="' + (d === cur) + '">' + (AR ? DAY_AR_SHORT[d] : d) + '<i aria-hidden="true"></i></button>';
     }).join("");
   }
 
@@ -213,10 +343,10 @@
       return '<button type="button" class="tr-slot' + (m ? "" : " empty") + '" data-slot="' + esc(s.id) + '">' +
         '<span class="tr-meta">' +
           '<span class="tr-label"><i style="background:' + COLORS[i % COLORS.length] + '"></i>' + esc(s.label) + "</span>" +
-          '<span class="tr-name">' + (m ? esc(m.n) : "Tap to choose") + "</span>" +
-          '<span class="tr-macro">' + (m ? esc(macros(m)) + (canCook(m) ? ' · <b class="tr-have">in your kitchen</b>' : "") : esc(s.guide || "")) + "</span>" +
+          '<span class="tr-name">' + (m ? esc(m.n) : tr("Tap to choose")) + "</span>" +
+          '<span class="tr-macro">' + (m ? esc(macros(m)) + (canCook(m) ? ' · <b class="tr-have">' + tr("in your kitchen") + "</b>" : "") : esc(s.guide || "")) + "</span>" +
         "</span>" +
-        '<span class="tr-kcal">' + (m ? m.k : "–") + "<small>kcal</small></span>" +
+        '<span class="tr-kcal">' + (m ? m.k : "–") + "<small>" + tr("kcal") + "</small></span>" +
       "</button>";
     }).join("");
   }
@@ -233,11 +363,11 @@
     var slots = state.plan.slots.length;
     var n = state.plan.slots.filter(function (s) { return pick(cur, s.id); }).length;
     var h;
-    if (n === 0) h = "Pick a " + state.plan.slots[0].label.toLowerCase() + " to start.";
-    else if (n < slots) h = (slots - n) + " meal" + (slots - n > 1 ? "s" : "") + " left to choose.";
-    else if (pMin && t.p < pMin) h = "The day's full, but protein is " + (pMin - t.p) + "g short — try a higher-protein snack.";
-    else if (kT && t.k > kT * 1.06) h = (t.k - kT) + " kcal over — try a lighter option or drop a snack.";
-    else h = "The day's balanced. Nice one.";
+    if (n === 0) h = tr("Pick a {x} to start.", { x: AR ? state.plan.slots[0].label : state.plan.slots[0].label.toLowerCase() });
+    else if (n < slots) h = tr(slots - n > 1 ? "{n} meals left to choose." : "{n} meal left to choose.", { n: slots - n });
+    else if (pMin && t.p < pMin) h = tr("The day's full, but protein is {x}g short — try a higher-protein snack.", { x: pMin - t.p });
+    else if (kT && t.k > kT * 1.06) h = tr("{x} kcal over — try a lighter option or drop a snack.", { x: t.k - kT });
+    else h = tr("The day's balanced. Nice one.");
     $("[data-tr-hint]").textContent = h;
   }
 
@@ -248,8 +378,8 @@
         var m = pick(d, s.id);
         return m ? '<li><span>' + esc(s.label) + "</span>" + esc(m.n) + "</li>" : "";
       }).join("");
-      return '<div class="tr-wk"><h3>' + d + (t.k ? " <small>" + t.k + " kcal · " + t.p + "g protein</small>" : "") + "</h3>" +
-        (rows ? "<ul>" + rows + "</ul>" : '<p class="tr-note">Nothing planned yet.</p>') + "</div>";
+      return '<div class="tr-wk"><h3>' + (AR ? DAY_AR[d] : d) + (t.k ? " <small>" + tr("{k} kcal · {p}g protein", { k: t.k, p: t.p }) + "</small>" : "") + "</h3>" +
+        (rows ? "<ul>" + rows + "</ul>" : '<p class="tr-note">' + tr("Nothing planned yet.") + "</p>") + "</div>";
     }).join("");
   }
 
@@ -265,8 +395,8 @@
     });
     var items = Object.keys(need).sort(function (a, b) { return need[b] - need[a] || a.localeCompare(b); });
     $("[data-tr-shopintro]").textContent = meals
-      ? meals + " meals planned this week. Tick what you already have — those meals get marked “in your kitchen”."
-      : "Plan some meals first and this list fills itself.";
+      ? tr("{n} meals planned this week. Tick what you already have — those meals get marked “in your kitchen”.", { n: meals })
+      : tr("Plan some meals first and this list fills itself.");
     $("[data-tr-shop]").innerHTML = items.length
       ? '<div class="tr-shoplist">' + items.map(function (x) {
           return '<label><input type="checkbox" data-item="' + esc(x) + '"' + (state.have[x] ? " checked" : "") + ">" +
@@ -291,9 +421,9 @@
     $("[data-tr-options]").innerHTML = list.length ? list.map(function (o) {
       return '<button type="button" class="tr-opt" data-idx="' + o.i + '" aria-pressed="' + (chosen === o.i) + '">' +
         '<span><span class="tr-oname">' + esc(o.m.n) + "</span>" +
-        '<span class="tr-osub">' + esc(macros(o.m)) + (canCook(o.m) ? ' · <b class="tr-have">in your kitchen</b>' : "") + "</span></span>" +
+        '<span class="tr-osub">' + esc(macros(o.m)) + (canCook(o.m) ? ' · <b class="tr-have">' + tr("in your kitchen") + "</b>" : "") + "</span></span>" +
         '<span class="tr-ocal">' + o.m.k + "</span></button>";
-    }).join("") : '<p class="tr-note">Nothing here you can make with what\'s ticked in your shopping list. Untick the filter to see every option.</p>';
+    }).join("") : '<p class="tr-note">' + tr("Nothing here you can make with what's ticked in your shopping list. Untick the filter to see every option.") + "</p>";
     lastFocus = document.activeElement;
     sheet.hidden = false;
     document.body.classList.add("locked");
@@ -331,10 +461,22 @@
       });
       save(); render(); return;
     }
-    if (t.closest("[data-tr-sample]")) { accept(window.SAMPLE_PLAN); return; }
+    if (t.closest("[data-tr-sample]")) {
+      /* The sample is Fatima's own plan page; if it can't be fetched (the
+         site opened straight from disk), fall back to the built-in version. */
+      fetch(ROOT + "data/plans/fatimas-plate.html")
+        .then(function (r) { if (!r.ok) throw new Error(); return r.text(); })
+        .then(function (html) { openHTML(html, "fatimas-plate.html"); })
+        .catch(function () { accept(window.SAMPLE_PLAN); });
+      return;
+    }
+    if (t.closest("[data-tr-full]")) { setFull(!(box && box.classList.contains("full"))); return; }
     if (t.closest("[data-tr-reset]")) {
-      if (window.confirm("Load a different plan? Your picks for this plan will be cleared from this device.")) {
-        state = null; try { localStorage.removeItem(KEY); } catch (err) {} render();
+      if (window.confirm(tr("Load a different plan? Your picks for this plan will be cleared from this device."))) {
+        setFull(false);
+        state = null; htmlPlan = null;
+        ["dotr_tracker_v1", KEY_HTML, KEY_STORE].forEach(function (k) { try { localStorage.removeItem(k); } catch (err) {} });
+        render();
       }
       return;
     }
@@ -360,7 +502,11 @@
       save(); render(); closePicker();
     }
   });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !sheet.hidden) closePicker(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (!sheet.hidden) closePicker();
+    else if (box && box.classList.contains("full")) setFull(false);
+  });
   $("[data-tr-onlyhave]").addEventListener("change", function () { if (openSlot) openPicker(openSlot); });
 
   app.addEventListener("change", function (e) {
@@ -383,5 +529,7 @@
   }
 
   load();
+  htmlPlan = loadJSON(KEY_HTML);
+  if (htmlPlan && typeof htmlPlan.html !== "string") htmlPlan = null;
   render();
 })();

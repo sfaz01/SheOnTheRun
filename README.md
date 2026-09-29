@@ -80,7 +80,7 @@ top of each. You never need to touch the HTML.
 | `runs.js` | Runs, classes, events — **past dates disappear by themselves** |
 | `packages.js` | Services, prices, packages, BackOnTheRun, the How-it-works steps |
 | `products.js` | Shop categories, products, prices and the checkout governorates |
-| `sample-plan.js` | The sample plan on the meal tracker |
+| `sample-plan.js` | Fallback sample for the meal tracker (when the site is opened straight from disk) |
 | `testimonials.js` | Client quotes |
 | `posts.js` | The Journal index |
 | `publications.js` | Papers and research interests |
@@ -244,18 +244,46 @@ Everything below is off until you paste a value in, and the site works without a
 
 ## 13. The meal tracker (for DietOnTheRun clients)
 
-`tracker.html` (linked at the end of the DietOnTheRun page) turns a client's meal plan
-into a tracker: one pick per meal slot, calories and protein against their targets, a
-week view and a shopping list. It is saved in the client's own browser only.
+The last section of the DietOnTheRun page ("Your plan, as a tracker", link:
+`dietontherun.html#tracker`) is where a client uploads the plan you gave them. It opens
+right there and is saved on their phone, so it's waiting for them next time.
 
-**Making a plan for a client:** download `data/plans/meal-plan-template.csv` (also
-linked on the tracker page), open it in Excel or Google Sheets, set the title and
-targets at the top, and list each meal option on its own row: `meal, guide, option,
-kcal, carbs, protein, fat, ingredients` (ingredients separated by `;`). Save as CSV
-and send it to the client; they upload it on the tracker page. The template is
-pre-filled with "Fatima's plate" as an example — replace the rows.
+**A plan made in Claude (.html)** — like `fatimas-plate.html` — opens and works exactly as
+it did in Claude: pick meals, calories and protein, week view, shopping list. Send the
+client the .html file; they upload it. (It runs in a sealed-off frame, so a plan page can't
+touch the rest of the site; "Full screen" gives it the whole phone.) The "Try a sample
+plan" button opens your own plan, `data/plans/fatimas-plate.html`.
 
-## 14. What's new on the pages
+**A spreadsheet plan (.csv)** also works: download `data/plans/meal-plan-template.csv`
+(linked under the section), fill it in Excel or Google Sheets — title and targets at the
+top, then one meal option per row: `meal, guide, option, kcal, carbs, protein, fat,
+ingredients` (ingredients separated by `;`) — save as CSV and send it. It opens in the
+site's built-in tracker.
+
+`tracker.html` just forwards to that section, so older links still work.
+
+## 14. The Arabic site
+
+Every main page has an Arabic version in `ar/` (home, About, DietOnTheRun, SheOnTheRun,
+Public Health, Shop, Connect), and the العربية / English switch in the header takes you to
+the same page in the other language. The Journal articles are in English; the Arabic pages
+label them "(بالإنجليزية)".
+
+- **Page text** — the Arabic pages (except `ar/index.html`, which is kept by hand) are built
+  from the English ones. After changing text on an English page, run
+  `python tools/build-ar.py`. If you added text it has no Arabic for, it stops and lists it:
+  add the Arabic to the tables at the top of `tools/build-ar.py` and run it again.
+- **Services, packages, events, products, captions** — the Arabic words live in
+  `data/ar.js`, matched by id. Prices, dates and photos come from the English data files, so
+  they only ever change in one place. A new event or product with no Arabic yet shows in
+  English on the Arabic pages until you add it.
+- **Buttons, calendar, cart and form messages** — built into `assets/js/site.js` and
+  `assets/js/tracker.js` (the `UI_AR` lists).
+
+⚠ The Arabic was written for you, not by you: please have it read by you or a native
+speaker before launch.
+
+## 15. What's new on the pages
 
 - **The lap** (home) — your story as one 400m in four hundreds, with a runner that goes round
   as the page scrolls. The About timeline now shows the year you're on large over the photo,

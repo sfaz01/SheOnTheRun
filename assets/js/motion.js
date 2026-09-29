@@ -278,8 +278,11 @@
       section.classList.add("hs-pinned");            /* pinned: the scroll drives it */
       var distance = function () { return Math.max(0, track.scrollWidth - window.innerWidth + 80); };
       var barFill = section.querySelector(".hs-bar-fill");
+      /* Right-to-left pages lay the run out from the right, so it slides the
+         other way. */
+      var rtl = getComputedStyle(section).direction === "rtl";
       gsap.to(track, {
-        x: function () { return -distance(); },
+        x: function () { return rtl ? distance() : -distance(); },
         ease: "none",
         scrollTrigger: {
           trigger: section,

@@ -16,6 +16,193 @@
 
   var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* ------------------------------------------------------------- language -- */
+  /* The Arabic pages (/ar/) run this same script. Words the script writes go
+     through tr(); the Arabic for data (services, events, products …) comes
+     from data/ar.js and is laid over the English data by id, so prices, dates
+     and photos are only ever written once. */
+  var AR = /^ar/i.test(document.documentElement.getAttribute("lang") || "");
+  var UI_AR = {
+    "Photo to come": "صورة قريباً",
+    "For those who prefer the flexibility of working together from wherever they are.": "لمن يفضّل مرونة العمل معاً من أي مكان.",
+    "For those who prefer face-to-face support and a more hands-on consultation experience.": "لمن يفضّل الدعم وجهاً لوجه وتجربة استشارة أكثر تفاعلاً.",
+    "Online": "أونلاين",
+    "In person": "حضورياً",
+    "Best for": "مناسبة",
+    "Duration": "المدة",
+    "Format": "الشكل",
+    "Video call": "مكالمة فيديو",
+    "Beirut clinic": "العيادة في بيروت",
+    "{x} is available in person only — it needs the analyser in the clinic.": "{x} متوفّر حضورياً فقط — يحتاج إلى جهاز التحليل في العيادة.",
+    "Book {x}": "حجز {x}",
+    "Where would you like to meet?": "أين تفضّل أن نلتقي؟",
+    "In person, in Beirut": "حضورياً، في بيروت",
+    "Online, by video call": "أونلاين، عبر مكالمة فيديو",
+    "Question {a} of {b}": "السؤال {a} من {b}",
+    "Back": "رجوع",
+    "Your best fit": "الخيار الأنسب لك",
+    "Because {x}.": "لأنّ {x}.",
+    "Price": "السعر",
+    "Length": "المدة",
+    "Runs": "المدة",
+    "Where": "المكان",
+    "Online, in a group": "أونلاين، ضمن مجموعة",
+    "In person, Beirut": "حضورياً، بيروت",
+    "Join {x}": "الانضمام إلى {x}",
+    "Talk it through first — free": "لنتحدث أولاً — مجاناً",
+    "Start again": "البدء من جديد",
+    "Hi Fatima! I'd like to book {what}{where}. {why}": "مرحباً فاطمة! أودّ حجز {what}{where}. {why}",
+    ", in person": "، حضورياً",
+    ", online": "، أونلاين",
+    "I found you through your website.": "وجدتك عبر موقعك الإلكتروني.",
+    "The quiz on your website suggested it.": "اقترحها الاختبار على موقعك.",
+    "the {x}": "{x}",
+    "{x} package ({y})": "باقة {x} ({y})",
+    "{x} package": "باقة {x}",
+    "Hi Fatima! I'd like to join {x}. The quiz on your website suggested it.": "مرحباً فاطمة! أودّ الانضمام إلى {x}. اقترحه الاختبار على موقعك.",
+    "Hi Fatima! I'd like to book the free 15-minute discovery call.": "مرحباً فاطمة! أودّ حجز مكالمة التعارف المجانية لمدة 15 دقيقة.",
+    "Hi Fatima! I'd like to join {x}, the 6-week group nutrition challenge. I found it on your website.": "مرحباً فاطمة! أودّ الانضمام إلى {x}، التحدي الغذائي الجماعي لمدة 6 أسابيع. وجدته على موقعك الإلكتروني.",
+    "Run": "جري",
+    "Class": "صف",
+    "Event": "فعالية",
+    "Challenge": "تحدٍّ",
+    "Retreat": "خلوة",
+    "Nothing on the calendar": "لا شيء على الرزنامة",
+    "The next runs are being set. Message me and I'll tell you the moment they're up — or just come to a sunset run, Tuesdays and Thursdays.": "يُحدَّد موعد الجولات القادمة الآن. راسليني وسأخبرك فور تحديدها — أو تعالي ببساطة إلى جري الغروب، كل ثلاثاء وخميس.",
+    "Hi Fatima! I'd like to know when the next SheOnTheRun runs are.": "مرحباً فاطمة! أودّ أن أعرف موعد جولات الجري القادمة مع SheOnTheRun.",
+    "Ask about the next run": "السؤال عن الجري القادم",
+    "until {x}": "حتى {x}",
+    "Hi Fatima! I'd like to join {x}. I found it on your website.": "مرحباً فاطمة! أودّ الانضمام إلى {x}. وجدته على موقعك الإلكتروني.",
+    "Hi Fatima! I'd like to join the {x} on {d}.": "مرحباً فاطمة! أودّ المشاركة في {x} يوم {d}.",
+    "{n} place left": "بقي مكان واحد",
+    "{n} places left": "{n} أماكن متبقية",
+    "Fully booked — ask for the waitlist": "مكتمل — اسألي عن قائمة الانتظار",
+    "Details": "التفاصيل",
+    "Join": "انضمام",
+    "Everything": "الكل",
+    "Classes": "الصفوف",
+    "Events": "الفعاليات",
+    "Runs ": "الجري",
+    "Nothing here yet": "لا شيء هنا بعد",
+    "No {x} on the calendar right now — the weekly sunset runs are always on.": "لا شيء من «{x}» على الرزنامة حالياً — جري الغروب الأسبوعي مستمر دائماً.",
+    "Add to calendar": "أضيفي إلى الرزنامة",
+    "Every week, all year": "كل أسبوع، طوال السنة",
+    "Meeting point: {x}.": "نقطة اللقاء: {x}.",
+    "Hi Fatima! I'd like to join SheOnTheRun and come to a sunset run.": "مرحباً فاطمة! أودّ الانضمام إلى SheOnTheRun والمشاركة في جري الغروب.",
+    "Join us": "انضمّي إلينا",
+    "Sold out": "نفدت الكمية",
+    "Add to cart": "إضافة إلى السلة",
+    "Added ✓": "أُضيف ✓",
+    "Option for {x}": "خيار {x}",
+    "Price confirmed with your order": "يُؤكَّد السعر مع طلبك",
+    "Hi Fatima! Please let me know when the {x} launches.": "مرحباً فاطمة! أخبريني من فضلك عند إطلاق {x}.",
+    "Coming soon": "قريباً",
+    "Tell me when it lands": "أعلميني عند الإطلاق",
+    "Cart": "السلة",
+    "Your cart": "سلّتك",
+    "Checkout": "إتمام الطلب",
+    "Thank you": "شكراً",
+    "Close": "إغلاق",
+    "One fewer {x}": "إنقاص {x}",
+    "One more {x}": "زيادة {x}",
+    "Total": "المجموع",
+    "Prices for some items are confirmed with your order.": "تُؤكَّد أسعار بعض المنتجات مع طلبك.",
+    "Payment: <b>cash on delivery</b>, anywhere in Lebanon.": "الدفع: <b>نقداً عند الاستلام</b>، في أي مكان في لبنان.",
+    "Your cart is empty.": "سلّتك فارغة.",
+    "Back to cart": "العودة إلى السلة",
+    "Your order": "طلبك",
+    "Full name": "الاسم الكامل",
+    "Phone number": "رقم الهاتف",
+    "Governorate": "المحافظة",
+    "Choose your governorate": "اختيار المحافظة",
+    "Detailed address": "العنوان بالتفصيل",
+    "Area, street, building, floor — and a landmark if it helps": "المنطقة، الشارع، المبنى، الطابق — ومَعلَم قريب إن أمكن",
+    "Payment": "الدفع",
+    "Pay on delivery": "الدفع عند الاستلام",
+    "Cash, when your order arrives.": "نقداً، عند وصول طلبك.",
+    "Place order": "تأكيد الطلب",
+    "Placing your order…": "جارٍ إرسال طلبك…",
+    "I'll call you to confirm before it's sent.": "سأتصل بك لتأكيد الطلب قبل إرساله.",
+    "Your order opens in WhatsApp, ready to send. I'll confirm before it's sent.": "سيُفتح طلبك في واتساب جاهزاً للإرسال. سأؤكّده معك قبل إرساله.",
+    "Your order opens in your email app, ready to send. I'll confirm before it's sent.": "سيُفتح طلبك في تطبيق البريد جاهزاً للإرسال. سأؤكّده معك قبل إرساله.",
+    "Order received": "تمّ استلام الطلب",
+    "Thank you, {x}.": "شكراً، {x}.",
+    "I'll call you to confirm your order and delivery. You pay in cash when it arrives.": "سأتصل بك لتأكيد الطلب والتوصيل. الدفع نقداً عند الوصول.",
+    "That didn't go through. Opening your email app with the order written out instead…": "لم يتمّ الإرسال. سيُفتح تطبيق البريد مع الطلب مكتوباً…",
+    "New order from the website": "طلب جديد من الموقع",
+    "Total: {x}": "المجموع: {x}",
+    "to confirm": "يُؤكَّد لاحقاً",
+    "Name: {x}": "الاسم: {x}",
+    "Phone: {x}": "الهاتف: {x}",
+    "Governorate: {x}": "المحافظة: {x}",
+    "Address: {x}": "العنوان: {x}",
+    "Payment: Pay on delivery": "الدفع: عند الاستلام",
+    "Shop order — {x}": "طلب من المتجر — {x}",
+    "Hi Fatima! ": "مرحباً فاطمة! ",
+    "Read": "قراءة",
+    "Nothing published yet": "لم يُنشر شيء بعد",
+    "The first articles are being written.": "المقالات الأولى قيد الكتابة.",
+    "Read the paper": "قراءة البحث",
+    "Email — being set up": "البريد الإلكتروني — قيد الإعداد",
+    "Goes to {x}": "يُرسل إلى {x}",
+    "General": "عام",
+    "{x} — enquiry from {y}": "{x} — استفسار من {y}",
+    "your website": "موقعك الإلكتروني",
+    "Hi Fatima,": "مرحباً فاطمة،",
+    "Email: {x}": "البريد الإلكتروني: {x}",
+    "About: {x}": "الموضوع: {x}",
+    "Sent from your website.": "أُرسلت من موقعك الإلكتروني.",
+    "Send message": "إرسال الرسالة",
+    "Your message comes straight to my inbox. I usually reply within a day.": "تصل رسالتك مباشرة إلى بريدي. عادةً أردّ خلال يوم.",
+    "Message received": "تمّ استلام رسالتك",
+    "I read every message myself and usually reply within a day. If it&rsquo;s urgent, WhatsApp is the fastest way to reach me.": "أقرأ كل رسالة بنفسي وعادةً أردّ خلال يوم. إن كان الأمر عاجلاً، فواتساب هو أسرع طريقة للتواصل معي.",
+    "Sending…": "جارٍ الإرسال…",
+    "That didn't go through. Opening your email app with the message written out instead…": "لم يتمّ الإرسال. سيُفتح تطبيق البريد مع رسالتك مكتوبة…",
+    "New number coming soon": "رقم جديد قريباً"
+  };
+  function tr(str, vars) {
+    var out = AR && UI_AR[str] != null ? UI_AR[str] : str;
+    if (vars) Object.keys(vars).forEach(function (k) { out = out.split("{" + k + "}").join(vars[k]); });
+    return out;
+  }
+
+  /* Lay the Arabic words from data/ar.js over the English data. */
+  if (AR) (function () {
+    var A = window.SITE_AR || {};
+    function over(target, src) {
+      if (!target || !src) return;
+      Object.keys(src).forEach(function (k) {
+        if (src[k] != null && (typeof src[k] !== "object" || Array.isArray(src[k]))) target[k] = src[k];
+      });
+    }
+    (OFFER.services || []).forEach(function (x) { over(x, (A.services || {})[x.id]); });
+    (OFFER.packages || []).forEach(function (x) { over(x, (A.packages || {})[x.id]); });
+    over(OFFER.challenge, A.challenge);
+    if (OFFER.fit && A.fit) Object.keys(A.fit).forEach(function (key) {
+      var q = OFFER.fit[key], aq = A.fit[key];
+      if (!q || !aq) return;
+      if (aq.question) q.question = aq.question;
+      (q.options || []).forEach(function (o) { over(o, (aq.options || {})[o.id]); });
+    });
+    over(RUNS.recurring, A.recurring);
+    (RUNS.events || []).forEach(function (x) { over(x, (A.events || {})[x.id]); });
+    var sh = A.shop || {};
+    (SHOP.categories || []).forEach(function (c) {
+      over(c, (sh.categories || {})[c.id]);
+      (c.items || []).forEach(function (x) { over(x, (sh.items || {})[x.id]); });
+    });
+    if ((A.governorates || []).length) SHOP.governorates = A.governorates;
+    PUBS.forEach(function (x, i) { over(x, (A.publications || [])[i]); });
+    if ((A.topics || []).length) TOPICS = A.topics;
+    POSTS.forEach(function (x) { over(x, (A.posts || {})[x.slug]); });
+    var G = window.SITE_GALLERY || {};
+    Object.keys(G).forEach(function (key) {
+      (G[key] || []).forEach(function (it) {
+        if (it && it.img && (A.gallery || {})[it.img]) it.caption = A.gallery[it.img];
+      });
+    });
+  })();
+
   /* ------------------------------------------------------------- helpers -- */
   function $(s, c) { return (c || document).querySelector(s); }
   function $$(s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); }
@@ -41,13 +228,15 @@
   /* Pages one folder down (the Journal, the Arabic site) reach the root with
      "../". A page can also say so itself with <html data-root="../">. */
   var rootRel = document.documentElement.getAttribute("data-root") || (isJournal ? "../" : "");
+  /* Pages in the visitor's own language (the Arabic pages sit in /ar/). */
+  var pageRel = AR ? rootRel + "ar/" : rootRel;
 
   /* Every booking button on the site comes through here. If the number isn't
      configured yet the button still works — it lands on Connect with the right
      interest pre-selected — so the site is never broken while she sets it up. */
   function waLink(message, interest) {
     if (WA_READY) return "https://wa.me/" + WA_DIGITS + "?text=" + encodeURIComponent(message);
-    return rootRel + "connect.html?interest=" + encodeURIComponent(interest || "nutrition") +
+    return pageRel + "connect.html?interest=" + encodeURIComponent(interest || "nutrition") +
            "&note=" + encodeURIComponent(message);
   }
 
@@ -65,16 +254,16 @@
   }
 
   function mailLink(subject, body, to) {
-    if (!EMAIL_READY && !to) return rootRel + "connect.html";
+    if (!EMAIL_READY && !to) return pageRel + "connect.html";
     return "mailto:" + (to || RAW_EMAIL) +
            "?subject=" + encodeURIComponent(subject || "") +
            "&body=" + encodeURIComponent(body || "");
   }
 
-  function bookingMessage(what, mode) {
-    var where = mode === "online" ? "online" : mode === "in-person" ? "in person" : "";
-    return "Hi Fatima! I'd like to book " + what + (where ? ", " + where : "") +
-           ". I found you through your website.";
+  function bookingMessage(what, mode, why) {
+    var where = mode === "online" ? tr(", online") : mode === "in-person" ? tr(", in person") : "";
+    return tr("Hi Fatima! I'd like to book {what}{where}. {why}",
+      { what: what, where: where, why: tr(why || "I found you through your website.") });
   }
 
   /* --------------------------------------------------------------- media -- */
@@ -116,7 +305,7 @@
       return '<div class="fig ' + r + '" data-reveal-img>' +
              pic(name, { alt: altOverride, sizes: sizes }) + "</div>";
     }
-    return '<div class="ph ' + r + '"><span class="ph-cap">' + esc(caption || "Photo to come") + "</span></div>";
+    return '<div class="ph ' + r + '"><span class="ph-cap">' + esc(caption || tr("Photo to come")) + "</span></div>";
   }
 
   /* Static markup writes <div class="fig r-x" data-img="slot-name"></div> and
@@ -125,7 +314,7 @@
     var name = el.getAttribute("data-img");
     if (!IMAGES[name]) {
       el.className = el.className.replace("fig", "ph");
-      el.innerHTML = '<span class="ph-cap">' + esc(el.getAttribute("data-cap") || "Photo to come") + "</span>";
+      el.innerHTML = '<span class="ph-cap">' + esc(el.getAttribute("data-cap") || tr("Photo to come")) + "</span>";
       return;
     }
     el.innerHTML = pic(name, {
@@ -141,7 +330,7 @@
     var ratio = (fig.className.match(/\br-[\w]+\b/) || ["r-45"])[0];
     var ph = document.createElement("div");
     ph.className = "ph " + ratio;
-    ph.innerHTML = '<span class="ph-cap">' + esc(img.getAttribute("data-fallback") || "Photo to come") + "</span>";
+    ph.innerHTML = '<span class="ph-cap">' + esc(img.getAttribute("data-fallback") || tr("Photo to come")) + "</span>";
     fig.replaceWith(ph);
   }
 
@@ -177,8 +366,12 @@
     }
   }
 
-  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  var DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var MONTHS = AR
+    ? ["كانون الثاني","شباط","آذار","نيسان","أيار","حزيران","تموز","آب","أيلول","تشرين الأول","تشرين الثاني","كانون الأول"]
+    : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var DAYS = AR
+    ? ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"]
+    : ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
   function parseLocal(s) {
     var m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?$/.exec(String(s || ""));
@@ -192,7 +385,7 @@
   function timeLabel(p) {
     if (p.h === 0 && p.mi === 0) return "";
     var h12 = p.h % 12 === 0 ? 12 : p.h % 12;
-    return h12 + ":" + String(p.mi).padStart(2, "0") + " " + (p.h < 12 ? "AM" : "PM");
+    return h12 + ":" + String(p.mi).padStart(2, "0") + " " + (p.h < 12 ? (AR ? "ص" : "AM") : (AR ? "م" : "PM"));
   }
 
   function dateLong(s) {
@@ -309,12 +502,16 @@
     }
     $$("[data-mode-note]").forEach(function (el) {
       el.textContent = next === "online"
-        ? "For those who prefer the flexibility of working together from wherever they are."
-        : "For those who prefer face-to-face support and a more hands-on consultation experience.";
+        ? tr("For those who prefer the flexibility of working together from wherever they are.")
+        : tr("For those who prefer face-to-face support and a more hands-on consultation experience.");
     });
     renderServices();
     renderPackages();
-    try { history.replaceState(null, "", "#" + next); } catch (e) {}
+    /* Remember the choice in the address — unless the address points somewhere
+       else on the page (#tracker, #fit …), which must be left alone. */
+    if (!location.hash || /^#(in-person|online)$/.test(location.hash)) {
+      try { history.replaceState(null, "", "#" + next); } catch (e) {}
+    }
   }
 
   if (switchEl) {
@@ -335,22 +532,22 @@
     });
 
     host.innerHTML = list.map(function (s) {
-      var msg = bookingMessage("the " + s.title, mode);
+      var msg = bookingMessage(tr("the {x}", { x: s.title }), mode);
       return '' +
       '<article class="service reveal" id="' + esc(s.id) + '">' +
         '<div class="s-top">' +
           '<span class="measured">' + esc(s.number) + "</span>" +
-          '<span class="measured">' + (mode === "online" ? "Online" : "In person") + "</span>" +
+          '<span class="measured">' + (mode === "online" ? tr("Online") : tr("In person")) + "</span>" +
         "</div>" +
         "<h3>" + esc(s.title) + "</h3>" +
         (s.tagline ? '<p class="s-tag">' + esc(s.tagline) + "</p>" : "") +
-        '<p class="s-best"><b>Best for</b> — ' + esc(s.bestFor) + "</p>" +
+        '<p class="s-best"><b>' + tr("Best for") + '</b> — ' + esc(s.bestFor) + "</p>" +
         '<ul class="s-inc">' + (s.includes || []).map(function (i) {
           return "<li>" + esc(i) + "</li>";
         }).join("") + "</ul>" +
         '<dl class="s-meta">' +
-          '<div class="s-row"><dt>Duration</dt><dd>' + esc(s.duration) + "</dd></div>" +
-          '<div class="s-row"><dt>Format</dt><dd>' + (mode === "online" ? "Video call" : "Beirut clinic") + "</dd></div>" +
+          '<div class="s-row"><dt>' + tr("Duration") + '</dt><dd>' + esc(s.duration) + "</dd></div>" +
+          '<div class="s-row"><dt>' + tr("Format") + '</dt><dd>' + (mode === "online" ? tr("Video call") : tr("Beirut clinic")) + "</dd></div>" +
         "</dl>" +
         '<span class="price"><sup>$</sup>' + esc(s.price) + "</span>" +
         '<a class="btn block" href="' + esc(bookLink(msg, "nutrition")) + '"' + bookAttrs() + ">" +
@@ -364,8 +561,8 @@
     var noteEl = $("[data-services-note]");
     if (noteEl) {
       noteEl.innerHTML = missing.length && mode === "online"
-        ? '<p class="only-inperson">' + esc(missing.map(function (s) { return s.title; }).join(", ")) +
-          " is available in person only — it needs the analyser in the clinic.</p>"
+        ? '<p class="only-inperson">' + tr("{x} is available in person only — it needs the analyser in the clinic.",
+            { x: esc(missing.map(function (s) { return s.title; }).join(", ")) }) + "</p>"
         : "";
     }
     observeReveals(host);
@@ -387,7 +584,7 @@
           if (inc.indexOf(line) === -1) inc.splice(Math.min(n + 1, inc.length), 0, line);
         });
       }
-      var msg = bookingMessage(p.name + " package (" + p.length + ")", mode);
+      var msg = bookingMessage(tr("{x} package ({y})", { x: p.name, y: p.length }), mode);
       return '' +
       '<article class="pack reveal' + (p.featured ? " is-featured" : "") + '" id="' + esc(p.id) + '">' +
         (p.featured && p.badge ? '<span class="p-badge">' + esc(p.badge) + "</span>" : "") +
@@ -397,7 +594,7 @@
         '<p class="p-price"><sup>$</sup>' + esc(p.price) + "</p>" +
         '<ul class="p-inc">' + inc.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + "</ul>" +
         '<a class="btn' + (p.featured ? "" : " ghost") + ' block" href="' + esc(bookLink(msg, "nutrition")) + '"' + bookAttrs() + ">" +
-          "Book " + esc(p.name) + ' <span class="arw" aria-hidden="true">→</span></a>' +
+          tr("Book {x}", { x: esc(p.name) }) + ' <span class="arw" aria-hidden="true">→</span></a>' +
       "</article>";
     }).join("");
     observeReveals(host);
@@ -432,9 +629,9 @@
       if (answers.support === "one" && FIT.returning) q.push({ key: "returning", data: FIT.returning });
       if (answers.support !== "group") q.push({
         key: "format",
-        data: { question: "Where would you like to meet?", options: [
-          { id: "in-person", label: "In person, in Beirut" },
-          { id: "online", label: "Online, by video call" }
+        data: { question: tr("Where would you like to meet?"), options: [
+          { id: "in-person", label: tr("In person, in Beirut") },
+          { id: "online", label: tr("Online, by video call") }
         ] }
       });
       return q;
@@ -454,7 +651,7 @@
       var cur = q[i];
       host.innerHTML =
         '<div class="fit-q" data-step="' + i + '">' +
-          '<div class="fit-top"><span class="measured">Question ' + (i + 1) + " of " + q.length + "</span>" +
+          '<div class="fit-top"><span class="measured">' + tr("Question {a} of {b}", { a: i + 1, b: q.length }) + "</span>" +
             lanes(i, q.length) + "</div>" +
           '<h3 class="fit-question" tabindex="-1">' + esc(cur.data.question) + "</h3>" +
           '<div class="fit-opts" role="group" aria-label="' + esc(cur.data.question) + '">' +
@@ -464,7 +661,7 @@
                 '" aria-pressed="' + chosen + '"><span>' + esc(o.label) + '</span><span class="arw" aria-hidden="true">→</span></button>';
             }).join("") +
           "</div>" +
-          (i > 0 ? '<button type="button" class="fit-back tlink" data-back="' + (i - 1) + '"><span class="arw" aria-hidden="true">←</span> Back</button>' : "") +
+          (i > 0 ? '<button type="button" class="fit-back tlink" data-back="' + (i - 1) + '"><span class="arw" aria-hidden="true">←</span> ' + tr("Back") + '</button>' : "") +
         "</div>";
     }
 
@@ -488,11 +685,11 @@
 
       var name = it.title || it.name;
       var length = it.duration || it.length || it.dates || "";
-      var where = found.kind === "challenge" ? "Online, in a group" : mode === "online" ? "Online" : "In person, Beirut";
+      var where = found.kind === "challenge" ? tr("Online, in a group") : mode === "online" ? tr("Online") : tr("In person, Beirut");
       var msg = found.kind === "challenge"
-        ? "Hi Fatima! I'd like to join " + name + ". The quiz on your website suggested it."
-        : bookingMessage((found.kind === "package" ? name + " package" : "the " + name), mode).replace(
-            ". I found you through your website.", ". The quiz on your website suggested it.");
+        ? tr("Hi Fatima! I'd like to join {x}. The quiz on your website suggested it.", { x: name })
+        : bookingMessage((found.kind === "package" ? tr("{x} package", { x: name }) : tr("the {x}", { x: name })), mode,
+            "The quiz on your website suggested it.");
       var href = found.kind === "challenge" ? waLink(msg, "nutrition") : bookLink(msg, "nutrition");
       var attrs = found.kind === "challenge" ? waAttrs() : bookAttrs();
 
@@ -500,21 +697,21 @@
          recommended it. Nothing in the quiz picks it today — this keeps it so. */
       host.innerHTML =
         '<div class="fit-result" role="status">' +
-          '<div class="fit-top"><span class="measured">Your best fit</span>' + lanes(4, 4) + "</div>" +
+          '<div class="fit-top"><span class="measured">' + tr("Your best fit") + '</span>' + lanes(4, 4) + "</div>" +
           '<h3 class="fit-name" tabindex="-1">' + esc(name) + "</h3>" +
-          '<p class="fit-why">' + (goal.why ? "Because " + esc(goal.why) + "." : "") + "</p>" +
+          '<p class="fit-why">' + (goal.why ? tr("Because {x}.", { x: esc(goal.why) }) : "") + "</p>" +
           '<dl class="fit-meta">' +
-            '<div><dt>Price</dt><dd>$' + esc(it.price) + (it.priceNote ? " " + esc(it.priceNote) : "") + "</dd></div>" +
-            (length ? "<div><dt>" + (found.kind === "service" ? "Length" : "Runs") + "</dt><dd>" + esc(length) + "</dd></div>" : "") +
-            "<div><dt>Where</dt><dd>" + esc(where) + "</dd></div>" +
+            '<div><dt>' + tr("Price") + '</dt><dd>$' + esc(it.price) + (it.priceNote ? " " + esc(it.priceNote) : "") + "</dd></div>" +
+            (length ? "<div><dt>" + (found.kind === "service" ? tr("Length") : tr("Runs")) + "</dt><dd>" + esc(length) + "</dd></div>" : "") +
+            "<div><dt>" + tr("Where") + "</dt><dd>" + esc(where) + "</dd></div>" +
           "</dl>" +
           '<ul class="fit-inc">' + inc.slice(0, 5).map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") + "</ul>" +
           '<div class="row mt-m">' +
             '<a class="btn lg" href="' + esc(href) + '"' + attrs + ">" +
-              (found.kind === "challenge" ? "Join " : "Book ") + esc(name) + ' <span class="arw" aria-hidden="true">→</span></a>' +
-            '<a class="btn ghost lg" href="' + esc(BOOK_URL || waLink("Hi Fatima! I'd like to book the free 15-minute discovery call.", "nutrition")) + '"' + bookAttrs() + ">Talk it through first — free</a>" +
+              (found.kind === "challenge" ? tr("Join {x}", { x: esc(name) }) : tr("Book {x}", { x: esc(name) })) + ' <span class="arw" aria-hidden="true">→</span></a>' +
+            '<a class="btn ghost lg" href="' + esc(BOOK_URL || waLink(tr("Hi Fatima! I'd like to book the free 15-minute discovery call."), "nutrition")) + '"' + bookAttrs() + ">" + tr("Talk it through first — free") + "</a>" +
           "</div>" +
-          '<button type="button" class="fit-back tlink mt-m" data-restart><span class="arw" aria-hidden="true">↺</span> Start again</button>' +
+          '<button type="button" class="fit-back tlink mt-m" data-restart><span class="arw" aria-hidden="true">↺</span> ' + tr("Start again") + '</button>' +
         "</div>";
 
       /* The services and packages below follow the answer. */
@@ -561,7 +758,7 @@
     var host = $("[data-challenge]");
     if (!host || !OFFER.challenge) return;
     var c = OFFER.challenge;
-    var msg = "Hi Fatima! I'd like to join " + c.name + ", the 6-week group nutrition challenge. I found it on your website.";
+    var msg = tr("Hi Fatima! I'd like to join {x}, the 6-week group nutrition challenge. I found it on your website.", { x: c.name });
     host.innerHTML = '' +
       '<div class="challenge-grid">' +
         "<div>" +
@@ -627,11 +824,11 @@
   /* Runs, classes and events, each tagged, with a filter above the list and a
      small month calendar beside it. The filter only narrows what is shown. */
   var KINDS = {
-    run:       { label: "Run",       group: "run" },
-    "class":   { label: "Class",     group: "class" },
-    event:     { label: "Event",     group: "event" },
-    challenge: { label: "Challenge", group: "event" },
-    retreat:   { label: "Retreat",   group: "event" }
+    run:       { label: tr("Run"),       group: "run" },
+    "class":   { label: tr("Class"),     group: "class" },
+    event:     { label: tr("Event"),     group: "event" },
+    challenge: { label: tr("Challenge"), group: "event" },
+    retreat:   { label: tr("Retreat"),   group: "event" }
   };
   function kindOf(e) { return KINDS[e.kind] || KINDS.event; }
 
@@ -653,11 +850,10 @@
       if (filterHost) filterHost.remove();
       if (calHost) calHost.remove();
       host.classList.remove("events");
-      host.innerHTML = '<div class="empty"><p class="measured">Nothing on the calendar</p>' +
-        '<p class="mt-s">The next runs are being set. Message me and I\'ll tell you the moment they\'re up — ' +
-        "or just come to a sunset run, Tuesdays and Thursdays.</p>" +
-        '<a class="btn mt-m" href="' + esc(waLink("Hi Fatima! I'd like to know when the next SheOnTheRun runs are.", "sheontherun")) +
-        '"' + waAttrs() + '>Ask about the next run <span class="arw" aria-hidden="true">→</span></a></div>';
+      host.innerHTML = '<div class="empty"><p class="measured">' + tr("Nothing on the calendar") + "</p>" +
+        '<p class="mt-s">' + tr("The next runs are being set. Message me and I'll tell you the moment they're up — or just come to a sunset run, Tuesdays and Thursdays.") + "</p>" +
+        '<a class="btn mt-m" href="' + esc(waLink(tr("Hi Fatima! I'd like to know when the next SheOnTheRun runs are."), "sheontherun")) +
+        '"' + waAttrs() + '>' + tr("Ask about the next run") + ' <span class="arw" aria-hidden="true">→</span></a></div>';
       return;
     }
 
@@ -668,13 +864,13 @@
       var isRange = e.ends && String(e.ends).slice(0, 10) !== String(e.starts).slice(0, 10);
       var dateBlock = isRange
         ? '<span class="e-date">' + esc(p.d + " " + MONTHS[p.mo - 1]) +
-          "<small>→ " + esc(dateLong(e.ends).replace(/ \d{4}$/, "")) + "</small></span>"
+          "<small>" + (AR ? tr("until {x}", { x: esc(dateLong(e.ends).replace(/ \d{4}$/, "")) }) : "→ " + esc(dateLong(e.ends).replace(/ \d{4}$/, ""))) + "</small></span>"
         : '<span class="e-date">' + esc(p.d + " " + MONTHS[p.mo - 1]) +
           "<small>" + esc(p.weekday + (t ? " · " + t : "")) + "</small></span>";
 
       var msg = e.kind === "challenge"
-        ? "Hi Fatima! I'd like to join " + e.title + ". I found it on your website."
-        : "Hi Fatima! I'd like to join the " + e.title + " on " + dateLong(e.starts) + ".";
+        ? tr("Hi Fatima! I'd like to join {x}. I found it on your website.", { x: e.title })
+        : tr("Hi Fatima! I'd like to join the {x} on {d}.", { x: e.title, d: dateLong(e.starts) });
 
       return '<article class="event' + (e.featured ? " is-featured" : "") + '" data-group="' + k.group + '">' +
         dateBlock +
@@ -684,31 +880,32 @@
           '<p class="measured e-where">' + esc(e.place) + (e.note ? " · " + esc(e.note) : "") + "</p>" +
           (typeof e.spots === "number"
             ? '<p class="e-spots' + (e.spots <= 3 ? " low" : "") + '">' +
-              (e.spots > 0 ? esc(e.spots) + (e.spots === 1 ? " place" : " places") + " left" : "Fully booked — ask for the waitlist") + "</p>"
+              (e.spots > 0 ? tr(e.spots === 1 ? "{n} place left" : "{n} places left", { n: esc(e.spots) }) : tr("Fully booked — ask for the waitlist")) + "</p>"
             : "") +
           (e.kind !== "challenge" ? calLinks(e) : "") +
         "</div>" +
         (e.link
-          ? '<a class="btn ghost sm" href="' + esc(/^(https?:|#|\.\.\/)/.test(e.link) ? e.link : rootRel + e.link) + '">Details <span class="arw" aria-hidden="true">→</span></a>'
+          ? '<a class="btn ghost sm" href="' + esc(/^(https?:|#|\.\.\/)/.test(e.link) ? e.link : pageRel + e.link) + '">' + tr("Details") + ' <span class="arw" aria-hidden="true">→</span></a>'
           : '<a class="btn ghost sm" href="' + esc(waLink(msg, "sheontherun")) + '"' + waAttrs() +
-            '>Join <span class="arw" aria-hidden="true">→</span></a>') +
+            '>' + tr("Join") + ' <span class="arw" aria-hidden="true">→</span></a>') +
       "</article>";
     }
 
     var groups = [
-      { id: "all", label: "Everything" },
-      { id: "run", label: "Runs" },
-      { id: "class", label: "Classes" },
-      { id: "event", label: "Events" }
+      { id: "all", label: tr("Everything") },
+      { id: "run", label: tr("Runs ") .trim() },
+      { id: "class", label: tr("Classes") },
+      { id: "event", label: tr("Events") }
     ];
     var current = "all";
 
     function render() {
       var list = upcoming.filter(function (e) { return current === "all" || kindOf(e).group === current; });
-      var label = groups.filter(function (g) { return g.id === current; })[0].label.toLowerCase();
+      var label = groups.filter(function (g) { return g.id === current; })[0].label;
+      if (!AR) label = label.toLowerCase();
       host.innerHTML = list.length ? list.map(card).join("") :
-        '<div class="empty"><p class="measured">Nothing here yet</p>' +
-        '<p class="mt-s">No ' + esc(label) + " on the calendar right now — the weekly sunset runs are always on.</p></div>";
+        '<div class="empty"><p class="measured">' + tr("Nothing here yet") + "</p>" +
+        '<p class="mt-s">' + tr("No {x} on the calendar right now — the weekly sunset runs are always on.", { x: esc(label) }) + "</p></div>";
       renderCal();
     }
 
@@ -743,9 +940,10 @@
           cells += '<span' + (cls ? ' class="' + cls.trim() + '"' : "") + ">" + d + (dots ? "<b>" + dots + "</b>" : "") + "</span>";
         }
         return '<div class="mc-month"><p class="mc-title">' + MONTHS[mo - 1] + " " + y + "</p>" +
-          '<div class="mc-grid"><em>M</em><em>T</em><em>W</em><em>T</em><em>F</em><em>S</em><em>S</em>' + cells + "</div></div>";
+          '<div class="mc-grid">' + (AR ? "<em>ن</em><em>ث</em><em>ر</em><em>خ</em><em>ج</em><em>س</em><em>ح</em>" : "<em>M</em><em>T</em><em>W</em><em>T</em><em>F</em><em>S</em><em>S</em>") + '' + cells + "</div></div>";
       }).join("") +
-      '<p class="mc-key"><span><i class="k-run"></i>Runs</span><span><i class="k-class"></i>Classes</span><span><i class="k-event"></i>Events</span></p>';
+      '<p class="mc-key"><span><i class="k-run"></i>' + groups[1].label + '</span><span><i class="k-class"></i>' + groups[2].label +
+      '</span><span><i class="k-event"></i>' + groups[3].label + "</span></p>";
     }
 
     if (filterHost) {
@@ -774,7 +972,7 @@
       "&ctz=Asia/Beirut" +
       "&details=" + encodeURIComponent((e.detail || "") + " — SheOnTheRun") +
       "&location=" + encodeURIComponent(e.place || "");
-    return '<p class="e-cal"><span class="measured">Add to calendar</span> ' +
+    return '<p class="e-cal"><span class="measured">' + tr("Add to calendar") + '</span> ' +
       '<a href="' + esc(g) + '" target="_blank" rel="noopener">Google</a> · ' +
       '<a href="#" data-ics="' + esc(e.id || "") + '">Apple / Outlook</a></p>';
   }
@@ -810,14 +1008,14 @@
     if (!host || !RUNS.recurring) return;
     var r = RUNS.recurring;
     /* "Join us" goes to the form, with SheOnTheRun already chosen. */
-    var joinHref = rootRel + "connect.html?interest=sheontherun&note=" +
-      encodeURIComponent("Hi Fatima! I'd like to join SheOnTheRun and come to a sunset run.") + "#form";
+    var joinHref = pageRel + "connect.html?interest=sheontherun&note=" +
+      encodeURIComponent(tr("Hi Fatima! I'd like to join SheOnTheRun and come to a sunset run.")) + "#form";
     host.innerHTML = "<div>" +
-        '<span class="measured">Every week, all year</span>' +
+        '<span class="measured">' + tr("Every week, all year") + '</span>' +
         '<p class="r-when">' + esc(r.days) + " · " + esc(r.time) + "</p>" +
-        '<p class="mt-s prose">' + esc(r.detail) + " Meeting point: " + esc(r.place) + ".</p>" +
+        '<p class="mt-s prose">' + esc(r.detail) + " " + tr("Meeting point: {x}.", { x: esc(r.place) }) + "</p>" +
       "</div>" +
-      '<a class="btn lilac" href="' + esc(joinHref) + '">Join us <span class="arw" aria-hidden="true">→</span></a>';
+      '<a class="btn lilac" href="' + esc(joinHref) + '">' + tr("Join us") + ' <span class="arw" aria-hidden="true">→</span></a>';
   })();
 
   /* --------------------------------------------------------------- 9. SHOP */
@@ -847,22 +1045,22 @@
       var selId = "opt-" + p.id;
       var price = priceText(p);
       var btn = p.soldOut
-        ? '<span class="btn ghost sm" aria-disabled="true">Sold out</span>'
-        : '<button class="btn lilac sm" type="button" data-add="' + esc(p.id) + '">Add to cart</button>';
+        ? '<span class="btn ghost sm" aria-disabled="true">' + tr("Sold out") + "</span>"
+        : '<button class="btn lilac sm" type="button" data-add="' + esc(p.id) + '">' + tr("Add to cart") + "</button>";
       return '<article class="product" data-cat-id="' + esc(c.id) + '">' +
         media(p.image, p.name, "r-11", p.name, "(min-width: 1100px) 22vw, (min-width: 780px) 30vw, 46vw") +
         '<p class="measured pr-cat">' + esc(c.name) + "</p>" +
         "<h3>" + esc(p.name) + "</h3>" +
         '<p class="pr-blurb">' + esc(p.blurb) + "</p>" +
         (hasOptions
-          ? '<label class="vh" for="' + esc(selId) + '">Option for ' + esc(p.name) + "</label>" +
+          ? '<label class="vh" for="' + esc(selId) + '">' + tr("Option for {x}", { x: esc(p.name) }) + "</label>" +
             '<select id="' + esc(selId) + '" data-option-for="' + esc(p.id) + '">' +
             p.options.map(function (o) { return '<option value="' + esc(o) + '">' + esc(o) + "</option>"; }).join("") +
             "</select>"
           : "") +
         '<div class="pr-foot">' +
           (price ? '<span class="pr-price">' + esc(price) + "</span>"
-                 : '<span class="pr-price ask">Price confirmed with your order</span>') +
+                 : '<span class="pr-price ask">' + tr("Price confirmed with your order") + "</span>") +
           btn +
         "</div>" +
       "</article>";
@@ -873,23 +1071,23 @@
     /* Coming soon — a panel in her logo colours rather than a photograph. */
     var soon = SHOP.categories.filter(function (c) { return c.comingSoon; })[0];
     if (soonHost && soon) {
-      var msg = "Hi Fatima! Please let me know when the " + soon.name.toLowerCase() + " launches.";
+      var msg = tr("Hi Fatima! Please let me know when the {x} launches.", { x: AR ? soon.name : soon.name.toLowerCase() });
       soonHost.innerHTML =
         '<div class="soon reveal"><div class="soon-grid"><div>' +
-          '<span class="measured">Coming soon</span>' +
+          '<span class="measured">' + tr("Coming soon") + "</span>" +
           '<h2 class="mt-s">' + esc(soon.name) + "</h2>" +
           '<p class="lede mt-s">' + esc(soon.blurb) + "</p>" +
           '<a class="btn lilac mt-m" href="' + esc(waLink(msg, "shop")) + '"' + waAttrs() +
-          '>Tell me when it lands <span class="arw" aria-hidden="true">→</span></a>' +
+          '>' + tr("Tell me when it lands") + ' <span class="arw" aria-hidden="true">→</span></a>' +
         '</div><div class="soon-art" aria-hidden="true">' +
           '<span class="sa-she">She</span><span class="sa-run">On the Run</span>' +
-          '<span class="sa-soon">Coming soon</span>' +
+          '<span class="sa-soon">' + tr("Coming soon") + "</span>" +
         "</div></div></div>";
     }
 
     if (navHost) {
       var cats = SHOP.categories.filter(function (c) { return !c.comingSoon && (c.items || []).length; });
-      navHost.innerHTML = '<button type="button" data-filter="all" aria-pressed="true">Everything</button>' +
+      navHost.innerHTML = '<button type="button" data-filter="all" aria-pressed="true">' + tr("Everything") + "</button>" +
         cats.map(function (c) {
           return '<button type="button" data-filter="' + esc(c.id) + '" aria-pressed="false">' + esc(c.name) + "</button>";
         }).join("");
@@ -951,64 +1149,64 @@
               '<p class="measured">' + esc(x.option || x.cat) +
               (x.price !== "" && x.price != null ? " · $" + esc(x.price) : "") + "</p></div>" +
               '<div class="bag-qty">' +
-                '<button type="button" data-qty="' + i + '" data-d="-1" aria-label="One fewer ' + esc(x.name) + '">−</button>' +
+                '<button type="button" data-qty="' + i + '" data-d="-1" aria-label="' + tr("One fewer {x}", { x: esc(x.name) }) + '">−</button>' +
                 '<span class="num">' + x.qty + "</span>" +
-                '<button type="button" data-qty="' + i + '" data-d="1" aria-label="One more ' + esc(x.name) + '">+</button>' +
+                '<button type="button" data-qty="' + i + '" data-d="1" aria-label="' + tr("One more {x}", { x: esc(x.name) }) + '">+</button>' +
               "</div></li>";
           }).join("") + "</ul>" +
-          '<p class="bag-total">' + (t.priced ? "Total <b class=\"num\">$" + t.total + "</b>" :
-            "Prices for some items are confirmed with your order.") + "</p>" +
-          '<p class="pay-note"><span class="pay-dot" aria-hidden="true"></span><span>Payment: <b>cash on delivery</b>, anywhere in Lebanon.</span></p>' +
-          '<button class="btn lilac block lg mt-s" type="button" data-checkout>Checkout <span class="arw" aria-hidden="true">→</span></button>'
-        : '<p class="prose mt-s">Your cart is empty.</p>';
+          '<p class="bag-total">' + (t.priced ? tr("Total") + " <b class=\"num\">$" + t.total + "</b>" :
+            tr("Prices for some items are confirmed with your order.")) + "</p>" +
+          '<p class="pay-note"><span class="pay-dot" aria-hidden="true"></span><span>' + tr("Payment: <b>cash on delivery</b>, anywhere in Lebanon.") + "</span></p>" +
+          '<button class="btn lilac block lg mt-s" type="button" data-checkout>' + tr("Checkout") + ' <span class="arw" aria-hidden="true">→</span></button>'
+        : '<p class="prose mt-s">' + tr("Your cart is empty.") + "</p>";
     }
 
     function checkoutHTML() {
       var t = totals();
       return '<form class="checkout form" data-order novalidate>' +
-        '<button type="button" class="tlink bag-back" data-back-cart><span class="arw" aria-hidden="true">←</span> Back to cart</button>' +
-        '<div class="co-summary"><p class="measured">Your order</p><p class="co-lines">' +
+        '<button type="button" class="tlink bag-back" data-back-cart><span class="arw" aria-hidden="true">←</span> ' + tr("Back to cart") + "</button>" +
+        '<div class="co-summary"><p class="measured">' + tr("Your order") + '</p><p class="co-lines">' +
           esc(lines()).replace(/\n/g, "<br>") + "</p>" +
-          (t.priced ? '<p class="co-total">Total <b class="num">$' + t.total + "</b></p>" : "") + "</div>" +
-        '<div><label class="field-label" for="co-name">Full name</label>' +
+          (t.priced ? '<p class="co-total">' + tr("Total") + ' <b class="num">$' + t.total + "</b></p>" : "") + "</div>" +
+        '<div><label class="field-label" for="co-name">' + tr("Full name") + "</label>" +
           '<input class="input" id="co-name" name="name" autocomplete="name" required></div>' +
-        '<div><label class="field-label" for="co-phone">Phone number</label>' +
+        '<div><label class="field-label" for="co-phone">' + tr("Phone number") + "</label>" +
           '<input class="input" id="co-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required ' +
           'minlength="7" placeholder="+961 70 123 456"></div>' +
-        '<div><label class="field-label" for="co-gov">Governorate</label>' +
+        '<div><label class="field-label" for="co-gov">' + tr("Governorate") + "</label>" +
           '<select class="input select" id="co-gov" name="governorate" required>' +
-            '<option value="">Choose your governorate</option>' +
+            '<option value="">' + tr("Choose your governorate") + "</option>" +
             GOVS.map(function (g) { return '<option value="' + esc(g) + '">' + esc(g) + "</option>"; }).join("") +
           "</select></div>" +
-        '<div><label class="field-label" for="co-address">Detailed address</label>' +
+        '<div><label class="field-label" for="co-address">' + tr("Detailed address") + "</label>" +
           '<textarea class="textarea" id="co-address" name="address" required rows="3" ' +
-          'placeholder="Area, street, building, floor — and a landmark if it helps"></textarea></div>' +
-        '<fieldset class="co-pay"><legend class="field-label">Payment</legend>' +
+          'placeholder="' + tr("Area, street, building, floor — and a landmark if it helps") + '"></textarea></div>' +
+        '<fieldset class="co-pay"><legend class="field-label">' + tr("Payment") + "</legend>" +
           '<label class="pay-option"><input type="radio" name="payment" value="Pay on delivery" checked>' +
-          '<span><b>Pay on delivery</b><small>Cash, when your order arrives.</small></span></label></fieldset>' +
-        '<button class="btn lilac block lg" type="submit">Place order <span class="arw" aria-hidden="true">→</span></button>' +
+          '<span><b>' + tr("Pay on delivery") + "</b><small>" + tr("Cash, when your order arrives.") + "</small></span></label></fieldset>" +
+        '<button class="btn lilac block lg" type="submit">' + tr("Place order") + ' <span class="arw" aria-hidden="true">→</span></button>' +
         '<p class="form-note co-note">' + (ORDER_ENDPOINT
-          ? "I'll call you to confirm before it's sent."
-          : WA_READY ? "Your order opens in WhatsApp, ready to send. I'll confirm before it's sent."
-                     : "Your order opens in your email app, ready to send. I'll confirm before it's sent.") + "</p>" +
+          ? tr("I'll call you to confirm before it's sent.")
+          : WA_READY ? tr("Your order opens in WhatsApp, ready to send. I'll confirm before it's sent.")
+                     : tr("Your order opens in your email app, ready to send. I'll confirm before it's sent.")) + "</p>" +
       "</form>";
     }
 
     function doneHTML(name) {
       return '<div class="form-done" role="status" tabindex="-1">' +
-        '<span class="measured">Order received</span>' +
-        '<p class="pull mt-s">Thank you' + (name ? ", " + esc(name.split(" ")[0]) : "") + ".</p>" +
-        '<p class="prose mt-s">I\'ll call you to confirm your order and delivery. You pay in cash when it arrives.</p></div>';
+        '<span class="measured">' + tr("Order received") + "</span>" +
+        '<p class="pull mt-s">' + (name ? tr("Thank you, {x}.", { x: esc(name.split(" ")[0]) }) : tr("Thank you") + ".") + "</p>" +
+        '<p class="prose mt-s">' + tr("I'll call you to confirm your order and delivery. You pay in cash when it arrives.") + "</p></div>";
     }
 
     function renderBag(name) {
       var n = bagCount();
       fab.hidden = n === 0 && view !== "done";
-      fab.innerHTML = 'Cart <span class="bag-n num">' + n + "</span>";
+      fab.innerHTML = tr("Cart") + ' <span class="bag-n num">' + n + "</span>";
       panel.innerHTML =
         '<div class="bag-card">' +
-          '<div class="bag-head"><h2>' + (view === "checkout" ? "Checkout" : view === "done" ? "Thank you" : "Your cart") + "</h2>" +
-          '<button type="button" class="bag-close" aria-label="Close">&times;</button></div>' +
+          '<div class="bag-head"><h2>' + (view === "checkout" ? tr("Checkout") : view === "done" ? tr("Thank you") : tr("Your cart")) + "</h2>" +
+          '<button type="button" class="bag-close" aria-label="' + tr("Close") + '">&times;</button></div>' +
           (view === "checkout" ? checkoutHTML() : view === "done" ? doneHTML(name) : cartHTML()) +
         "</div>";
     }
@@ -1027,12 +1225,12 @@
       if (!form.reportValidity()) return;
       var f = function (n) { return (form.elements[n] || {}).value || ""; };
       var t = totals();
-      var body = "New order from the website\n\n" + lines() +
-        (t.priced ? "\nTotal: $" + t.total : "\nTotal: to confirm") +
-        "\n\nName: " + f("name") + "\nPhone: " + f("phone") +
-        "\nGovernorate: " + f("governorate") + "\nAddress: " + f("address") +
-        "\nPayment: Pay on delivery";
-      var subject = "Shop order — " + f("name");
+      var body = tr("New order from the website") + "\n\n" + lines() +
+        "\n" + tr("Total: {x}", { x: t.priced ? "$" + t.total : tr("to confirm") }) +
+        "\n\n" + tr("Name: {x}", { x: f("name") }) + "\n" + tr("Phone: {x}", { x: f("phone") }) +
+        "\n" + tr("Governorate: {x}", { x: f("governorate") }) + "\n" + tr("Address: {x}", { x: f("address") }) +
+        "\n" + tr("Payment: Pay on delivery");
+      var subject = tr("Shop order — {x}", { x: f("name") });
 
       function finish() {
         var name = f("name");
@@ -1042,7 +1240,7 @@
 
       if (ORDER_ENDPOINT) {
         var btn = $('button[type="submit"]', form);
-        if (btn) { btn.disabled = true; btn.textContent = "Placing your order…"; }
+        if (btn) { btn.disabled = true; btn.textContent = tr("Placing your order…"); }
         fetch(ORDER_ENDPOINT, {
           method: "POST",
           headers: { "Accept": "application/json", "Content-Type": "application/json" },
@@ -1053,16 +1251,16 @@
           if (!r.ok) throw new Error("status " + r.status);
           finish();
         }).catch(function () {
-          if (btn) { btn.disabled = false; btn.innerHTML = 'Place order <span class="arw" aria-hidden="true">→</span>'; }
+          if (btn) { btn.disabled = false; btn.innerHTML = tr("Place order") + ' <span class="arw" aria-hidden="true">→</span>'; }
           var note = $(".co-note", form);
-          if (note) note.textContent = "That didn't go through. Opening your email app with the order written out instead…";
+          if (note) note.textContent = tr("That didn't go through. Opening your email app with the order written out instead…");
           setTimeout(function () { window.location.href = mailLink(subject, body); }, 900);
         });
         return;
       }
       /* No order inbox configured yet: hand the finished order to WhatsApp or
          the visitor's email app, already written. */
-      var url = WA_READY ? "https://wa.me/" + WA_DIGITS + "?text=" + encodeURIComponent("Hi Fatima! " + body)
+      var url = WA_READY ? "https://wa.me/" + WA_DIGITS + "?text=" + encodeURIComponent(tr("Hi Fatima! ") + body)
                          : mailLink(subject, body);
       if (WA_READY) window.open(url, "_blank", "noopener"); else window.location.href = url;
       finish();
@@ -1081,8 +1279,8 @@
       else bag.push({ id: id, name: x.p.name, cat: x.cat.name, option: option,
                       price: x.p.price == null ? "" : x.p.price, qty: 1 });
       saveBag(); view = "cart"; renderBag();
-      b.textContent = "Added ✓";
-      setTimeout(function () { b.textContent = "Add to cart"; }, 1400);
+      b.textContent = tr("Added ✓");
+      setTimeout(function () { b.textContent = tr("Add to cart"); }, 1400);
       fab.classList.remove("bump"); void fab.offsetWidth; fab.classList.add("bump");
     });
 
@@ -1183,10 +1381,14 @@
     }).join("");
     var scope = host.closest("section") || document;
     var prev = $("[data-car-prev]", scope), next = $("[data-car-next]", scope);
-    function step(d) { host.scrollBy({ left: d * host.clientWidth * 0.8, behavior: REDUCED ? "auto" : "smooth" }); }
+    /* In a right-to-left page the carousel runs the other way (scrollLeft
+       counts down from 0), so steps and edges are measured by distance. */
+    var dir = getComputedStyle(host).direction === "rtl" ? -1 : 1;
+    function step(d) { host.scrollBy({ left: dir * d * host.clientWidth * 0.8, behavior: REDUCED ? "auto" : "smooth" }); }
     function edges() {
-      if (prev) prev.disabled = host.scrollLeft <= 4;
-      if (next) next.disabled = host.scrollLeft + host.clientWidth >= host.scrollWidth - 4;
+      var x = Math.abs(host.scrollLeft);
+      if (prev) prev.disabled = x <= 4;
+      if (next) next.disabled = x + host.clientWidth >= host.scrollWidth - 4;
     }
     if (prev) prev.addEventListener("click", function () { step(-1); });
     if (next) next.addEventListener("click", function () { step(1); });
@@ -1208,8 +1410,8 @@
     var section = host.closest("[data-posts-section]");
     if (!live.length) {
       if (section) { section.remove(); return; }
-      host.innerHTML = '<div class="empty"><p class="measured">Nothing published yet</p>' +
-        '<p class="mt-s">The first articles are being written.</p></div>';
+      host.innerHTML = '<div class="empty"><p class="measured">' + tr("Nothing published yet") + "</p>" +
+        '<p class="mt-s">' + tr("The first articles are being written.") + "</p></div>";
       return;
     }
 
@@ -1245,7 +1447,7 @@
           '<span class="measured">' + esc(dateLong(p.date)) + " · " + esc(p.readingTime) + "</span></div>" +
         "<h3>" + esc(p.title) + "</h3>" +
         "<p>" + esc(p.excerpt) + "</p>" +
-        '<span class="tlink">Read <span class="arw" aria-hidden="true">→</span></span>' +
+        '<span class="tlink">' + tr("Read") + ' <span class="arw" aria-hidden="true">→</span></span>' +
       "</a>";
     }).join("");
   })();
@@ -1322,7 +1524,7 @@
           '<div><span class="measured">' + esc(p.journal) + " · " + esc(p.year) + "</span></div>" +
           "<div><h3>" + esc(p.title) + "</h3>" +
             '<p class="p-sum">' + esc(p.summary) + "</p>" +
-            (p.link ? '<a class="tlink mt-s" href="' + esc(p.link) + '" target="_blank" rel="noopener">Read the paper <span class="arw" aria-hidden="true">→</span></a>' : "") +
+            (p.link ? '<a class="tlink mt-s" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + tr("Read the paper") + ' <span class="arw" aria-hidden="true">→</span></a>' : "") +
           "</div>";
         return '<article class="pub reveal">' + inner + "</article>";
       }).join("");
@@ -1362,7 +1564,7 @@
   });
 
   $$("[data-email-text]").forEach(function (el) {
-    el.textContent = EMAIL_READY ? RAW_EMAIL : "Email — being set up";
+    el.textContent = EMAIL_READY ? RAW_EMAIL : tr("Email — being set up");
   });
 
   $$("[data-instagram]").forEach(function (a) {
@@ -1393,7 +1595,7 @@
     var routeEl = $("[data-route]", form);
     function currentInterest() { return ($('input[name="interest"]:checked', form) || {}).value || "general"; }
     function showRoute() {
-      if (routeEl) routeEl.innerHTML = "Goes to <b>" + esc(inboxFor(currentInterest())) + "</b>";
+      if (routeEl) routeEl.innerHTML = tr("Goes to {x}", { x: "<b>" + esc(inboxFor(currentInterest())) + "</b>" });
     }
     form.addEventListener("change", function (e) { if (e.target.name === "interest") showRoute(); });
     showRoute();
@@ -1401,18 +1603,18 @@
     function compose() {
       var name = ($("#name", form) || {}).value || "";
       var interest = ($('input[name="interest"]:checked', form) || {}).nextElementSibling;
-      var interestLabel = interest ? interest.textContent.trim() : "General";
+      var interestLabel = interest ? interest.textContent.trim() : tr("General");
       var message = ($("#message", form) || {}).value || "";
       var email = ($("#email", form) || {}).value || "";
       return {
         name: name, email: email, interest: interestLabel, message: message,
         to: inboxFor(currentInterest()),
-        subject: interestLabel + " — enquiry from " + (name || "your website"),
-        body: "Hi Fatima,\n\n" + message +
-          "\n\n—\nName: " + name +
-          (email ? "\nEmail: " + email : "") +
-          "\nAbout: " + interestLabel +
-          "\nSent from your website."
+        subject: tr("{x} — enquiry from {y}", { x: interestLabel, y: name || tr("your website") }),
+        body: tr("Hi Fatima,") + "\n\n" + message +
+          "\n\n—\n" + tr("Name: {x}", { x: name }) +
+          (email ? "\n" + tr("Email: {x}", { x: email }) : "") +
+          "\n" + tr("About: {x}", { x: interestLabel }) +
+          "\n" + tr("Sent from your website.")
       };
     }
 
@@ -1423,17 +1625,16 @@
       /* With a real endpoint the reply address matters, so ask for it. */
       var emailField = $("#email", form);
       if (emailField) emailField.required = true;
-      if (submitBtn) submitBtn.innerHTML = 'Send message <span class="arw" aria-hidden="true">→</span>';
-      if (noteEl) noteEl.textContent = "Your message comes straight to my inbox. I usually reply within a day.";
+      if (submitBtn) submitBtn.innerHTML = tr("Send message") + ' <span class="arw" aria-hidden="true">→</span>';
+      if (noteEl) noteEl.textContent = tr("Your message comes straight to my inbox. I usually reply within a day.");
     }
 
     function sent() {
       var c = compose();
       form.innerHTML = '<div class="form-done" role="status" tabindex="-1">' +
-        '<span class="measured">Message received</span>' +
-        '<p class="pull mt-s">Thank you' + (c.name ? ", " + esc(c.name.split(" ")[0]) : "") + '.</p>' +
-        '<p class="prose mt-s">I read every message myself and usually reply within a day. ' +
-        'If it&rsquo;s urgent, WhatsApp is the fastest way to reach me.</p></div>';
+        '<span class="measured">' + tr("Message received") + "</span>" +
+        '<p class="pull mt-s">' + (c.name ? tr("Thank you, {x}.", { x: esc(c.name.split(" ")[0]) }) : tr("Thank you") + ".") + "</p>" +
+        '<p class="prose mt-s">' + tr("I read every message myself and usually reply within a day. If it&rsquo;s urgent, WhatsApp is the fastest way to reach me.") + "</p></div>";
       var done = $(".form-done", form);
       if (done) done.focus();
     }
@@ -1444,7 +1645,7 @@
       var c = compose();
       if (!ENDPOINT) { window.location.href = mailLink(c.subject, c.body, c.to); return; }
 
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Sending…"; }
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = tr("Sending…"); }
       fetch(ENDPOINT, {
         method: "POST",
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
@@ -1460,9 +1661,9 @@
            the visitor's email app instead. */
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.innerHTML = 'Send message <span class="arw" aria-hidden="true">→</span>';
+          submitBtn.innerHTML = tr("Send message") + ' <span class="arw" aria-hidden="true">→</span>';
         }
-        if (noteEl) noteEl.textContent = "That didn't go through. Opening your email app with the message written out instead…";
+        if (noteEl) noteEl.textContent = tr("That didn't go through. Opening your email app with the message written out instead…");
         setTimeout(function () { window.location.href = mailLink(c.subject, c.body, c.to); }, 900);
       });
     });
@@ -1474,14 +1675,14 @@
     $$("[data-wa-line]").forEach(function (li) {
       if (WA_READY) return;
       var a = $("a", li);
-      if (a) a.outerHTML = "<em>New number coming soon</em>";
+      if (a) a.outerHTML = "<em>" + tr("New number coming soon") + "</em>";
     });
     if (waBtn) {
       waBtn.addEventListener("click", function () {
         if (!form.reportValidity()) return;
         var c = compose();
         var interest = ($('input[name="interest"]:checked', form) || {}).value || "general";
-        var url = waLink(c.body.replace(/^Hi Fatima,\n\n/, "Hi Fatima! "), interest);
+        var url = waLink(c.body.replace(tr("Hi Fatima,") + "\n\n", tr("Hi Fatima! ")), interest);
         if (WA_READY) window.open(url, "_blank", "noopener");
         else window.location.href = url;
       });

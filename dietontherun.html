@@ -7,6 +7,8 @@
 <title>DietOnTheRun — Dietitian in Beirut &amp; Online Nutrition Consultations</title>
 <meta name="description" content="Personalised, evidence-based nutrition consultations and packages with Fatima Mouzahem, licensed dietitian and certified sports nutritionist. In person in Beirut or online worldwide. Weight management, women's nutrition and sports nutrition. Free 15-minute discovery call.">
 <link rel="canonical" href="https://sheontherun.com/dietontherun.html">
+<link rel="alternate" hreflang="en" href="https://sheontherun.com/dietontherun.html">
+<link rel="alternate" hreflang="ar" href="https://sheontherun.com/ar/dietontherun.html">
 <meta name="theme-color" content="#0E2026">
 <meta property="og:type" content="website">
 <meta property="og:title" content="DietOnTheRun — Nutrition that works with your life">
@@ -67,6 +69,7 @@
       <a href="sheontherun.html">SheOnTheRun</a>
       <a href="public-health.html">Public Health</a>
       <a href="shop.html">Shop</a>
+      <a class="lang" href="ar/dietontherun.html" lang="ar" hreflang="ar">العربية</a>
       <a class="btn sm lilac" href="connect.html">Connect with me</a>
     </nav>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="drawer">
@@ -83,6 +86,7 @@
     <a href="sheontherun.html">SheOnTheRun</a>
     <a href="public-health.html">Public Health</a>
     <a href="shop.html">Shop</a>
+    <a href="ar/dietontherun.html" lang="ar" hreflang="ar">العربية</a>
   </nav>
   <div class="drawer-foot">
     <a class="btn lilac block" href="connect.html">Connect with me <span class="arw" aria-hidden="true">→</span></a>
@@ -175,10 +179,8 @@
             </div>
           </div>
           <div class="reveal">
-            <div class="duo-stack">
-              <div class="fig r-tall" data-img="dotr-detail" data-sizes="(min-width: 860px) 30vw, 92vw" data-parallax="7"></div>
-              <div class="fig r-11" data-img="nature-lilies" data-sizes="(min-width: 860px) 20vw, 46vw"></div>
-              <div class="fig r-11" data-img="about-coffee" data-sizes="(min-width: 860px) 20vw, 46vw"></div>
+            <div class="duo-single">
+              <div class="fig" style="aspect-ratio:0.7261" data-img="dotr-cafe" data-sizes="(min-width: 900px) 34vw, 92vw" data-parallax="6"></div>
             </div>
           </div>
         </div>
@@ -364,20 +366,116 @@
   </section>
 
   <!-- ══════════════════════════════ MEAL TRACKER ═════════════════════════
-       For clients: the plan I give them becomes a meal and calorie tracker.
+       For clients: upload the plan I gave you and it opens right here —
+       a plan made in Claude (.html) runs exactly as it did there; a CSV or
+       saved plan becomes the built-in tracker. Everything stays on the phone.
        ══════════════════════════════════════════════════════════════════ -->
-  <section class="band-tight" id="tracker" style="padding-bottom:clamp(3.75rem,9vw,8.5rem)">
+  <section class="band-tight tracker" id="tracker" data-tracker style="padding-bottom:clamp(3.75rem,9vw,8.5rem)">
     <div class="wrap">
-      <div class="tracker-cta reveal">
-        <div>
-          <span class="measured">For my clients</span>
-          <h2 class="mt-s">Your plan, as a tracker</h2>
-          <p class="prose mt-s">Upload the meal plan I sent you and it turns into a simple daily tracker: pick a meal for each slot, watch your calories and protein add up, plan the week and get a shopping list. It stays on your phone — nothing is uploaded anywhere.</p>
-        </div>
-        <div class="row">
-          <a class="btn lilac lg" href="tracker.html">Open my meal tracker <span class="arw" aria-hidden="true">→</span></a>
+      <div class="head mb-l" data-tr-top>
+        <span class="measured">For my clients</span>
+        <h2 data-split>Your plan, as a tracker</h2>
+        <p class="lede">Upload the meal plan I gave you and it opens here, ready to use: pick your meals, watch calories and protein add up, plan the week and get your shopping list.</p>
+      </div>
+
+      <!-- ── Before a plan is loaded ─────────────────────────────────────── -->
+      <div class="tr-empty" data-tr-empty>
+        <label class="tr-drop" data-tr-drop>
+          <input type="file" accept=".html,.htm,.csv,.json,text/html,text/csv,application/json" data-tr-file class="vh">
+          <span class="tr-drop-icon" aria-hidden="true">+</span>
+          <span class="tr-drop-title">Upload the plan I sent you</span>
+          <span class="tr-drop-sub">Tap to choose the file, or drop it here</span>
+        </label>
+        <p class="tr-msg" data-tr-msg role="alert"></p>
+        <div class="tr-empty-side">
+          <p class="prose">Use the file I sent you — the plan page made for you, or a spreadsheet plan. Once it's open it stays saved on this phone, so next time it's right here. Nothing is uploaded anywhere.</p>
+          <div class="row mt-m">
+            <button class="btn ghost" type="button" data-tr-sample>Try a sample plan</button>
+          </div>
         </div>
       </div>
+
+      <!-- ── A plan made in Claude (.html), running as-is ─────────────────── -->
+      <div class="tr-html" data-tr-html hidden>
+        <div class="tr-head">
+          <div>
+            <h3 class="tr-htitle" data-tr-htitle></h3>
+            <p class="tr-sub">Saved on this phone. Your picks are kept for next time.</p>
+          </div>
+          <div class="tr-tools">
+            <button class="tlink" type="button" data-tr-full>Full screen</button>
+            <button class="tlink" type="button" data-tr-reset>Load a different plan</button>
+          </div>
+        </div>
+        <div class="tr-frame" data-tr-framebox>
+          <button class="tr-exit btn lilac sm" type="button" data-tr-full hidden>Close full screen</button>
+          <iframe data-tr-iframe title="Your meal plan" sandbox="allow-scripts"></iframe>
+        </div>
+      </div>
+
+      <!-- ── The tracker ──────────────────────────────────────────────────── -->
+      <div class="tr-app" data-tr-app hidden>
+        <div class="tr-head">
+          <div>
+            <h3 class="tr-ptitle" data-tr-title></h3>
+            <p class="tr-sub" data-tr-sub></p>
+          </div>
+          <div class="tr-tools">
+            <button class="tlink" type="button" data-tr-export>Save a copy</button>
+            <button class="tlink" type="button" data-tr-reset>Load a different plan</button>
+          </div>
+        </div>
+
+        <div class="tr-tabs" role="group" aria-label="View">
+          <button type="button" data-tr-view="day" aria-pressed="true">Today's plate</button>
+          <button type="button" data-tr-view="week" aria-pressed="false">Whole week</button>
+          <button type="button" data-tr-view="shop" aria-pressed="false">Shopping</button>
+        </div>
+
+        <div data-tr-pane="day">
+          <div class="tr-days" data-tr-days role="group" aria-label="Day"></div>
+          <label class="tr-toggle"><input type="checkbox" data-tr-onlyhave> Only show meals I can make with what's in my kitchen</label>
+          <div class="tr-slots" data-tr-slots></div>
+          <div class="row mt-m">
+            <button class="btn ghost" type="button" data-tr-clear>Clear day</button>
+            <button class="btn lilac" type="button" data-tr-surprise>Surprise me</button>
+          </div>
+        </div>
+
+        <div data-tr-pane="week" hidden><div class="tr-weekgrid" data-tr-week></div></div>
+
+        <div data-tr-pane="shop" hidden>
+          <p class="tr-note" data-tr-shopintro></p>
+          <div data-tr-shop></div>
+        </div>
+
+        <!-- Totals for the chosen day -->
+        <div class="tr-track" aria-live="polite">
+          <div class="tr-bar"><div class="tr-top"><span>Calories</span><b data-tr-cal>0</b></div>
+            <div class="tr-rail"><div class="tr-fill" data-tr-calfill></div></div></div>
+          <div class="tr-bar"><div class="tr-top"><span>Protein</span><b data-tr-pro>0g</b></div>
+            <div class="tr-rail"><div class="tr-fill p" data-tr-profill></div></div></div>
+          <p class="tr-hint" data-tr-hint></p>
+        </div>
+      </div>
+
+      <!-- The picker -->
+      <div class="tr-sheet" data-tr-sheet hidden role="dialog" aria-modal="true" aria-labelledby="tr-sheet-title">
+        <div class="tr-panel">
+          <header>
+            <div class="tr-sheet-top">
+              <h2 id="tr-sheet-title" data-tr-sheet-title></h2>
+              <button class="tr-x" type="button" data-tr-close aria-label="Close">&times;</button>
+            </div>
+            <p class="tr-note" data-tr-sheet-note></p>
+          </header>
+          <div class="tr-options" data-tr-options></div>
+          <div class="tr-sheet-foot"><button class="btn ghost block" type="button" data-tr-remove>Remove this pick</button></div>
+        </div>
+      </div>
+
+      <p class="measured mt-l">General guidance only — follow the plan your dietitian gave you.
+        <a class="tr-template" href="data/plans/meal-plan-template.csv" download>Spreadsheet template (for Fatima)</a></p>
     </div>
   </section>
 
@@ -426,7 +524,9 @@
 <script src="data/packages.js"></script>
 <script src="data/testimonials.js"></script>
 <script src="data/posts.js"></script>
+<script src="data/sample-plan.js"></script>
 <script src="assets/js/site.js" defer></script>
+<script src="assets/js/tracker.js" defer></script>
 <script src="assets/js/motion.js" defer></script>
 </body>
 </html>

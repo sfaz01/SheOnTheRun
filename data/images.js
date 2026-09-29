@@ -12,9 +12,11 @@
    ========================================================================== */
 
 window.SITE_IMAGES = {
+  "about-armchair": { w: [480, 748], r: 1.1911, alt: "Fatima seated in a teal armchair by a bookshelf, smiling" },
   "about-cafe": { w: [480, 960], r: 0.8, alt: "Fatima at a cafe in Beirut" },
   "about-coffee": { w: [480, 960, 1440], r: 0.8, alt: "Fatima with a coffee among the palms" },
   "about-human": { w: [480, 960, 1440], r: 0.75, alt: "Fatima reading, off duty" },
+  "about-lotus": { w: [480, 960, 1440, 2000], r: 2.048, alt: "A white lotus in bloom with morning water droplets" },
   "about-professional": { w: [480, 960], r: 0.75, alt: "Fatima Mouzahem in Beirut at night, the Grand Serail lit behind her" },
   "about-reading": { w: [480, 960, 1440], r: 0.8, alt: "Fatima reading in a quiet corner" },
   "china-flags": { w: [480, 960, 1440], r: 0.8, alt: "Fatima seated among international flags during her studies in China" },
@@ -22,6 +24,7 @@ window.SITE_IMAGES = {
   "china-graduation": { w: [480, 960, 1440, 2000], r: 1.5, alt: "Fatima at the closing ceremony of her studies in China" },
   "china-pavilion": { w: [480, 960, 1440], r: 0.8, alt: "A garden pavilion hung with red lanterns in China" },
   "china-summer-school": { w: [480, 960, 1440, 2000], r: 1.5, alt: "Study in China International Summer School, Shanghai University of Traditional Chinese Medicine" },
+  "dotr-cafe": { w: [480, 960, 1440], r: 0.7261, alt: "Fatima Mouzahem at a cafe in Beirut, smiling over a cappuccino" },
   "dotr-detail": { w: [480, 960, 1440], r: 0.8, alt: "A SheOnTheRun chalkboard and a drink among flowers" },
   "dotr-hero": { w: [480, 960, 1440], r: 1.7778, alt: "Fatima Mouzahem, licensed dietitian, in a quiet corner in Beirut" },
   "dotr-portrait": { w: [480, 960, 1440], r: 0.8, alt: "Fatima Mouzahem, licensed dietitian, seated with a book" },

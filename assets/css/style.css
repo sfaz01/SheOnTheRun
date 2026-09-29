@@ -83,7 +83,9 @@ html.lenis body, html.lenis-smooth body, html.lenis-on body {
 .lenis.lenis-stopped {
   overflow: hidden;
 }
-.lenis.lenis-smooth iframe {
+/* Only while a smooth scroll is actually running — otherwise embedded frames
+   (the map, a client's meal plan) could never be clicked. */
+.lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
 
@@ -2084,7 +2086,11 @@ picture { display: contents; }
 [dir="rtl"] .nav .btn { margin-left: 0; margin-right: .75rem; }
 [dir="rtl"] .btn::before { transform: translateX(101%); }
 [dir="rtl"] .btn:hover::before, [dir="rtl"] .btn:focus-visible::before { transform: none; }
-[dir="rtl"] .btn:hover .arw, [dir="rtl"] .tlink:hover .arw { transform: translateX(-4px); }
+/* Arrows are written once, pointing forward (→); a right-to-left page turns
+   them round, so "forward" and "back" always point the way the reader reads. */
+[dir="rtl"] .arw { display: inline-block; transform: scaleX(-1); }
+[dir="rtl"] .btn:hover .arw, [dir="rtl"] .tlink:hover .arw,
+[dir="rtl"] .fit-opt:hover .arw { transform: scaleX(-1) translateX(4px); }
 [dir="rtl"] .tlink::after { transform-origin: left; }
 [dir="rtl"] .nav a::after { transform-origin: right; }
 [dir="rtl"] .stage-media::after {
@@ -2135,6 +2141,50 @@ picture { display: contents; }
 }
 @media (max-width: 767px) {
   .stage-portrait .stage-media img { object-position: 50% 12%; }
+}
+
+/* ---- About hero: White lotus in bloom --------------------------------------- */
+.stage-lotus {
+  background: #0B1013;
+  min-height: min(88svh, 820px);
+  display: flex;
+  align-items: center;
+}
+.stage-lotus .stage-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.stage-lotus .stage-media picture,
+.stage-lotus .stage-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+  filter: none;
+}
+.stage-lotus .stage-media::after {
+  display: none;
+}
+.stage-lotus .stage-scroll {
+  display: none;
+}
+@media (max-width: 767px) {
+  .stage-lotus {
+    min-height: 82svh;
+    align-items: flex-end;
+  }
+  .stage-lotus .stage-media img {
+    object-position: 72% center;
+  }
+  .stage-lotus .stage-media::after {
+    display: block;
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(11,16,19,0.95) 0%, rgba(11,16,19,0.75) 45%, rgba(11,16,19,0.2) 100%);
+  }
 }
 
 /* ---- One photograph where there used to be three --------------------------- */
@@ -2281,21 +2331,6 @@ picture { display: contents; }
 }
 .focus-plain .focus h3 { margin-top: 1rem; }
 
-/* ---- DietOnTheRun: the tracker invitation -------------------------------- */
-.tracker-cta {
-  display: grid; gap: 1.75rem;
-  padding: clamp(1.75rem, 5vw, 3.25rem);
-  border-radius: 6px;
-  border: 1px solid rgba(116,103,207,.22);
-  background:
-    radial-gradient(100% 140% at 100% 0%, rgba(179,176,248,.34), transparent 60%),
-    radial-gradient(100% 140% at 0% 100%, rgba(98,197,215,.18), transparent 60%),
-    var(--paper-2);
-}
-@media (min-width: 900px) {
-  .tracker-cta { grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); align-items: center; gap: 3rem; }
-  .tracker-cta .row { justify-content: flex-end; }
-}
 
 /* ---- A simple photo carousel (Public Health) ------------------------------ */
 .car-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.25rem; }
@@ -2327,7 +2362,7 @@ picture { display: contents; }
 .product .pr-cat { margin-top: .85rem; }
 .product h3 { margin-top: .35rem; }
 .product .pr-foot { margin-top: 1rem; flex-wrap: wrap; }
-.product .pr-foot .btn { margin-top: 0; margin-left: auto; border-radius: 100px; }
+.product .pr-foot .btn { margin-top: 0; margin-inline-start: auto; border-radius: 100px; }
 .product .pr-price.ask { font-size: .75rem; max-width: 12ch; line-height: 1.3; }
 
 /* Coming soon: her logo, in her colours, instead of a photograph. */
@@ -2539,7 +2574,7 @@ picture { display: contents; }
 }
 
 /* Ghost buttons need an edge on the stronger gradient panel. */
-.discovery .btn.ghost, .tracker-cta .btn.ghost { border-color: rgba(116,103,207,.4); background: rgba(255,255,255,.55); }
+.discovery .btn.ghost { border-color: rgba(116,103,207,.4); background: rgba(255,255,255,.55); }
 
 /* Until (or unless) the scroll-pinned motion takes over, the photo run can be
    swiped or scrolled sideways, so no frame is ever out of reach. */
@@ -2547,3 +2582,53 @@ picture { display: contents; }
 .shop-top .glow { -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent); mask-image: linear-gradient(to bottom, #000 45%, transparent); }
 .tr-empty[hidden], .tr-app[hidden], [data-tr-pane][hidden] { display: none; }
 @media (max-width: 559px) { .tr-days { gap: .25rem; } .tr-day { min-width: 0; padding-inline: .1rem; font-size: .8rem; } }
+
+/* ---- A plan made in Claude, running on the DietOnTheRun page -------------
+   It was built for a phone, so it sits in a phone-width frame on a laptop
+   (with a full-screen option) and fills the width on a phone. */
+.tr-html { max-width: 44rem; margin-inline: auto; }
+.tr-htitle, .tr-ptitle { font-size: clamp(1.6rem, 3.4vw, 2.3rem); }
+.tr-frame {
+  position: relative; margin-top: 1.25rem;
+  width: 100%; max-width: 30rem; margin-inline: auto;
+  height: min(86svh, 880px);
+  border-radius: 22px; overflow: hidden;
+  border: 1px solid rgba(116,103,207,.3);
+  background: #DFD0F7;
+  box-shadow: 0 30px 60px -36px rgba(51,35,90,.55);
+}
+.tr-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
+@media (max-width: 559px) { .tr-frame { max-width: none; border-radius: 16px; } }
+.tr-frame.full {
+  position: fixed; inset: 0; z-index: 330; margin: 0;
+  max-width: none; height: 100%; border-radius: 0; border: 0;
+}
+.tr-exit { position: absolute; top: .6rem; right: .6rem; z-index: 2; }
+.tr-exit[hidden] { display: none; }
+.tr-template { margin-left: .5rem; color: var(--lilac-deep); text-transform: none; letter-spacing: 0; font-weight: 500; }
+.tr-html[hidden] { display: none; }
+
+/* ---- Right-to-left: the Version 2 components ------------------------------- */
+[dir="rtl"] .tl-rail { left: auto; right: calc(-1 * clamp(1.25rem, 2.5vw, 2.5rem)); }
+[dir="rtl"] .select { background-position: 7px 55%, 12px 55%; padding-right: 0; padding-left: 1.5rem; }
+[dir="rtl"] .tr-exit { right: auto; left: .6rem; }
+[dir="rtl"] .tr-template, [dir="rtl"] .route { letter-spacing: 0; }
+@media (min-width: 768px) {
+  [dir="rtl"] .oq-portrait .oq-media .fig {
+    right: auto; left: max(4%, calc((100% - 1360px) / 2));
+    -webkit-mask-image: linear-gradient(to left, transparent 0, #000 18%, #000 88%, transparent 100%);
+            mask-image: linear-gradient(to left, transparent 0, #000 18%, #000 88%, transparent 100%);
+  }
+}
+/* Latin words inside Arabic text (brand names, emails) keep their own face. */
+[dir="rtl"] .emails a, [dir="rtl"] .route b { direction: ltr; unicode-bidi: isolate; }
+
+/* Right-to-left: list dashes sit at the start of the line (the right). */
+[dir="rtl"] .service .s-inc li, [dir="rtl"] .pack .p-inc li,
+[dir="rtl"] .challenge .c-inc li, [dir="rtl"] .fit-inc li { padding-left: 0; padding-right: 1.15rem; }
+[dir="rtl"] .service .s-inc li::before, [dir="rtl"] .pack .p-inc li::before,
+[dir="rtl"] .challenge .c-inc li::before, [dir="rtl"] .fit-inc li::before { left: auto; right: 0; }
+[dir="rtl"] .ledger li + li::before { left: auto; right: -1rem; }
+/* The lotus hero is dark on its left, where English text sits; mirrored, the
+   dark side falls behind the right-aligned Arabic text instead. */
+[dir="rtl"] .stage-lotus .stage-media img { transform: scaleX(-1); }

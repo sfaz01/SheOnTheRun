@@ -1,0 +1,450 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fatima's Plate — Back on the Run</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lilac:#DFD0F7;
+  --lilac-deep:#C9B2EE;
+  --ink:#33235A;
+  --ink-soft:#6B5C92;
+  --cyan:#A9E4EE;
+  --teal:#4FC3D6;
+  --violet:#9A78D6;
+  --card:#FFFDFB;
+  --line:rgba(51,35,90,.14);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--lilac);
+  color:var(--ink);
+  font-family:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:16px;line-height:1.45;
+  padding-bottom:180px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px 0}
+
+/* ---------- header ---------- */
+h1{
+  font-family:'Caveat Brush','Outfit',cursive;
+  font-size:2.6rem;line-height:.95;margin:0;letter-spacing:.5px;
+}
+.sub{margin:6px 0 16px;color:var(--ink-soft);font-size:.92rem}
+.sub b{font-weight:600;color:var(--ink)}
+
+/* ---------- day strip ---------- */
+.days{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{
+  flex:1 0 auto;min-width:58px;border:1px solid var(--line);background:transparent;
+  color:var(--ink);font:inherit;font-size:.9rem;font-weight:500;
+  padding:9px 4px;border-radius:12px;cursor:pointer;text-align:center;
+}
+.day .dot{display:block;height:4px;width:4px;border-radius:50%;background:var(--teal);margin:4px auto 0;opacity:0}
+.day.filled .dot{opacity:1}
+.day[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.day[aria-pressed="true"] .dot{background:var(--cyan)}
+
+/* ---------- slots ---------- */
+.slots{margin-top:14px;display:flex;flex-direction:column;gap:9px}
+.slot{
+  background:var(--card);border-radius:16px;padding:13px 14px;border:1px solid transparent;
+  display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;
+}
+.slot:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+.slot .meta{flex:1;min-width:0}
+.slot .label{font-size:.78rem;color:var(--ink-soft);display:flex;align-items:center;gap:6px}
+.slot .label i{width:7px;height:7px;border-radius:50%;background:var(--teal);display:inline-block;font-style:normal}
+.slot .name{font-weight:600;font-size:1.02rem;margin-top:2px;overflow-wrap:anywhere}
+.slot.empty .name{font-weight:400;color:var(--ink-soft)}
+.slot .macro{font-size:.8rem;color:var(--ink-soft);margin-top:2px;font-variant-numeric:tabular-nums}
+.slot .kcal{font-family:'Caveat Brush',cursive;font-size:1.5rem;color:var(--violet);line-height:1}
+.slot .kcal small{display:block;font-family:'Outfit';font-size:.6rem;color:var(--ink-soft);letter-spacing:.04em}
+.have{font-size:.72rem;color:#1f7a5c;font-weight:500}
+
+.rowbtns{display:flex;gap:8px;margin:14px 0 8px}
+.btn{
+  flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);
+  font:inherit;font-size:.9rem;font-weight:500;padding:11px;border-radius:12px;cursor:pointer;
+}
+.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn:active{transform:translateY(1px)}
+
+.toggle{display:flex;align-items:center;gap:9px;margin:2px 0 4px;font-size:.88rem;color:var(--ink-soft)}
+.toggle input{width:18px;height:18px;accent-color:var(--violet)}
+
+/* ---------- the track (totals) ---------- */
+.track{
+  position:fixed;left:0;right:0;bottom:0;background:var(--cyan);
+  border-top-left-radius:20px;border-top-right-radius:20px;
+  padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+  box-shadow:0 -8px 24px rgba(51,35,90,.13);
+}
+.track .inner{max-width:560px;margin:0 auto}
+.bar{margin-bottom:9px}
+.bar .top{display:flex;justify-content:space-between;align-items:baseline;font-size:.84rem}
+.bar .top b{font-size:1.02rem;font-variant-numeric:tabular-nums}
+.rail{height:9px;border-radius:5px;background:rgba(51,35,90,.15);position:relative;overflow:hidden;margin-top:5px}
+.fill{height:100%;border-radius:5px;background:var(--ink);width:0;transition:width .35s cubic-bezier(.4,0,.2,1)}
+.fill.p{background:var(--violet)}
+.fill.over{background:#D0705E}
+.flag{position:absolute;top:-5px;font-size:.8rem;transform:translateX(-50%)}
+.hint{font-size:.8rem;color:var(--ink-soft);margin:0}
+
+/* ---------- sheet ---------- */
+.sheet{position:fixed;inset:0;background:rgba(51,35,90,.45);display:none;z-index:20}
+.sheet.open{display:block}
+.panel{
+  position:absolute;left:0;right:0;bottom:0;max-height:88vh;background:var(--lilac);
+  border-top-left-radius:22px;border-top-right-radius:22px;display:flex;flex-direction:column;
+}
+.panel header{padding:16px 16px 8px;border-bottom:1px solid var(--line)}
+.panel h2{font-family:'Caveat Brush',cursive;font-size:1.8rem;margin:0;font-weight:400}
+.panel .note{font-size:.84rem;color:var(--ink-soft);margin:2px 0 10px}
+.list{overflow-y:auto;padding:10px 16px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px}
+.opt{
+  background:var(--card);border:1px solid transparent;border-radius:14px;padding:12px 13px;
+  text-align:left;font:inherit;color:inherit;cursor:pointer;display:flex;gap:10px;align-items:flex-start;
+}
+.opt[aria-pressed="true"]{border-color:var(--violet);background:#fff}
+.opt .o-name{font-weight:600;font-size:.98rem}
+.opt .o-sub{font-size:.8rem;color:var(--ink-soft);margin-top:2px;font-variant-numeric:tabular-nums}
+.opt .o-cal{margin-left:auto;font-family:'Caveat Brush',cursive;font-size:1.3rem;color:var(--violet);white-space:nowrap}
+.closebar{display:flex;gap:8px;padding:0 16px 8px}
+
+/* ---------- week + shopping views ---------- */
+.view{display:none}
+.view.on{display:block}
+.wk{background:var(--card);border-radius:16px;padding:12px 14px;margin-bottom:8px}
+.wk h3{font-family:'Caveat Brush',cursive;font-weight:400;font-size:1.45rem;margin:0 0 4px}
+.wk .li{font-size:.9rem;padding:3px 0;border-bottom:1px dotted var(--line);display:flex;gap:8px}
+.wk .li:last-child{border:0}
+.wk .li span{color:var(--ink-soft);min-width:74px;font-size:.8rem}
+.shoplist{background:var(--card);border-radius:16px;padding:6px 14px}
+.shoplist label{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:.95rem;cursor:pointer}
+.shoplist label:last-child{border:0}
+.shoplist input{width:19px;height:19px;accent-color:var(--teal)}
+.shoplist input:checked + span{text-decoration:line-through;color:var(--ink-soft)}
+.empty-note{color:var(--ink-soft);font-size:.9rem;padding:14px 2px}
+.tabs{display:flex;gap:6px;margin:16px 0 12px}
+.tab{flex:1;padding:9px;border-radius:11px;border:1px solid var(--line);background:transparent;font:inherit;font-size:.88rem;color:var(--ink);cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <h1>Fatima's plate</h1>
+  <p class="sub">One pick per meal. Target <b>1700 kcal</b> · <b>110–126g protein</b> · 6 starch, 2 milk, 7 protein, 2 snack.</p>
+
+  <div class="tabs">
+    <button class="tab" data-view="day" aria-pressed="true">Today's plate</button>
+    <button class="tab" data-view="week" aria-pressed="false">Whole week</button>
+    <button class="tab" data-view="shop" aria-pressed="false">Shopping</button>
+  </div>
+
+  <!-- DAY VIEW -->
+  <section class="view on" id="view-day">
+    <div class="days" id="days"></div>
+    <label class="toggle"><input type="checkbox" id="onlyHave"> Only show meals I can cook right now</label>
+    <div class="slots" id="slots"></div>
+    <div class="rowbtns">
+      <button class="btn" id="clearDay">Clear day</button>
+      <button class="btn dark" id="surprise">Surprise me</button>
+    </div>
+  </section>
+
+  <!-- WEEK VIEW -->
+  <section class="view" id="view-week"><div id="weekBody"></div></section>
+
+  <!-- SHOPPING VIEW -->
+  <section class="view" id="view-shop">
+    <p class="sub" id="shopIntro"></p>
+    <div id="shopBody"></div>
+  </section>
+</div>
+
+<!-- totals track -->
+<div class="track">
+  <div class="inner">
+    <div class="bar">
+      <div class="top"><span>Calories</span><b><span id="calNow">0</span> / 1700</b></div>
+      <div class="rail"><div class="fill" id="calFill"></div><span class="flag" id="calFlag" style="left:100%">🏁</span></div>
+    </div>
+    <div class="bar">
+      <div class="top"><span>Protein</span><b><span id="proNow">0</span> / 110–126g</b></div>
+      <div class="rail"><div class="fill p" id="proFill"></div><span class="flag" style="left:87%">🏁</span></div>
+    </div>
+    <p class="hint" id="hint">Pick a breakfast to start.</p>
+  </div>
+</div>
+
+<!-- picker sheet -->
+<div class="sheet" id="sheet">
+  <div class="panel">
+    <header>
+      <h2 id="sheetTitle">Breakfast</h2>
+      <p class="note" id="sheetNote"></p>
+    </header>
+    <div class="closebar">
+      <button class="btn" id="removePick">Remove pick</button>
+      <button class="btn dark" id="closeSheet">Done</button>
+    </div>
+    <div class="list" id="options"></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- pantry ---------------- */
+const PANTRY = ["chicken breast","chicken legs","mushrooms","kale","tuna","eggs","greek yogurt","laban","milk","bell peppers","cauliflower","onion","garlic","tannour bread","pita bread","potato","sweet potato","jasmine rice","shrimp","minced beef","hamburger"];
+/* staples assumed on hand and never added to the shopping list */
+const STAPLES = ["salt","pepper","olive oil","lemon","spices","za'atar","cumin","paprika","mustard","soy sauce","vinegar","coffee","cinnamon"];
+
+/* ---------------- meals ---------------- */
+/* n=name, k=kcal, c/p/f macros, i=shopping items, h=cookable from her kitchen today */
+const M = {
+breakfast:[
+ {n:"Eggs & mushroom scramble + tannour",k:300,c:26,p:22,f:13,i:["eggs","mushrooms","tannour bread","onion"],h:1},
+ {n:"Boiled eggs + bread choice",k:300,c:27,p:21,f:12,i:["eggs","tannour bread","cucumber","tomato"],h:1},
+ {n:"Eggs with kale & garlic + pita",k:300,c:24,p:21,f:14,i:["eggs","kale","garlic","pita bread"],h:1},
+ {n:"Greek yogurt protein pancakes",k:300,c:28,p:24,f:9,i:["greek yogurt","eggs","oats"],h:0},
+ {n:"Protein overnight oats",k:300,c:30,p:23,f:8,i:["oats","greek yogurt","milk","chia seeds"],h:0},
+ {n:"Za'atar labneh wrap",k:300,c:26,p:20,f:13,i:["pita bread","labneh","cucumber","tomato"],h:0},
+ {n:"Feta, tomato & egg skillet",k:300,c:22,p:21,f:15,i:["eggs","feta","tomato","tannour bread"],h:0},
+ {n:"Halloumi pesto wrap",k:300,c:25,p:22,f:14,i:["pita bread","halloumi","pesto","lettuce","tomato"],h:0},
+ {n:"Cottage cheese & honey toast with walnuts",k:300,c:29,p:22,f:10,i:["toast bread","cottage cheese","honey","walnuts"],h:0},
+ {n:"Turkey & cheese breakfast wrap",k:300,c:24,p:23,f:13,i:["pita bread","turkey breast","light cheese","lettuce"],h:0},
+ {n:"Mini man'oushe (akkawi & za'atar)",k:300,c:26,p:20,f:14,i:["pita bread","akkawi cheese"],h:0},
+ {n:"Eggs & avocado sourdough toast",k:300,c:24,p:20,f:15,i:["sourdough","eggs","avocado"],h:0}
+],
+coffee:[
+ {n:"1 cup skimmed milk + coffee",k:100,c:12,p:8,f:1,i:["milk"],h:1},
+ {n:"1 cup low-fat Greek yogurt",k:100,c:10,p:14,f:2,i:["greek yogurt"],h:1},
+ {n:"1 cup low-fat yogurt (laban)",k:100,c:12,p:8,f:2,i:["laban"],h:1},
+ {n:"Cappuccino with skimmed milk",k:100,c:11,p:7,f:2,i:["milk"],h:1},
+ {n:"Nescafé 2-in-1 (2 cups)",k:100,c:14,p:2,f:4,i:["nescafé sachets"],h:0},
+ {n:"Skip — black coffee or tea",k:0,c:0,p:0,f:0,i:[],h:1}
+],
+lunch:[
+ {n:"Tawook skewers with pita & grilled veg",k:500,c:45,p:38,f:16,i:["chicken breast","pita bread","bell peppers","onion","laban"],h:1},
+ {n:"One-pan chicken fajita bowl",k:500,c:43,p:35,f:15,i:["chicken breast","jasmine rice","bell peppers","onion"],h:1},
+ {n:"Chicken fajita wraps",k:500,c:44,p:34,f:16,i:["chicken breast","pita bread","bell peppers","onion"],h:1},
+ {n:"Chicken stir-fry with rice",k:500,c:48,p:34,f:14,i:["chicken breast","jasmine rice","mushrooms","bell peppers","onion"],h:1},
+ {n:"Beef kafta with rice & grilled veg",k:500,c:44,p:34,f:18,i:["minced beef","jasmine rice","onion","bell peppers"],h:1},
+ {n:"Lemon herb baked chicken & potato",k:500,c:42,p:36,f:17,i:["chicken legs","potato","garlic"],h:1},
+ {n:"Sweet potato & chicken leg tray",k:500,c:45,p:35,f:17,i:["chicken legs","sweet potato","onion","garlic"],h:1},
+ {n:"Shrimp & garlic rice with peppers",k:500,c:50,p:33,f:16,i:["shrimp","jasmine rice","bell peppers","garlic"],h:1},
+ {n:"Tuna & baked potato bowl",k:460,c:44,p:33,f:14,i:["tuna","potato","bell peppers"],h:1},
+ {n:"Tuna melt on tannour with mushrooms",k:420,c:40,p:30,f:12,i:["tuna","tannour bread","mushrooms","onion"],h:1},
+ {n:"Potato with minced meat & yogurt",k:500,c:46,p:28,f:18,i:["potato","minced beef","onion","laban"],h:1},
+ {n:"Burger plate with sweet potato wedges",k:500,c:42,p:32,f:20,i:["hamburger","sweet potato","kale","onion"],h:1},
+ {n:"Kale & cauliflower chicken tray",k:450,c:30,p:40,f:16,i:["chicken breast","cauliflower","kale","onion"],h:1},
+ {n:"Mushroom, kale & egg rice skillet",k:480,c:52,p:24,f:16,i:["jasmine rice","mushrooms","kale","eggs","onion"],h:1},
+ {n:"Chicken shawarma power bowl",k:500,c:46,p:36,f:15,i:["chicken breast","jasmine rice","salad greens","pickles"],h:0},
+ {n:"Grilled chicken fattoush bowl",k:500,c:40,p:36,f:16,i:["chicken breast","salad greens","cucumber","tomato","radish","pita bread"],h:0},
+ {n:"Loubieh w rez",k:500,c:52,p:32,f:16,i:["green beans","minced beef","jasmine rice","laban"],h:0},
+ {n:"Fasoulya (white beans) with rice",k:500,c:58,p:26,f:12,i:["white beans","minced beef","jasmine rice"],h:0},
+ {n:"Mujadara with salad & yogurt",k:500,c:62,p:22,f:14,i:["lentils","jasmine rice","onion","laban"],h:0},
+ {n:"Lentil soup with grilled cheese side",k:500,c:50,p:24,f:16,i:["lentils","toast bread","light cheese"],h:0},
+ {n:"Coussa mehchi (3 pcs) with yogurt",k:500,c:48,p:30,f:17,i:["zucchini","jasmine rice","minced beef","tomato sauce","laban"],h:0},
+ {n:"Baked kibbeh with yogurt side",k:500,c:46,p:30,f:18,i:["kibbeh","laban","salad greens"],h:0},
+ {n:"Grilled fish with rice & roasted veg",k:500,c:44,p:34,f:15,i:["white fish","jasmine rice","mixed vegetables"],h:0},
+ {n:"Shrimp pasta with red sauce",k:500,c:55,p:28,f:12,i:["shrimp","whole wheat pasta","tomato sauce"],h:0},
+ {n:"Tuna pasta salad",k:500,c:50,p:32,f:14,i:["tuna","whole wheat pasta","cherry tomato","cucumber","olives"],h:0},
+ {n:"Quinoa tabbouleh with grilled chicken",k:500,c:42,p:35,f:15,i:["chicken breast","quinoa","parsley","mint","tomato"],h:0},
+ {n:"Chicken caesar salad with WW croutons",k:500,c:34,p:38,f:18,i:["chicken breast","romaine","croutons","parmesan"],h:0},
+ {n:"Turkey & hummus wrap with side salad",k:500,c:46,p:30,f:15,i:["pita bread","turkey breast","hommos","salad greens"],h:0},
+ {n:"Baked falafel & salad bowl with tahini",k:500,c:52,p:22,f:16,i:["falafel","tahini","pita bread","salad greens"],h:0}
+],
+snack2:[
+ {n:"Hard-boiled egg & fruit",k:150,c:15,p:9,f:6,i:["eggs","apples"],h:0},
+ {n:"Kale chips",k:100,c:10,p:4,f:5,i:["kale"],h:1},
+ {n:"Roasted cauliflower bites",k:90,c:14,p:4,f:3,i:["cauliflower"],h:1},
+ {n:"Pepper strips & yogurt-garlic dip",k:110,c:12,p:8,f:3,i:["bell peppers","laban","garlic"],h:1},
+ {n:"Yogurt & cucumber with mint",k:110,c:10,p:8,f:3,i:["laban","cucumber","mint"],h:0},
+ {n:"1 medium apple or banana",k:100,c:25,p:0,f:0,i:["fruit"],h:0},
+ {n:"12 almonds",k:100,c:4,p:4,f:9,i:["almonds"],h:0},
+ {n:"Labneh & cucumber za'atar bites",k:110,c:6,p:8,f:6,i:["labneh","cucumber"],h:0},
+ {n:"Veggie sticks with hommos",k:130,c:14,p:5,f:6,i:["carrots","cucumber","bell peppers","hommos"],h:0},
+ {n:"Spiced roasted chickpeas",k:120,c:18,p:6,f:3,i:["chickpeas"],h:0},
+ {n:"Termos (lupini beans)",k:119,c:10,p:16,f:3,i:["termos"],h:0},
+ {n:"Unshelled edamame",k:100,c:10,p:11,f:5,i:["edamame"],h:0},
+ {n:"Popcorn (3 cups)",k:100,c:17,p:2,f:3,i:["popcorn kernels"],h:0},
+ {n:"Jazar w hamod (carrot with lemon)",k:94,c:24,p:3,f:1,i:["carrots"],h:0},
+ {n:"Rice cake + labneh",k:140,c:16,p:7,f:5,i:["rice cakes","labneh"],h:0},
+ {n:"Dark chocolate square & almonds",k:140,c:12,p:3,f:9,i:["dark chocolate","almonds"],h:0},
+ {n:"2 fingers mini KitKat",k:100,c:12,p:1,f:5,i:["kitkat"],h:0},
+ {n:"Unica dark chocolate",k:100,c:12,p:1,f:5,i:["unica"],h:0},
+ {n:"Scoop of sorbet",k:100,c:22,p:0,f:1,i:["sorbet"],h:0}
+],
+snack3:[
+ {n:"1 cup low-fat Greek yogurt",k:100,c:10,p:14,f:2,i:["greek yogurt"],h:1},
+ {n:"1 cup low-fat yogurt (laban)",k:100,c:12,p:8,f:2,i:["laban"],h:1},
+ {n:"2 boiled eggs",k:140,c:1,p:12,f:10,i:["eggs"],h:1},
+ {n:"Yogurt & cucumber with mint",k:110,c:10,p:8,f:3,i:["laban","cucumber","mint"],h:0},
+ {n:"Protein shake",k:130,c:6,p:22,f:2,i:["protein powder","milk"],h:0},
+ {n:"Protein bar (≤200 kcal)",k:180,c:12,p:20,f:5,i:["protein bars"],h:0},
+ {n:"Taanayel Greek yogurt drink",k:110,c:12,p:10,f:2,i:["taanayel yogurt drink"],h:0},
+ {n:"Skip this one",k:0,c:0,p:0,f:0,i:[],h:1}
+],
+dinner:[]
+};
+/* dinner shares the lunch pool plus the light-dinner rules from the plan */
+M.dinner = M.lunch.concat([
+ {n:"Light dinner — yogurt, cucumber & herbs",k:120,c:12,p:9,f:3,i:["laban","cucumber"],h:1,light:1},
+ {n:"Light dinner — tannour + 50g cheese",k:200,c:15,p:12,f:10,i:["tannour bread","feta"],h:0,light:1},
+ {n:"Light dinner — rice cakes & tuna",k:250,c:33,p:28,f:3,i:["rice cakes","tuna"],h:0,light:1}
+]);
+
+const SLOTS=[
+ {id:"breakfast",label:"Breakfast",aim:"300 kcal · 1 starch + 2 protein + 1 milk for coffee",pool:"breakfast",color:"#4FC3D6"},
+ {id:"coffee",label:"Snack 1 / coffee",aim:"100 kcal · 1 milk exchange",pool:"coffee",color:"#9A78D6"},
+ {id:"lunch",label:"Lunch",aim:"500 kcal · 2 starch + 3 protein, or 2 mixed dishes + 1 protein",pool:"lunch",color:"#4FC3D6"},
+ {id:"snack2",label:"Snack 2",aim:"100–150 kcal · 1 fruit or a snack from the list",pool:"snack2",color:"#C97FB4"},
+ {id:"snack3",label:"Snack 3 / post-workout",aim:"100–150 kcal · 1 milk exchange or protein shake",pool:"snack3",color:"#9A78D6"},
+ {id:"dinner",label:"Dinner",aim:"500 kcal · 3 starch + 2 protein, or 2 mixed dishes + 1 protein",pool:"dinner",color:"#4FC3D6"}
+];
+const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+/* ---------------- state ---------------- */
+let plan={}, cur="Mon", openSlot=null, bought={};
+DAYS.forEach(d=>plan[d]={});
+
+async function save(){
+  try{ await window.storage.set("dotr-week", JSON.stringify({plan,bought})); }catch(e){}
+}
+async function load(){
+  try{
+    const r=await window.storage.get("dotr-week");
+    if(r&&r.value){const d=JSON.parse(r.value); if(d.plan)plan=d.plan; if(d.bought)bought=d.bought;}
+  }catch(e){}
+  render();
+}
+
+const el=id=>document.getElementById(id);
+const pool=s=>M[SLOTS.find(x=>x.id===s).pool];
+const pick=(d,s)=>{const i=plan[d][s]; return (i===undefined||i===null)?null:pool(s)[i];};
+
+/* ---------------- render ---------------- */
+function renderDays(){
+  el("days").innerHTML=DAYS.map(d=>{
+    const filled=Object.keys(plan[d]||{}).length>0;
+    return `<button class="day${filled?" filled":""}" data-day="${d}" aria-pressed="${d===cur}">${d}<i class="dot"></i></button>`;
+  }).join("");
+}
+function renderSlots(){
+  el("slots").innerHTML=SLOTS.map(s=>{
+    const m=pick(cur,s.id);
+    return `<button class="slot${m?"":" empty"}" data-slot="${s.id}">
+      <div class="meta">
+        <div class="label"><i style="background:${s.color}"></i>${s.label}</div>
+        <div class="name">${m?m.n:"Tap to choose"}</div>
+        <div class="macro">${m?`${m.c}C · ${m.p}P · ${m.f}F${m.h?' · <span class="have">in your kitchen</span>':""}`:s.aim}</div>
+      </div>
+      <div class="kcal">${m?m.k:"–"}<small>kcal</small></div>
+    </button>`;
+  }).join("");
+}
+function totals(d){
+  let k=0,p=0;
+  SLOTS.forEach(s=>{const m=pick(d,s.id); if(m){k+=m.k;p+=m.p;}});
+  return {k,p};
+}
+function renderTrack(){
+  const {k,p}=totals(cur);
+  el("calNow").textContent=k; el("proNow").textContent=p+"g";
+  const cf=el("calFill"), pf=el("proFill");
+  cf.style.width=Math.min(100,k/1700*100)+"%";
+  pf.style.width=Math.min(100,p/126*100)+"%";
+  cf.classList.toggle("over",k>1800);
+  pf.classList.toggle("over",false);
+  const n=SLOTS.filter(s=>pick(cur,s.id)).length;
+  let h;
+  if(n===0) h="Pick a breakfast to start.";
+  else if(n<6) h=`${6-n} meal${6-n>1?"s":""} left to choose.`;
+  else if(p<110) h=`Day's full but protein is ${110-p}g short — swap a snack for yogurt or eggs.`;
+  else if(k>1800) h=`${k-1700} kcal over — try the light dinner or drop a snack.`;
+  else h="Day's balanced. Nice one.";
+  el("hint").textContent=h;
+}
+function renderWeek(){
+  el("weekBody").innerHTML=DAYS.map(d=>{
+    const t=totals(d);
+    const rows=SLOTS.map(s=>{const m=pick(d,s.id); return m?`<div class="li"><span>${s.label.split(" /")[0]}</span>${m.n}</div>`:"";}).join("");
+    return `<div class="wk"><h3>${d}${t.k?` · ${t.k} kcal · ${t.p}g protein`:""}</h3>${rows||'<div class="empty-note">Nothing planned yet.</div>'}</div>`;
+  }).join("");
+}
+function renderShop(){
+  const need={}, mealsCount=[];
+  DAYS.forEach(d=>SLOTS.forEach(s=>{
+    const m=pick(d,s.id);
+    if(m){ mealsCount.push(m); m.i.forEach(x=>{ if(!PANTRY.includes(x)&&!STAPLES.includes(x)) need[x]=(need[x]||0)+1; }); }
+  }));
+  const items=Object.keys(need).sort((a,b)=>need[b]-need[a]||a.localeCompare(b));
+  el("shopIntro").textContent = mealsCount.length
+    ? `${mealsCount.length} meals planned. Everything below is what you don't already have — the number is how many meals need it.`
+    : "Plan some meals first and this fills itself.";
+  el("shopBody").innerHTML = items.length
+    ? `<div class="shoplist">${items.map(i=>`<label><input type="checkbox" data-item="${i}" ${bought[i]?"checked":""}><span>${i}${need[i]>1?` · ${need[i]} meals`:""}</span></label>`).join("")}</div>`
+    : `<p class="empty-note">${mealsCount.length?"Nothing to buy — your whole week runs on what's in the kitchen.":""}</p>`;
+}
+function render(){renderDays();renderSlots();renderTrack();renderWeek();renderShop();}
+
+/* ---------------- picker ---------------- */
+function openPicker(slotId){
+  openSlot=slotId;
+  const s=SLOTS.find(x=>x.id===slotId);
+  el("sheetTitle").textContent=s.label;
+  el("sheetNote").textContent=s.aim;
+  const onlyHave=el("onlyHave").checked;
+  const list=pool(slotId).map((m,idx)=>({m,idx})).filter(o=>!onlyHave||o.m.h);
+  el("options").innerHTML=list.length?list.map(o=>`
+    <button class="opt" data-idx="${o.idx}" aria-pressed="${plan[cur][slotId]===o.idx}">
+      <div><div class="o-name">${o.m.n}</div>
+      <div class="o-sub">${o.m.c}C · ${o.m.p}P · ${o.m.f}F${o.m.h?' · <span class="have">in your kitchen</span>':""}</div></div>
+      <div class="o-cal">${o.m.k}</div>
+    </button>`).join("")
+    : `<p class="empty-note">Nothing here you can cook with what's in the kitchen. Untick the filter to see the full guide.</p>`;
+  el("sheet").classList.add("open");
+  el("options").scrollTop=0;
+}
+function closePicker(){el("sheet").classList.remove("open");openSlot=null;}
+
+/* ---------------- events ---------------- */
+document.addEventListener("click",e=>{
+  const day=e.target.closest("[data-day]");
+  if(day){cur=day.dataset.day;render();return;}
+  const slot=e.target.closest("[data-slot]");
+  if(slot){openPicker(slot.dataset.slot);return;}
+  const opt=e.target.closest(".opt");
+  if(opt&&openSlot){plan[cur][openSlot]=+opt.dataset.idx;save();render();closePicker();return;}
+  const tab=e.target.closest(".tab");
+  if(tab){
+    document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-pressed",t===tab));
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("on"));
+    el("view-"+tab.dataset.view).classList.add("on");
+  }
+});
+el("sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closePicker();});
+el("closeSheet").onclick=closePicker;
+el("removePick").onclick=()=>{if(openSlot){delete plan[cur][openSlot];save();render();closePicker();}};
+el("clearDay").onclick=()=>{plan[cur]={};save();render();};
+el("onlyHave").onchange=()=>{if(openSlot)openPicker(openSlot);};
+el("surprise").onclick=()=>{
+  const onlyHave=el("onlyHave").checked;
+  SLOTS.forEach(s=>{
+    let cand=pool(s.id).map((m,i)=>({m,i})).filter(o=>!onlyHave||o.m.h).filter(o=>!o.m.light);
+    if(s.id==="dinner"){const used=plan[cur].lunch; cand=cand.filter(o=>o.i!==used);}
+    if(!cand.length)return;
+    plan[cur][s.id]=cand[Math.floor(Math.random()*cand.length)].i;
+  });
+  save();render();
+};
+document.addEventListener("change",e=>{
+  if(e.target.dataset.item){bought[e.target.dataset.item]=e.target.checked;save();}
+});
+load();
+</script>

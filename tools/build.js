@@ -18,6 +18,10 @@ const OUT = process.argv[2] || "_site";
 const ROOT = path.join(__dirname, "..");
 const SITE_URL = "https://sheontherun.com/";
 
+if (!fs.existsSync(OUT)) {
+  fs.mkdirSync(OUT, { recursive: true });
+}
+
 const sandbox = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, "data/posts.js"), "utf8"), sandbox);
 const posts = (sandbox.window.SITE_POSTS || [])
@@ -57,7 +61,9 @@ ${items}
 const pages = [
   ["", "1.0"], ["dietontherun.html", "0.9"], ["about.html", "0.8"],
   ["sheontherun.html", "0.8"], ["public-health.html", "0.8"], ["shop.html", "0.7"],
-  ["connect.html", "0.7"], ["journal/", "0.6"], ["ar/", "0.7"]
+  ["connect.html", "0.7"], ["journal/", "0.6"], ["ar/", "0.7"],
+  ["ar/about.html", "0.6"], ["ar/dietontherun.html", "0.7"], ["ar/sheontherun.html", "0.6"],
+  ["ar/public-health.html", "0.6"], ["ar/shop.html", "0.5"], ["ar/connect.html", "0.5"]
 ];
 const urls = pages.map(([p, pr]) => `  <url><loc>${SITE_URL}${p}</loc><priority>${pr}</priority></url>`)
   .concat(posts.map((p) =>

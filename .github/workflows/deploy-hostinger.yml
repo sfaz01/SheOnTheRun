@@ -58,24 +58,52 @@ jobs:
         if: ${{ inputs.include_content }}
         run: node tools/build.js _site
 
-      - name: Set up SSH
+      # Checks the six secrets before anything is uploaded. It prints each one's LENGTH (never its
+      # value) and stops with a clear message naming the bad one. Stray spaces/line breaks pasted
+      # into a secret are trimmed away automatically.
+      - name: Check the deploy settings
         env:
-          SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
-          KNOWN_HOSTS: ${{ secrets.HOSTINGER_SSH_KNOWN_HOSTS }}
+          S_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          S_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          S_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          S_DIR: ${{ secrets.HOSTINGER_SITE_DIR }}
+          S_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          S_KNOWN: ${{ secrets.HOSTINGER_SSH_KNOWN_HOSTS }}
         run: |
+          trim() { printf '%s' "$1" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
+          fail=0
+          check() { # name value regex hint
+            if [ -z "$2" ]; then echo "::error::$1 is empty or missing. $4"; fail=1
+            elif ! printf '%s' "$2" | grep -Eq "$3"; then echo "::error::$1 has the wrong format ($(printf '%s' "$2" | wc -c) characters). $4"; fail=1
+            else echo "ok  $1 ($(printf '%s' "$2" | wc -c) characters)"; fi
+          }
+          HOST=$(trim "$S_HOST"); PORT=$(trim "$S_PORT"); USER_=$(trim "$S_USER"); DIR=$(trim "$S_DIR")
+          check HOSTINGER_SSH_HOST "$HOST" '^[A-Za-z0-9.-]+$' "Expected the server IP, e.g. 82.25.126.244"
+          check HOSTINGER_SSH_PORT "$PORT" '^[0-9]{2,5}$' "Expected digits only, e.g. 65002"
+          check HOSTINGER_SSH_USER "$USER_" '^[A-Za-z0-9_.-]+$' "Expected the SSH username, e.g. u123456789"
+          check HOSTINGER_SITE_DIR "$DIR" '^/[A-Za-z0-9_./-]+$' "Expected an absolute path starting with /"
+          case "$S_KEY" in *"BEGIN OPENSSH PRIVATE KEY"*"END OPENSSH PRIVATE KEY"*) echo "ok  HOSTINGER_SSH_KEY looks like a private key ($(printf '%s' "$S_KEY" | wc -l) lines)";; *) echo "::error::HOSTINGER_SSH_KEY is missing the BEGIN/END OPENSSH PRIVATE KEY lines"; fail=1;; esac
+          case "$S_KNOWN" in *ssh-ed25519*) echo "ok  HOSTINGER_SSH_KNOWN_HOSTS contains an ed25519 key";; *) echo "::error::HOSTINGER_SSH_KNOWN_HOSTS must be the one-line [host]:port ssh-ed25519 AAAA… fingerprint"; fail=1;; esac
+          [ "$fail" = 0 ] || exit 1
+
+          # Hand the cleaned values to the next steps.
+          { echo "DEPLOY_HOST=$HOST"; echo "DEPLOY_PORT=$PORT"; echo "DEPLOY_USER=$USER_"; echo "DEPLOY_DIR=$DIR"; } >> "$GITHUB_ENV"
+
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
-          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf '%s\n' "$S_KEY" | tr -d '\r' > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$S_KNOWN" | tr -d '\r' > ~/.ssh/known_hosts
+          echo "Key fingerprint (compare with 'ssh-keygen -lf ~/.ssh/sotr-deploy.pub' on your PC):"
+          ssh-keygen -lf ~/.ssh/deploy_key || { echo "::error::The private key could not be read. Re-copy it into HOSTINGER_SSH_KEY."; exit 1; }
+
+      - name: Test the connection
+        run: |
+          ssh -p "$DEPLOY_PORT" -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes -o ConnectTimeout=20 "$DEPLOY_USER@$DEPLOY_HOST" 'echo "connected as $(whoami)"; which rsync'
 
       # No --delete: a deploy only ever adds or updates files, so it can never wipe uploads or
       # anything the admin panel wrote. --checksum compares content, not timestamps.
       - name: Upload
-        env:
-          HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
-          PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
-          USER: ${{ secrets.HOSTINGER_SSH_USER }}
-          DIR: ${{ secrets.HOSTINGER_SITE_DIR }}
         run: |
           rsync -rlt --checksum --omit-dir-times --no-perms --stats \
-            -e "ssh -p ${PORT:-22} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
-            _site/ "${USER}@${HOST}:${DIR}/"
+            -e "ssh -p $DEPLOY_PORT -i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
+            _site/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_DIR/"

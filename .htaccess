@@ -6,6 +6,23 @@
 Options -Indexes
 DirectoryIndex index.html
 
+# >>> PRIVATE PREVIEW — DELETE THIS WHOLE BLOCK (down to the "<<<" line) TO LAUNCH >>>
+# Until the owner says go, visitors get a password prompt. /admin and /api have their own
+# sign-in (admin/.htaccess, api/.htaccess lift this prompt), and /.well-known stays open so
+# the SSL certificate can renew. The password file lives outside the web folder.
+AuthType Basic
+AuthName "SheOnTheRun - private preview"
+AuthUserFile /home/u586950607/domains/sheontherun.com/.htpasswd
+SetEnvIf Request_URI "^/\.well-known/" PUBLIC_PATH
+<RequireAny>
+  Require valid-user
+  Require env PUBLIC_PATH
+</RequireAny>
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>
+# <<< END PRIVATE PREVIEW <<<
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
 

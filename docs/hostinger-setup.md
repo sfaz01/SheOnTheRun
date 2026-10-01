@@ -75,3 +75,13 @@ This file holds passwords. It never goes into GitHub, and being above `public_ht
 - *"The database isn't ready yet"*: the details in `sotr-config.php` are wrong. Re-check step A3.
 - *Locked out (lost phone and recovery codes)*: over SSH, `php server/bin/create-admin.php EMAIL NEWPASSWORD` resets the password and the authenticator setup.
 - The old GitHub Pages site (`sfaz01.github.io/SheOnTheRun`) keeps working until you decide to retire it.
+
+## Private preview and launch day
+
+Until the owner says go, the public site sits behind a password prompt (user `preview`).
+It is the block marked `PRIVATE PREVIEW` at the top of the root `.htaccess`; the password
+hash is in `domains/sheontherun.com/.htpasswd`, outside the web folder. `/admin/` and `/api/`
+are not behind it (they have their own sign-in).
+
+**To launch:** delete that block from `.htaccess`, commit, and run *Deploy to Hostinger*.
+Optionally delete `.htpasswd` afterwards. To change the preview password, regenerate that file.

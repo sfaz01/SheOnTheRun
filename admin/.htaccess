@@ -1,3 +1,6 @@
+# The admin has its own sign-in + 2-step code; the site-wide private-preview prompt is lifted here.
+Require all granted
+
 # The admin is private: never cached, never indexed, never framed, and it may only load its own files.
 <IfModule mod_headers.c>
   Header always set Cache-Control "no-store"

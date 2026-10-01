@@ -1,0 +1,3 @@
+# The API has its own sign-in and lock-out; the site-wide private-preview prompt is lifted here
+# (the browser can't answer two prompts, and the public checkout will need it open at launch).
+Require all granted

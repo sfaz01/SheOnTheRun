@@ -32,7 +32,8 @@ jobs:
             --exclude '.git' --exclude '.github' --exclude '.claude' \
             --exclude '_site' --exclude 'README.md' --exclude 'serve.py' \
             --exclude '*.exe' --exclude '.gitignore' --exclude '__pycache__' \
-            --exclude 'tools'
+            --exclude 'tools' --exclude 'docs' --exclude 'server' \
+            --exclude 'admin' --exclude 'api' --exclude '.htaccess'
 
       # The Journal's RSS feed and the sitemap are built from data/posts.js,
       # so a new article only ever needs adding in one place.

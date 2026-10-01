@@ -1,0 +1,13 @@
+# The admin has its own sign-in + 2-step code; the site-wide private-preview prompt is lifted here.
+Require all granted
+
+# The admin is private: never cached, never indexed, never framed, and it may only load its own files.
+<IfModule mod_headers.c>
+  Header always set Cache-Control "no-store"
+  Header always set X-Robots-Tag "noindex, nofollow"
+  Header always set X-Frame-Options "DENY"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+</IfModule>
+<IfModule mod_expires.c>
+  ExpiresActive Off
+</IfModule>

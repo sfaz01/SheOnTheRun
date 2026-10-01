@@ -1,0 +1,81 @@
+name: Deploy to Hostinger
+
+# Manual for now: run it from the Actions tab once the secrets below exist.
+# (Switch to `on: push: branches: [main]` when you're happy with it.)
+on:
+  workflow_dispatch:
+    inputs:
+      include_content:
+        description: "Also upload content the admin panel will own (data/*.js, journal/, feed.xml, sitemap.xml). Turn OFF once the panel is live, so a deploy never overwrites her edits."
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hostinger
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PHP
+        run: sudo apt-get update && sudo apt-get install -y php-cli php-sqlite3 php-mbstring
+      - name: PHP syntax check
+        run: find api server -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Unit tests
+        run: php server/tests/unit.php
+      - name: API flow tests
+        run: node --test server/tests/flow.test.mjs
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assemble the site
+        env:
+          INCLUDE_CONTENT: ${{ inputs.include_content }}
+        run: |
+          EXTRA=()
+          if [ "$INCLUDE_CONTENT" != "true" ]; then
+            EXTRA+=(--exclude '/data/*.js' --exclude '/journal/' --exclude '/feed.xml' --exclude '/sitemap.xml')
+          fi
+          rsync -a ./ _site/ \
+            --exclude '.git' --exclude '.github' --exclude '.claude' --exclude '_site' \
+            --exclude 'README.md' --exclude 'serve.py' --exclude '*.exe' --exclude '.gitignore' \
+            --exclude '__pycache__' --exclude 'node_modules' --exclude 'tools' --exclude 'docs' \
+            --exclude '.nojekyll' --exclude 'server/dev' --exclude 'server/tests' \
+            --exclude 'server/config.php' --exclude 'server/storage/*' \
+            "${EXTRA[@]}"
+          mkdir -p _site/server/storage
+
+      - name: Build feed and sitemap
+        if: ${{ inputs.include_content }}
+        run: node tools/build.js _site
+
+      - name: Set up SSH
+        env:
+          SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.HOSTINGER_SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      # No --delete: a deploy only ever adds or updates files, so it can never wipe uploads or
+      # anything the admin panel wrote. --checksum compares content, not timestamps.
+      - name: Upload
+        env:
+          HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          DIR: ${{ secrets.HOSTINGER_SITE_DIR }}
+        run: |
+          rsync -rlt --checksum --omit-dir-times --no-perms --stats \
+            -e "ssh -p ${PORT:-22} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
+            _site/ "${USER}@${HOST}:${DIR}/"

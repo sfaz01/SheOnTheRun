@@ -11,6 +11,15 @@
       "port": 8091
     },
     {
+      "name": "admin",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "server/dev/serve.mjs",
+        "8092"
+      ],
+      "port": 8092
+    },
+    {
       "name": "bitandbites-demo",
       "runtimeExecutable": "npm",
       "runtimeArgs": [

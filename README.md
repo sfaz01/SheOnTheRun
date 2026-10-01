@@ -324,3 +324,17 @@ speaker before launch.
   a carousel of the fieldwork photos.
 - Shop: no hero photo, one filterable grid, cart and cash-on-delivery checkout.
 - Connect: form only, in lilac, routed per subject; "Where I am" with the address and map.
+
+
+---
+
+## 16. The admin panel (in progress)
+
+A private admin lives at `/admin/` (PHP + MySQL on Hostinger). The plan is in `docs/admin-panel-plan.md`,
+the one-time hosting steps in `docs/hostinger-setup.md`.
+
+```bash
+node server/dev/serve.mjs     # site + admin at http://localhost:8092/admin/ (needs PHP 8.1+)
+php server/tests/unit.php     # unit checks
+node --test server/tests/flow.test.mjs   # end-to-end API test
+```

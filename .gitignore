@@ -1,3 +1,10 @@
 cloudflared.exe
 *.log
 __pycache__/
+# Backend secrets and runtime data — never commit
+server/config.php
+sotr-config.php
+server/storage/*
+!server/storage/.gitkeep
+*.sqlite
+node_modules/

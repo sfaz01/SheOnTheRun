@@ -119,6 +119,12 @@ final class Auth
         unset($_SESSION['pending_secret']);
     }
 
+    /** Used after accepting an invite: password is set, the authenticator app comes next. */
+    public static function startEnrollmentFor(int $userId): void
+    {
+        self::beginPasswordStage($userId);
+    }
+
     private static function completeLogin(array $user): void
     {
         session_regenerate_id(true);

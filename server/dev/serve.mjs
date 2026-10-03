@@ -31,7 +31,7 @@ if (process.platform === "win32") {
 }
 const iniPath = join(tmpdir(), "sotr-dev-php.ini");
 writeFileSync(iniPath, ini.join("\n") + "\n");
-mkdirSync(join(root, "server", "storage"), { recursive: true });
+mkdirSync(join(root, "server", "storage", "dev-site", "data"), { recursive: true });
 
 const child = spawn(
   phpPath,

@@ -1,88 +1,17 @@
 /* =============================================================================
-   SheOnTheRun admin — Phase 0: sign-in, two-step code, dashboard shell, server check.
-   Plain JavaScript, no build step. Every string from the server goes through
-   textContent (never innerHTML), so nothing it sends can inject markup.
+   SheOnTheRun admin — sign-in screens, the app shell, Overview, Publish and Account.
+   The content editor itself is in editor.js; shared helpers are in core.js.
    ========================================================================== */
 (function () {
   "use strict";
-
+  var S = window.SOTR, h = S.h, api = S.api, form = S.form, field = S.field, val = S.val;
   var app = document.getElementById("app");
-  var csrf = "";
-  var session = { stage: "anonymous" };
 
-  /* ------------------------------------------------------------------ helpers */
-  function h(tag, attrs) {
-    var el = document.createElement(tag);
-    Object.keys(attrs || {}).forEach(function (k) {
-      var v = attrs[k];
-      if (v === false || v == null) return;
-      if (k === "class") el.className = v;
-      else if (k.slice(0, 2) === "on") el.addEventListener(k.slice(2), v);
-      else if (v === true) el.setAttribute(k, "");
-      else el.setAttribute(k, v);
-    });
-    for (var i = 2; i < arguments.length; i++) append(el, arguments[i]);
-    return el;
-  }
-  function append(el, child) {
-    if (child == null || child === false) return;
-    if (Array.isArray(child)) child.forEach(function (c) { append(el, c); });
-    else el.appendChild(typeof child === "string" ? document.createTextNode(child) : child);
-  }
   function mount(node) {
-    app.replaceChildren(node);
+    S.put(app, node);
     var focus = node.querySelector("[autofocus], input:not([type=checkbox]), h1");
     if (focus) { if (focus.tagName === "H1") focus.setAttribute("tabindex", "-1"); focus.focus({ preventScroll: true }); }
   }
-
-  function api(method, path, body, retried) {
-    var opts = { method: method, credentials: "same-origin", headers: {} };
-    if (method !== "GET") {
-      opts.headers["Content-Type"] = "application/json";
-      opts.headers["X-CSRF-Token"] = csrf;
-      opts.body = JSON.stringify(body || {});
-    }
-    return fetch("/api" + path, opts).then(function (res) {
-      return res.json().catch(function () { return {}; }).then(function (data) {
-        if (res.ok) return data;
-        if (data.code === "csrf" && !retried) {
-          return loadState().then(function () { return api(method, path, body, true); });
-        }
-        var err = new Error(data.error || "Something went wrong. Please try again.");
-        err.code = data.code; err.status = res.status;
-        throw err;
-      });
-    }, function () { throw new Error("Can’t reach the server. Check your connection."); });
-  }
-
-  function loadState() {
-    return api("GET", "/auth/state").then(function (s) { session = s; csrf = s.csrf; return s; });
-  }
-
-  /** A form that disables its button while sending and shows errors in one live region. */
-  function form(fields, submitLabel, onSubmit, extra) {
-    var errBox = h("div", { role: "alert" });
-    var btn = h("button", { class: "btn block", type: "submit" }, submitLabel);
-    var f = h("form", { novalidate: true, onsubmit: function (e) {
-      e.preventDefault();
-      errBox.replaceChildren();
-      btn.disabled = true;
-      var label = btn.textContent;
-      btn.textContent = "One moment…";
-      Promise.resolve(onSubmit(f)).catch(function (err) {
-        errBox.replaceChildren(h("div", { class: "alert error" }, err.message));
-        var first = f.querySelector("input"); if (first && err.code !== "locked") first.select();
-      }).then(function () { btn.disabled = false; btn.textContent = label; });
-    } }, fields, errBox, btn, extra);
-    return f;
-  }
-  function field(id, label, attrs, hint) {
-    return h("div", { class: "field" },
-      h("label", { for: id }, label),
-      h("input", Object.assign({ id: id, name: id }, attrs)),
-      hint ? h("p", { class: "hint" }, hint) : null);
-  }
-  function val(f, id) { return f.querySelector("#" + id).value; }
 
   function authCard(title, intro) {
     var wrap = h("main", { class: "auth" });
@@ -96,14 +25,15 @@
 
   /* ------------------------------------------------------------------- routing */
   function route() {
-    if (session.stage === "full") return dashboard();
-    if (session.stage === "password") return session.next === "enroll" ? enroll() : secondStep();
-    return session.setup_available ? setup() : login();
+    var s = S.session;
+    if (s.stage === "full") return shell();
+    if (s.stage === "password") return s.next === "enroll" ? enroll() : secondStep();
+    if (location.hash === "#invite") return acceptInvite();
+    return s.setup_available ? setup() : login();
   }
+  function refreshAndRoute() { return S.loadState().then(route); }
 
-  function refreshAndRoute() { return loadState().then(route); }
-
-  /* --------------------------------------------------------------------- screens */
+  /* --------------------------------------------------------------- sign-in */
   function setup() {
     var v = authCard("Welcome — let’s create your account", "This is the one-time setup. You’ll need the setup key you were given.");
     v.card.appendChild(form([
@@ -126,23 +56,42 @@
     ], "Continue", function (f) {
       return api("POST", "/auth/login", { email: val(f, "email"), password: val(f, "password") }).then(refreshAndRoute);
     }));
+    v.card.appendChild(h("p", { class: "muted center" }, h("a", { href: "#invite", onclick: function (e) { e.preventDefault(); location.hash = "#invite"; acceptInvite(); } }, "I have an invite code")));
+    mount(v.wrap);
+  }
+
+  function acceptInvite() {
+    var v = authCard("Join the admin", "Enter the email you were invited with, the invite code you were sent, and choose a password.");
+    v.card.appendChild(form([
+      field("email", "Your email", { type: "email", autocomplete: "username", required: true }),
+      field("code", "Invite code", { type: "text", autocomplete: "off", autocapitalize: "none", spellcheck: "false", placeholder: "xxxxx-xxxxx", required: true }),
+      field("password", "Choose a password", { type: "password", autocomplete: "new-password", required: true, minlength: 12 }, "At least 12 characters. Three or four random words is a great password."),
+      field("password2", "Repeat the password", { type: "password", autocomplete: "new-password", required: true })
+    ], "Continue", function (f) {
+      if (val(f, "password") !== val(f, "password2")) throw new Error("The two passwords don’t match.");
+      return api("POST", "/auth/invite/accept", { email: val(f, "email"), code: val(f, "code"), password: val(f, "password") }).then(function () {
+        history.replaceState(null, "", location.pathname);
+        return refreshAndRoute();
+      });
+    }));
+    v.card.appendChild(h("p", { class: "muted center" }, h("a", { href: "#", onclick: function (e) { e.preventDefault(); history.replaceState(null, "", location.pathname); login(); } }, "Back to sign in")));
     mount(v.wrap);
   }
 
   function secondStep() {
     var useRecovery = false;
     var v = authCard("Enter your code", "Open your authenticator app and type the 6-digit code for SheOnTheRun.");
-    var toggle = h("button", { type: "button", class: "linklike" }, "I can’t use my app — use a recovery code");
+    var toggle = h("button", { type: "button", class: "linklike" }, "");
     var f = form([h("div", { class: "field", id: "codeField" })], "Sign in", function (fm) {
       return api("POST", "/auth/2fa", { code: val(fm, "code") }).then(function (r) {
         return refreshAndRoute().then(function () {
-          if (r.recovery_used) notice("You signed in with a recovery code. " + r.recovery_left + " left — keep them somewhere safe.");
+          if (r.recovery_used) S.toast("You signed in with a recovery code. " + r.recovery_left + " left — keep them somewhere safe.", "warn");
         });
       });
-    }, h("p", { class: "muted", style: false }, toggle));
+    }, h("p", { class: "muted" }, toggle));
     function renderField() {
       var box = f.querySelector("#codeField");
-      box.replaceChildren(
+      S.put(box, 
         h("label", { for: "code" }, useRecovery ? "Recovery code" : "6-digit code"),
         h("input", useRecovery
           ? { id: "code", name: "code", type: "text", autocomplete: "off", autocapitalize: "none", spellcheck: "false", placeholder: "xxxxx-xxxxx", required: true }
@@ -164,7 +113,7 @@
     mount(v.wrap);
     api("POST", "/auth/2fa/begin").then(function (r) {
       var qr = qrcode(0, "M"); qr.addData(r.uri); qr.make();
-      body.replaceChildren(
+      S.put(body, 
         h("ol", { class: "steps" },
           h("li", {}, "Install an authenticator app (Google Authenticator, Microsoft Authenticator, Authy or 1Password)."),
           h("li", {}, "In the app, add an account and scan this code."),
@@ -178,11 +127,11 @@
             h("input", { id: "code", name: "code", type: "text", class: "code", inputmode: "numeric", autocomplete: "one-time-code", maxlength: 7, placeholder: "000000", required: true, autofocus: true }))
         ], "Turn on and continue", function (f) {
           return api("POST", "/auth/2fa/enable", { code: val(f, "code") }).then(function (res) {
-            return loadState().then(function () { recoveryCodes(res.recovery_codes); });
+            return S.loadState().then(function () { recoveryCodes(res.recovery_codes); });
           });
         }));
     }).catch(function (err) {
-      body.replaceChildren(h("div", { class: "alert error" }, err.message), h("button", { class: "btn ghost", onclick: signOut }, "Start again"));
+      S.put(body, h("div", { class: "alert error" }, err.message), h("button", { class: "btn ghost", onclick: signOut }, "Start again"));
     });
   }
 
@@ -204,98 +153,290 @@
     mount(v.wrap);
   }
 
-  function notice(msg) {
-    var box = h("div", { class: "alert warn", role: "status" }, msg);
-    var main = document.querySelector(".main");
-    if (main) main.insertBefore(box, main.firstChild);
-  }
-
   function signOut() {
+    if (S.editorDirty() && !window.confirm("You have unsaved changes. Sign out anyway?")) return;
+    S.resetEditor();
     return api("POST", "/auth/logout").catch(function () {}).then(refreshAndRoute);
   }
 
-  /* ----------------------------------------------------------------- dashboard */
-  var SOON = [["Shop & products", "Phase 1"], ["Runs & events", "Phase 1"], ["Services & packages", "Phase 1"], ["FAQ & testimonials", "Phase 1"],
-              ["Photos", "Phase 2"], ["Journal", "Phase 2"], ["Orders", "Phase 3"], ["Messages", "Phase 3"]];
+  /* ------------------------------------------------------------------ shell */
+  var NAV = [
+    ["overview", "Overview"],
+    ["edit/shop", "Shop & products", "shop"],
+    ["edit/runs", "Runs & events", "runs"],
+    ["edit/offer", "Services & packages", "offer"],
+    ["edit/testimonials", "Testimonials", "testimonials"],
+    ["edit/settings", "Site settings", "settings"],
+    ["publish", "Publish"],
+    ["account", "Account"]
+  ];
+  var SOON = [["Photos", "Phase 2"], ["Journal", "Phase 2"], ["Orders", "Phase 3"], ["Messages", "Phase 3"]];
 
-  function dashboard() {
-    var tab = location.hash === "#account" ? "account" : "home";
-    var page = h("div", { class: "main", id: "main" });
-    var nav = h("nav", { class: "nav", "aria-label": "Admin sections" }, h("ul", {},
-      h("li", {}, h("a", { href: "#", "aria-current": tab === "home" ? "page" : false }, "Overview")),
-      SOON.map(function (s) { return h("li", {}, h("span", { class: "soon" }, s[0], h("span", { class: "tag" }, s[1]))); }),
-      h("li", {}, h("a", { href: "#account", "aria-current": tab === "account" ? "page" : false }, "Account"))));
-    var shell = h("div", { class: "shell" },
+  var status = { changed: {}, last_publish: null };
+  var navEl, main, lastHash = "";
+
+  S.refreshStatus = function () {
+    return api("GET", "/admin/status").then(function (s) { status = s; S.refreshNav(); return s; }).catch(function () {});
+  };
+
+  S.refreshNav = function () {
+    if (!navEl) return;
+    var hash = location.hash.replace(/^#/, "") || "overview";
+    var count = Object.keys(status.changed || {}).filter(function (k) { return status.changed[k]; }).length;
+    S.put(navEl, h("ul", {},
+      NAV.map(function (n) {
+        var active = hash === n[0] || hash.indexOf(n[0] + "/") === 0;
+        var dirty = n[2] && S.editorArea() === n[2] && S.editorDirty();
+        var pending = n[2] && status.changed[n[2]];
+        return h("li", {}, h("a", { href: "#" + n[0], "aria-current": active ? "page" : false },
+          h("span", {}, n[1]),
+          n[0] === "publish" && count ? h("span", { class: "badge" }, String(count)) : null,
+          dirty ? h("span", { class: "dot unsaved", title: "Unsaved changes" }, h("span", { class: "vh-label" }, "Unsaved changes"))
+            : pending ? h("span", { class: "dot pending", title: "Saved, not published yet" }, h("span", { class: "vh-label" }, "Not published yet")) : null));
+      }),
+      SOON.map(function (s) { return h("li", {}, h("span", { class: "soon" }, s[0], h("span", { class: "tag" }, s[1]))); })));
+  };
+
+  function shell() {
+    main = h("main", { class: "main", id: "main" });
+    navEl = h("nav", { class: "nav", "aria-label": "Admin sections" });
+    S.put(app, h("div", { class: "shell" },
       h("header", { class: "topbar" },
         h("div", { class: "brand" }, h("span", {}, "She", h("b", {}, "OnTheRun"), " · Admin")),
-        h("div", { class: "who" }, h("span", {}, session.user.email), h("button", { class: "btn ghost small", onclick: signOut }, "Sign out"))),
-      h("div", { class: "layout" }, nav, page));
-    app.replaceChildren(shell);
-    window.onhashchange = function () { if (session.stage === "full") dashboard(); };
-    (tab === "account" ? accountView : homeView)(page);
+        h("div", { class: "who" },
+          h("a", { class: "btn small", href: "#publish" }, "Publish"),
+          h("span", {}, S.session.user.email),
+          h("button", { class: "btn ghost small", onclick: signOut }, "Sign out"))),
+      h("div", { class: "layout" }, navEl, main)));
+    lastHash = location.hash;
+    window.onhashchange = onHash;
+    S.refreshStatus();
+    show();
   }
 
-  function homeView(page) {
-    page.appendChild(h("h1", {}, "Hello, and welcome"));
-    page.appendChild(h("p", { class: "muted" }, "This is your control room. For now it holds the secure sign-in and a health check of the hosting. Editors for the shop, events, prices and the rest arrive next."));
+  function onHash() {
+    if (S.session.stage !== "full") return;
+    var next = location.hash;
+    var leavingArea = S.editorDirty() && !new RegExp("^#edit/" + S.editorArea() + "(/|$)").test(next);
+    if (leavingArea) {
+      if (!window.confirm("You have unsaved changes in " + areaLabel(S.editorArea()) + ". Leave without saving?")) {
+        history.replaceState(null, "", lastHash || "#");
+        return;
+      }
+      S.resetEditor();
+    }
+    lastHash = next;
+    show();
+  }
 
-    var list = h("ul", { class: "checks" });
-    var pill = h("span", { class: "pill warn" }, "Checking…");
-    var panel = h("section", { class: "panel" }, h("h2", {}, "Hosting check", pill), list);
-    page.appendChild(panel);
-    page.appendChild(h("section", { class: "panel" },
-      h("h2", {}, "What’s coming"),
-      h("ul", { class: "roadmap" },
-        [["Phase 1", "Products, events, services & prices, FAQ, testimonials, site settings — with English and Arabic side by side."],
-         ["Phase 2", "Photo library and the Journal."],
-         ["Phase 3", "Shop orders, order alerts by email, and the messages inbox."]].map(function (r) {
-          return h("li", {}, h("span", { class: "tag when" }, r[0]), h("span", {}, r[1]));
-        }))));
+  function areaLabel(a) { var n = NAV.filter(function (x) { return x[2] === a; })[0]; return n ? n[1] : a; }
 
-    api("GET", "/admin/server-check").then(function (r) {
-      var bad = r.checks.filter(function (c) { return c.status === "fail"; }).length;
-      var warn = r.checks.filter(function (c) { return c.status === "warn"; }).length;
-      pill.className = "pill " + (bad ? "fail" : warn ? "warn" : "ok");
-      pill.textContent = bad ? bad + " to fix" : warn ? warn + " to look at" : "All good";
-      var order = { fail: 0, warn: 1, ok: 2 };
-      r.checks.slice().sort(function (a, b) { return order[a.status] - order[b.status]; }).forEach(function (c) {
-        list.appendChild(h("li", {},
-          h("span", { class: "pill " + c.status }, c.status === "ok" ? "OK" : c.status === "warn" ? "Check" : "Fix"),
-          h("span", { class: "what" }, c.label),
-          h("span", { class: "detail" }, c.detail)));
-      });
-    }).catch(function (err) {
-      pill.className = "pill fail"; pill.textContent = "Error";
-      list.appendChild(h("li", {}, h("span", { class: "detail" }, err.message)));
-      if (err.code === "auth") refreshAndRoute();
+  function show() {
+    var hash = location.hash.replace(/^#/, "");
+    S.put(main, h("p", { class: "muted" }, "Loading…"));
+    S.refreshNav();
+    var m = /^edit\/([a-z]+)(?:\/([\w.]+))?$/.exec(hash);
+    var p = m ? S.editor(main, m[1], m[2] || "")
+      : hash === "publish" ? publishView(main)
+      : hash === "account" ? accountView(main)
+      : overview(main);
+    Promise.resolve(p).catch(function (err) {
+      if (err.code === "auth") return refreshAndRoute();
+      S.put(main, h("div", { class: "alert error" }, err.message));
+    }).then(function () {
+      var h1 = main.querySelector("h1");
+      if (h1) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
+      window.scrollTo(0, 0);
     });
   }
 
+  /* --------------------------------------------------------------- overview */
+  function overview(page) {
+    return S.refreshStatus().then(function () {
+      var changed = Object.keys(status.changed || {}).filter(function (k) { return status.changed[k]; });
+      var lp = status.last_publish;
+      var list = h("ul", { class: "checks" });
+      var pill = h("span", { class: "pill warn" }, "Checking…");
+      S.put(page, 
+        h("h1", {}, "Hello"),
+        h("p", { class: "muted" }, "Edit any section on the left, save, then Publish to put your changes on the website."),
+        h("section", { class: "panel" },
+          h("h2", {}, "Website", changed.length ? h("span", { class: "pill warn" }, changed.length + " section" + (changed.length > 1 ? "s" : "") + " not published") : h("span", { class: "pill ok" }, "Up to date")),
+          lp ? h("p", {}, "Last published ", h("strong", {}, S.fmtUtc(lp.at)), lp.by ? " by " + lp.by : "", lp.note ? " — “" + lp.note + "”" : "", ".") : null,
+          changed.length ? h("p", {}, "Waiting to go live: " + changed.map(areaLabel).join(", ") + ". ", h("a", { href: "#publish" }, "Review and publish")) : null),
+        h("section", { class: "panel" },
+          h("h2", {}, "Quick links"),
+          h("ul", { class: "quick" },
+            h("li", {}, h("a", { href: "#edit/runs" }, "Add a run or event")),
+            h("li", {}, h("a", { href: "#edit/shop" }, "Update products, prices or stock")),
+            h("li", {}, h("a", { href: "#edit/offer" }, "Change consultation or package prices")),
+            h("li", {}, h("a", { href: "/", target: "_blank", rel: "noopener" }, "Open the website ↗")))),
+        h("details", { class: "panel" }, h("summary", {}, h("span", { class: "h2like" }, "Hosting check "), pill), list));
+      api("GET", "/admin/server-check").then(function (r) {
+        var bad = r.checks.filter(function (c) { return c.status === "fail"; }).length;
+        var warn = r.checks.filter(function (c) { return c.status === "warn"; }).length;
+        pill.className = "pill " + (bad ? "fail" : warn ? "warn" : "ok");
+        pill.textContent = bad ? bad + " to fix" : warn ? warn + " to look at" : "All good";
+        var order = { fail: 0, warn: 1, ok: 2 };
+        r.checks.slice().sort(function (a, b) { return order[a.status] - order[b.status]; }).forEach(function (c) {
+          list.appendChild(h("li", {},
+            h("span", { class: "pill " + c.status }, c.status === "ok" ? "OK" : c.status === "warn" ? "Check" : "Fix"),
+            h("span", { class: "what" }, c.label), h("span", { class: "detail" }, c.detail)));
+        });
+      }).catch(function (err) { pill.className = "pill fail"; pill.textContent = "Error"; list.appendChild(h("li", {}, err.message)); });
+    });
+  }
+
+  /* ---------------------------------------------------------------- publish */
+  function publishView(page) {
+    return Promise.all([S.refreshStatus(), api("GET", "/admin/history")]).then(function (res) {
+      var versions = res[1].versions;
+      var changed = Object.keys(status.changed || {}).filter(function (k) { return status.changed[k]; });
+      var unsaved = S.editorDirty();
+      var result = h("div", { role: "status" });
+
+      var publishBox = h("section", { class: "panel" }, h("h2", {}, "Publish"));
+      if (unsaved) {
+        publishBox.appendChild(h("div", { class: "alert warn" }, "You have unsaved changes in " + areaLabel(S.editorArea()) + ". ",
+          h("a", { href: "#edit/" + S.editorArea() }, "Go back and save them"), " first, or they won’t be included."));
+      }
+      if (changed.length) {
+        publishBox.append(
+          h("p", {}, "These sections have saved changes that aren’t on the website yet:"),
+          h("ul", {}, changed.map(function (a) { return h("li", {}, h("a", { href: "#edit/" + a }, areaLabel(a))); })),
+          form([field("note", "What changed? (optional)", { type: "text", maxlength: 200, placeholder: "e.g. Added October runs, new tee prices" })],
+            "Publish now", function (f) {
+              return api("POST", "/admin/publish", { note: val(f, "note") }).then(function () {
+                S.toast("Published. The website shows the changes now (a refresh may be needed).");
+                return publishView(page);
+              }, function (err) {
+                if (err.code === "invalid") {
+                  var errs = (err.data && err.data.errors) || [];
+                  S.put(result, h("div", { class: "alert error" }, h("p", {}, err.message),
+                    h("ul", {}, errs.map(function (e) {
+                      return h("li", {}, h("a", { href: "#edit/" + e.area }, areaLabel(e.area)), " — " + e.message);
+                    }))));
+                  return;
+                }
+                throw err;
+              });
+            }, null, { inline: true }),
+          result,
+          h("p", { class: "muted small" },
+            "Changed your mind? ",
+            h("button", { type: "button", class: "linklike", onclick: function () {
+              if (!window.confirm("Throw away every saved change that isn’t published yet? The website stays as it is.")) return;
+              api("POST", "/admin/discard").then(function () { S.resetEditor(); S.toast("Unpublished changes discarded."); publishView(page); }, function (e) { S.toast(e.message, "bad"); });
+            } }, "Discard all unpublished changes")));
+      } else {
+        publishBox.appendChild(h("p", { class: "muted" }, "Everything saved is already live. Edit a section and save it, and it will show up here."));
+      }
+
+      S.put(page, 
+        h("h1", {}, "Publish"),
+        h("p", { class: "muted" }, "Saving keeps your work as a draft. Publishing puts every saved draft on the website at once."),
+        publishBox,
+        h("section", { class: "panel" },
+          h("h2", {}, "History"),
+          h("p", { class: "muted" }, "Every publish is kept. Restoring copies that version into your drafts; publish again to make it live."),
+          h("ol", { class: "history" }, versions.map(function (v, i) {
+            return h("li", {},
+              h("div", {}, h("strong", {}, S.fmtUtc(v.at)), v.by ? " · " + v.by : "", i === 0 ? h("span", { class: "pill ok" }, "Live now") : null,
+                v.note ? h("div", { class: "muted" }, v.note) : null),
+              i === 0 ? null : h("button", { class: "btn ghost small", type: "button", onclick: function () {
+                if (!window.confirm("Copy the version from " + S.fmtUtc(v.at) + " into your drafts? Your current unpublished changes are replaced.")) return;
+                api("POST", "/admin/history/" + v.id + "/restore").then(function () {
+                  S.resetEditor(); S.toast("Restored into your drafts. Publish to make it live."); publishView(page);
+                }, function (e) { S.toast(e.message, "bad"); });
+              } }, "Restore"));
+          }))));
+    });
+  }
+
+  /* ---------------------------------------------------------------- account */
   function accountView(page) {
-    page.appendChild(h("h1", {}, "Account"));
-    page.appendChild(h("section", { class: "panel" },
-      h("h2", {}, "Sign-in"),
-      h("p", {}, "Signed in as ", h("strong", {}, session.user.email), "."),
-      h("p", { class: "muted" }, "Two-step sign-in is on: every sign-in needs a code from your authenticator app.")));
+    return api("GET", "/admin/admins").then(function (r) {
+      var me = S.session.user;
 
-    var done = h("div", { role: "status" });
-    var f = form([
-      field("current", "Current password", { type: "password", autocomplete: "current-password", required: true }),
-      field("new1", "New password", { type: "password", autocomplete: "new-password", required: true, minlength: 12 }, "At least 12 characters."),
-      field("new2", "Repeat new password", { type: "password", autocomplete: "new-password", required: true })
-    ], "Change password", function (fm) {
-      done.replaceChildren();
-      if (val(fm, "new1") !== val(fm, "new2")) throw new Error("The two new passwords don’t match.");
-      return api("POST", "/auth/password", { current: val(fm, "current"), new: val(fm, "new1") }).then(function () {
-        fm.reset();
-        done.replaceChildren(h("div", { class: "alert ok" }, "Password changed."));
-      });
+      var emailDone = h("div", { role: "status" });
+      var emailForm = form([
+        field("newEmail", "New email", { type: "email", autocomplete: "email", required: true }),
+        field("emailPw", "Your password", { type: "password", autocomplete: "current-password", required: true }, "To confirm it’s you.")
+      ], "Change email", function (f) {
+        return api("POST", "/auth/email", { email: val(f, "newEmail"), password: val(f, "emailPw") }).then(function () {
+          return S.loadState().then(function () { S.toast("Email changed."); accountView(page); document.querySelector(".who span").textContent = S.session.user.email; });
+        });
+      }, null, { inline: true });
+
+      var pwDone = h("div", { role: "status" });
+      var pwForm = form([
+        field("current", "Current password", { type: "password", autocomplete: "current-password", required: true }),
+        field("new1", "New password", { type: "password", autocomplete: "new-password", required: true, minlength: 12 }, "At least 12 characters."),
+        field("new2", "Repeat new password", { type: "password", autocomplete: "new-password", required: true })
+      ], "Change password", function (f) {
+        if (val(f, "new1") !== val(f, "new2")) throw new Error("The two new passwords don’t match.");
+        return api("POST", "/auth/password", { current: val(f, "current"), new: val(f, "new1") }).then(function () {
+          f.reset(); S.put(pwDone, h("div", { class: "alert ok" }, "Password changed."));
+        });
+      }, null, { inline: true });
+
+      var inviteResult = h("div", { role: "status" });
+      var inviteForm = form([field("inviteEmail", "Their email", { type: "email", required: true })], "Create invite", function (f) {
+        var email = val(f, "inviteEmail");
+        return api("POST", "/admin/admins/invite", { email: email }).then(function (inv) {
+          f.reset();
+          var msg = "You’re invited to the SheOnTheRun admin.\n\n1. Open https://sheontherun.com/admin/\n2. Choose “I have an invite code”\n3. Enter your email (" + email + ") and this code: " + inv.code +
+            "\n\nThe code works once and expires on " + S.fmtUtc(inv.expires_at) + " (Beirut time). You’ll also set up an authenticator app on your phone.";
+          var copy = h("button", { class: "btn ghost small", type: "button", onclick: function () {
+            (navigator.clipboard ? navigator.clipboard.writeText(msg) : Promise.reject()).then(function () { copy.textContent = "Copied"; }, function () { copy.textContent = "Copy failed"; });
+          } }, "Copy message");
+          S.put(inviteResult, h("div", { class: "alert ok invite" },
+            h("p", {}, "Invite created. Send this to " + email + " — by WhatsApp, for example. The code is shown only now."),
+            h("pre", { class: "invite-msg" }, msg), copy));
+          return reloadAdmins();
+        });
+      }, null, { inline: true });
+
+      var adminsBox = h("div", {});
+      function paintAdmins(data) {
+        S.put(adminsBox, 
+          h("ul", { class: "admins" }, data.admins.map(function (a) {
+            return h("li", {},
+              h("div", {}, h("strong", {}, a.email), a.you ? h("span", { class: "pill ok" }, "You") : null,
+                h("div", { class: "muted small" }, a.last_login_at ? "Last signed in " + S.fmtUtc(a.last_login_at) : "Hasn’t signed in yet")),
+              a.you ? null : h("button", { class: "btn danger small", type: "button", onclick: function () {
+                if (!window.confirm("Remove " + a.email + "? They won’t be able to sign in any more.")) return;
+                api("POST", "/admin/admins/" + a.id + "/remove").then(function () { S.toast("Removed " + a.email + "."); reloadAdmins(); }, function (e) { S.toast(e.message, "bad"); });
+              } }, "Remove"));
+          })),
+          data.invites.length ? h("div", {}, h("h3", {}, "Waiting to accept"),
+            h("ul", { class: "admins" }, data.invites.map(function (i) {
+              return h("li", {}, h("div", {}, i.email, h("div", { class: "muted small" }, "Invite expires " + S.fmtUtc(i.expires_at))),
+                h("button", { class: "btn ghost small", type: "button", onclick: function () {
+                  api("POST", "/admin/invites/" + i.id + "/cancel").then(reloadAdmins, function (e) { S.toast(e.message, "bad"); });
+                } }, "Cancel invite"));
+            }))) : null);
+      }
+      function reloadAdmins() { return api("GET", "/admin/admins").then(paintAdmins); }
+      paintAdmins(r);
+
+      S.put(page, 
+        h("h1", {}, "Account"),
+        h("section", { class: "panel" }, h("h2", {}, "Your sign-in"),
+          h("p", {}, "Signed in as ", h("strong", {}, me.email), ". Two-step sign-in is on."),
+          h("h3", {}, "Change your email"), emailDone, emailForm,
+          h("h3", {}, "Change your password"), pwDone, pwForm),
+        h("section", { class: "panel" }, h("h2", {}, "Admins"),
+          h("p", { class: "muted" }, "Everyone listed can edit and publish the website. Each person signs in with their own password and phone code."),
+          adminsBox,
+          h("h3", {}, "Invite someone"),
+          h("p", { class: "muted small" }, "You get a one-time code to send them. They choose their own password and set up their own phone."),
+          inviteForm, inviteResult));
     });
-    page.appendChild(h("section", { class: "panel" }, h("h2", {}, "Change password"), done, f));
   }
 
-  /* ---------------------------------------------------------------------- start */
-  loadState().then(route).catch(function (err) {
+  /* ------------------------------------------------------------------ start */
+  S.loadState().then(route).catch(function (err) {
     var v = authCard("Can’t start the admin");
     v.card.appendChild(h("div", { class: "alert error" }, err.message));
     v.card.appendChild(h("button", { class: "btn", onclick: function () { location.reload(); } }, "Try again"));

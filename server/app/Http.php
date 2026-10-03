@@ -100,14 +100,14 @@ final class Http
      *  - come from our own origin when the browser says where it came from, and
      *  - carry the CSRF token the session handed out.
      */
-    public static function guardWrite(): void
+    public static function guardWrite(bool $multipart = false): void
     {
         if (!in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)) {
             return;
         }
         $type = strtolower((string) ($_SERVER['CONTENT_TYPE'] ?? ''));
-        if (!str_starts_with($type, 'application/json')) {
-            throw new HttpError(415, 'Send JSON.');
+        if (!str_starts_with($type, $multipart ? 'multipart/form-data' : 'application/json')) {
+            throw new HttpError(415, $multipart ? 'Send the photo as a form upload.' : 'Send JSON.');
         }
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
         if ($origin !== '') {

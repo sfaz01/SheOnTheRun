@@ -12,6 +12,7 @@ use Sotr\Db;
 use Sotr\Http;
 use Sotr\HttpError;
 use Sotr\Migrator;
+use Sotr\Photos;
 use Sotr\Schema;
 use Sotr\ServerCheck;
 
@@ -46,6 +47,22 @@ try {
 
     if ($method === 'GET' && $path === '/auth/state') {
         Http::json(Auth::state());
+    }
+
+    // Photo upload is the one multipart request; it gets the same origin + CSRF checks as every write.
+    if ($method === 'POST' && $path === '/admin/photos') {
+        $user = Auth::requireUser();
+        Http::guardWrite(true);
+        Content::ensureSeeded();
+        $file = $_FILES['file'] ?? [];
+        Http::json(Photos::upload(
+            is_array($file) ? $file : [],
+            (string) ($_POST['name'] ?? ''),
+            (string) ($_POST['alt'] ?? ''),
+            (string) ($_POST['alt_ar'] ?? ''),
+            (string) ($_POST['replace'] ?? ''),
+            (int) $user['id']
+        ), 201);
     }
 
     Http::guardWrite();
@@ -93,6 +110,11 @@ try {
             Http::json(['checks' => ServerCheck::run()]);
 
         /* --------------------------------------------------------- content */
+        case 'GET /admin/photos':
+            Auth::requireUser();
+            Content::ensureSeeded();
+            Http::json(['photos' => Photos::list()]);
+
         case 'GET /admin/schema':
             Auth::requireUser();
             Content::ensureSeeded();
@@ -136,6 +158,18 @@ try {
         if ($method === 'PUT') {
             $body = Http::body();
             Http::json(Content::save($m[1], $body['doc'] ?? null, (int) ($body['rev'] ?? 0), (int) $user['id']));
+        }
+    }
+    if (preg_match('#^/admin/photos/([a-z0-9-]+)$#', $path, $m)) {
+        $user = Auth::requireUser();
+        Content::ensureSeeded();
+        if ($method === 'PUT') {
+            $b = Http::body();
+            Http::json(Photos::update($m[1], (string) ($b['alt'] ?? ''), (string) ($b['alt_ar'] ?? ''), (int) $user['id']));
+        }
+        if ($method === 'DELETE') {
+            Photos::delete($m[1], (int) $user['id']);
+            Http::json(['ok' => true]);
         }
     }
     if ($method === 'POST' && preg_match('#^/admin/history/(\d+)/restore$#', $path, $m)) {

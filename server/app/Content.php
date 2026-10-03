@@ -16,39 +16,77 @@ final class Content
 
     public static function ensureSeeded(): void
     {
-        if ((int) (Db::one('SELECT COUNT(*) AS n FROM content')['n'] ?? 0) > 0) {
+        if ((int) (Db::one('SELECT COUNT(*) AS n FROM content')['n'] ?? 0) === 0) {
+            self::seed(Schema::ALL);
             return;
         }
+        // An existing site that predates the Journal/gallery/photo areas (phase 2): add them from the
+        // website's own files, upgrade the photo list, and fold them into the "imported" snapshot so
+        // the panel doesn't claim there are unpublished changes that nobody made.
+        if (Db::one('SELECT area FROM content WHERE area = ?', ['posts']) === null) {
+            self::seed(['posts', 'gallery'], true);
+            $seed = self::seedAreas();
+            Db::run('UPDATE content SET doc = ?, rev = rev + 1, updated_at = ? WHERE area = ?', [self::encode($seed['images']), Db::now(), 'images']);
+            $extras = self::get('extras')['doc'];
+            unset($extras['ar']['posts'], $extras['ar']['gallery']);
+            Db::run('UPDATE content SET doc = ?, updated_at = ? WHERE area = ?', [self::encode($extras), Db::now(), 'extras']);
+            $last = Db::one('SELECT id, snapshot FROM publishes ORDER BY id DESC LIMIT 1');
+            if ($last !== null) {
+                $snap = json_decode($last['snapshot'], true) ?? [];
+                foreach (['posts', 'gallery', 'images'] as $a) {
+                    $snap[$a] = $seed[$a];
+                }
+                $snap['extras'] = $extras;
+                Db::run('UPDATE publishes SET snapshot = ? WHERE id = ?', [self::encode($snap), $last['id']]);
+            }
+        }
+    }
+
+    /** @return array<string, array> the website's current content, normalised the way a save would store it */
+    private static function seedAreas(): array
+    {
         $path = SOTR_ROOT . '/database/seed/content.json';
         $seed = is_file($path) ? json_decode((string) file_get_contents($path), true) : null;
         if (!is_array($seed) || !is_array($seed['areas'] ?? null)) {
             throw new HttpError(500, 'The starting content is missing (server/database/seed/content.json).');
         }
         $areas = $seed['areas'];
-        // Store the seed in the same normalised shape a save produces, so "unpublished changes"
-        // only lights up for real edits.
         foreach (Schema::EDITABLE as $area) {
             [$areas[$area]] = Validator::run($area, $areas[$area] ?? []);
         }
-        $areas['images'] = ['items' => $seed['images'] ?? []];
+        return $areas;
+    }
+
+    private static function seed(array $which, bool $addOnly = false): void
+    {
+        $areas = self::seedAreas();
         $pdo = Db::pdo();
         $pdo->beginTransaction();
         try {
-            foreach (Schema::ALL as $area) {
+            foreach ($which as $area) {
                 Db::run(
                     'INSERT INTO content (area, doc, rev, updated_at, updated_by) VALUES (?, ?, 1, ?, NULL)',
                     [$area, self::encode($areas[$area] ?? []), Db::now()]
                 );
             }
-            Db::insert(
-                'INSERT INTO publishes (snapshot, note, user_id, created_at) VALUES (?, ?, NULL, ?)',
-                [self::encode(self::publishable($areas)), 'Imported from the website', Db::now()]
-            );
+            if (!$addOnly) {
+                Db::insert(
+                    'INSERT INTO publishes (snapshot, note, user_id, created_at) VALUES (?, ?, NULL, ?)',
+                    [self::encode(self::publishable($areas)), 'Imported from the website', Db::now()]
+                );
+            }
             $pdo->commit();
         } catch (\Throwable $e) {
             $pdo->rollBack();
             throw $e;
         }
+    }
+
+    /** The documents as they were at the last publish (what visitors see), or null. */
+    public static function lastSnapshot(): ?array
+    {
+        $last = self::lastPublish();
+        return $last ? (json_decode($last['snapshot'], true) ?? []) : null;
     }
 
     /** @return array{doc: array, rev: int, updated_at: string} */
@@ -75,7 +113,7 @@ final class Content
     /** Validate and store a draft. Throws 422 with field errors, or 409 if someone saved in between. */
     public static function save(string $area, mixed $doc, int $baseRev, int $userId): array
     {
-        self::assertArea($area, Schema::EDITABLE);
+        self::assertArea($area, Schema::GENERIC);
         [$clean, $errors] = Validator::run($area, $doc);
         if ($errors) {
             throw new HttpError(422, 'Some fields need fixing.', 'invalid', ['errors' => $errors]);
@@ -123,7 +161,25 @@ final class Content
             throw new HttpError(422, 'Some content needs fixing before it can go live.', 'invalid', ['errors' => $all]);
         }
 
-        self::writeFiles(Generator::files($drafts));
+        $previous = self::lastSnapshot() ?? [];
+        $files = [];
+        foreach (Generator::files($drafts) as $name => $contents) {
+            $files['data/' . $name] = $contents;
+        }
+        $live = Journal::published($drafts['posts'] ?? []);
+        foreach ($live as $p) {
+            $files['journal/' . $p['slug'] . '.html'] = Journal::page($p);
+        }
+        $files['feed.xml'] = Journal::feed($live);
+        $files['sitemap.xml'] = Journal::sitemap($live);
+        self::writeFiles($files);
+        // An article that was live and is now a draft or deleted must come off the site.
+        $nowLive = array_column($live, 'slug');
+        foreach (Journal::published($previous['posts'] ?? []) as $p) {
+            if (!in_array($p['slug'], $nowLive, true) && preg_match('/^[a-z0-9-]+$/', $p['slug'])) {
+                @unlink(Config::siteRoot() . '/journal/' . $p['slug'] . '.html');
+            }
+        }
 
         $id = Db::insert(
             'INSERT INTO publishes (snapshot, note, user_id, created_at) VALUES (?, ?, ?, ?)',
@@ -203,28 +259,36 @@ final class Content
         );
     }
 
-    /** Write each file to a temporary name first, then swap it in, so visitors never see half a file. */
+    /**
+     * Write each file to a temporary name first, then swap them all in, so visitors never see half a file.
+     * @param array<string,string> $files path (from the site root) => contents
+     */
     private static function writeFiles(array $files): void
     {
-        $dir = Config::siteRoot() . '/data';
-        if (!is_dir($dir) || !is_writable($dir)) {
-            throw new HttpError(500, 'The website’s data folder isn’t writable, so nothing was published.');
-        }
+        $root = Config::siteRoot();
         $tmp = [];
         try {
-            foreach ($files as $name => $contents) {
-                $t = $dir . '/.' . $name . '.' . bin2hex(random_bytes(4)) . '.tmp';
+            foreach ($files as $rel => $contents) {
+                $target = $root . '/' . $rel;
+                $dir = dirname($target);
+                if (!is_dir($dir) && !@mkdir($dir, 0755, true)) {
+                    throw new HttpError(500, 'The website’s ' . dirname($rel) . ' folder can’t be created, so nothing was published.');
+                }
+                if (!is_writable($dir)) {
+                    throw new HttpError(500, 'The website’s ' . dirname($rel) . ' folder isn’t writable, so nothing was published.');
+                }
+                $t = $dir . '/.' . basename($rel) . '.' . bin2hex(random_bytes(4)) . '.tmp';
                 if (file_put_contents($t, $contents, LOCK_EX) === false) {
-                    throw new HttpError(500, 'Couldn’t write ' . $name . '. Nothing was published.');
+                    throw new HttpError(500, 'Couldn’t write ' . $rel . '. Nothing was published.');
                 }
                 @chmod($t, 0644);
-                $tmp[$name] = $t;
+                $tmp[$rel] = $t;
             }
-            foreach ($tmp as $name => $t) {
-                if (!rename($t, $dir . '/' . $name)) {
-                    throw new HttpError(500, 'Couldn’t replace ' . $name . '. Try publishing again.');
+            foreach ($tmp as $rel => $t) {
+                if (!rename($t, $root . '/' . $rel)) {
+                    throw new HttpError(500, 'Couldn’t replace ' . $rel . '. Try publishing again.');
                 }
-                unset($tmp[$name]);
+                unset($tmp[$rel]);
             }
         } finally {
             foreach ($tmp as $t) {

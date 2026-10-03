@@ -27,7 +27,7 @@ if (!phpPath) {
 const ini = ["display_errors=1", "error_reporting=E_ALL", "date.timezone=UTC", "upload_max_filesize=16M", "post_max_size=20M"];
 if (process.platform === "win32") {
   ini.push(`extension_dir="${join(dirname(phpPath), "ext")}"`);
-  for (const e of ["mbstring", "openssl", "curl", "fileinfo", "gd", "pdo_sqlite", "sqlite3", "pdo_mysql", "zip"]) ini.push(`extension=${e}`);
+  for (const e of ["mbstring", "openssl", "curl", "fileinfo", "gd", "exif", "pdo_sqlite", "sqlite3", "pdo_mysql", "zip"]) ini.push(`extension=${e}`);
 }
 const iniPath = join(tmpdir(), "sotr-dev-php.ini");
 writeFileSync(iniPath, ini.join("\n") + "\n");

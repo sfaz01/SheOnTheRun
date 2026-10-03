@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       include_content:
-        description: "Also upload the data files the admin panel owns (products, runs, packages, testimonials, config, ar). Leave OFF — turning it on overwrites what was published from the admin."
+        description: "Also upload the files the admin panel owns (data files, article pages, feed, sitemap). Leave OFF — turning it on overwrites what was published from the admin."
         type: boolean
         default: false
 
@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install PHP
-        run: sudo apt-get update && sudo apt-get install -y php-cli php-sqlite3 php-mbstring
+        run: sudo apt-get update && sudo apt-get install -y php-cli php-sqlite3 php-mbstring php-gd php-xml
       - name: PHP syntax check
         run: find api server -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Unit tests
@@ -44,7 +44,9 @@ jobs:
           EXTRA=()
           if [ "$INCLUDE_CONTENT" != "true" ]; then
             # These are written by the admin panel's Publish button on the server.
-            for f in config products runs packages testimonials ar; do EXTRA+=(--exclude "/data/$f.js"); done
+            for f in config products runs packages testimonials ar posts images gallery; do EXTRA+=(--exclude "/data/$f.js"); done
+            # Article pages, the feed, the sitemap and uploaded photos are written by the admin panel too.
+            EXTRA+=(--include '/journal/index.html' --exclude '/journal/*.html' --exclude '/feed.xml' --exclude '/sitemap.xml')
           fi
           rsync -a ./ _site/ \
             --exclude '.git' --exclude '.github' --exclude '.claude' --exclude '_site' \
@@ -54,9 +56,6 @@ jobs:
             --exclude 'server/config.php' --exclude 'server/storage/*' \
             "${EXTRA[@]}"
           mkdir -p _site/server/storage
-
-      - name: Build feed and sitemap
-        run: node tools/build.js _site
 
       # Checks the six secrets before anything is uploaded. It prints each one's LENGTH (never its
       # value) and stops with a clear message naming the bad one. Stray spaces/line breaks pasted
@@ -102,8 +101,10 @@ jobs:
 
       # No --delete: a deploy only ever adds or updates files, so it can never wipe uploads or
       # anything the admin panel wrote. --checksum compares content, not timestamps.
+      # Photos are special: the owner can replace one from the admin, so a deploy only ADDS photos
+      # that aren't on the server yet (--ignore-existing) and never overwrites one.
       - name: Upload
         run: |
-          rsync -rlt --checksum --omit-dir-times --no-perms --stats \
-            -e "ssh -p $DEPLOY_PORT -i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
-            _site/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_DIR/"
+          SSH="ssh -p $DEPLOY_PORT -i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+          rsync -rlt --checksum --omit-dir-times --no-perms --stats --exclude '/public/images/'             -e "$SSH" _site/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_DIR/"
+          rsync -rlt --ignore-existing --omit-dir-times --no-perms --stats             -e "$SSH" _site/public/images/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_DIR/public/images/"

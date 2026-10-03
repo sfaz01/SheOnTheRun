@@ -810,422 +810,1193 @@
           "تغيير السلوك",
           "الرصد والتقييم",
           "البيانات والأدلة"
-        ],
-        "posts": {
-          "a-month-in-shanghai": {
+        ]
+      }
+    },
+    "images": {
+      "items": [
+        {
+          "name": "about-armchair",
+          "alt": "Fatima seated in a teal armchair by a bookshelf, smiling",
+          "w": [
+            480,
+            748
+          ],
+          "r": 1.1911,
+          "seeded": true
+        },
+        {
+          "name": "about-cafe",
+          "alt": "Fatima at a cafe in Beirut",
+          "w": [
+            480,
+            960
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "about-coffee",
+          "alt": "Fatima with a coffee among the palms",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "about-human",
+          "alt": "Fatima reading, off duty",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "about-lotus",
+          "alt": "A white lotus in bloom with morning water droplets",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 2.048,
+          "seeded": true
+        },
+        {
+          "name": "about-professional",
+          "alt": "Fatima Mouzahem in Beirut at night, the Grand Serail lit behind her",
+          "w": [
+            480,
+            960
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "about-reading",
+          "alt": "Fatima reading in a quiet corner",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "china-flags",
+          "alt": "Fatima seated among international flags during her studies in China",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "china-garden",
+          "alt": "Fatima in a classical Chinese garden",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "china-graduation",
+          "alt": "Fatima at the closing ceremony of her studies in China",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "china-pavilion",
+          "alt": "A garden pavilion hung with red lanterns in China",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "china-summer-school",
+          "alt": "Study in China International Summer School, Shanghai University of Traditional Chinese Medicine",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "dotr-cafe",
+          "alt": "Fatima Mouzahem at a cafe in Beirut, smiling over a cappuccino",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.7261,
+          "seeded": true
+        },
+        {
+          "name": "dotr-detail",
+          "alt": "A SheOnTheRun chalkboard and a drink among flowers",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "dotr-hero",
+          "alt": "Fatima Mouzahem, licensed dietitian, in a quiet corner in Beirut",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.7778,
+          "seeded": true
+        },
+        {
+          "name": "dotr-portrait",
+          "alt": "Fatima Mouzahem, licensed dietitian, seated with a book",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "dotr-reading",
+          "alt": "Fatima reading in a quiet corner",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "focus-sports",
+          "alt": "Race number 959 pinned to Fatima's kit on the track",
+          "w": [
+            480,
+            960
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "focus-weight",
+          "alt": "Fatima reading in a quiet corner",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "focus-wellbeing",
+          "alt": "Fatima with a coffee among the palms",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "hero-road",
+          "alt": "Fatima Mouzahem in running kit on an empty road by the Beirut seafront",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.7778,
+          "seeded": true
+        },
+        {
+          "name": "hero-road-tall",
+          "alt": "Fatima Mouzahem in running kit on an empty road by the Beirut seafront",
+          "w": [
+            480,
+            960
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "hero-road-wide",
+          "alt": "Fatima Mouzahem in running kit on an empty road by the Beirut seafront",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 2.3333,
+          "seeded": true
+        },
+        {
+          "name": "journal-10k",
+          "alt": "A runner holding a sign reading 'Run like a girl' at a race in Beirut",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "journey-2014",
+          "alt": "Fatima running a relay leg in competition",
+          "w": [
+            480,
+            768
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "journey-2016",
+          "alt": "Fatima at the Lebanese American University with her certificate",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "journey-2017",
+          "alt": "Fatima in cap and gown on graduation day",
+          "w": [
+            480,
+            800
+          ],
+          "r": 0.6667,
+          "seeded": true
+        },
+        {
+          "name": "journey-2018",
+          "alt": "UNV-UNICEF Youth Advocates assignment preparation training",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "journey-2019",
+          "alt": "Two UNICEF colleagues embracing, jackets reading 'We are inspiration in action'",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "journey-2022",
+          "alt": "Two colleagues in team UNICEF shirts",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "journey-2023",
+          "alt": "Fatima presenting on health data from the podium",
+          "w": [
+            480,
+            900
+          ],
+          "r": 0.5625,
+          "seeded": true
+        },
+        {
+          "name": "journey-2024",
+          "alt": "Fatima racing on the track, wearing race number 209",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "journey-2025",
+          "alt": "Fatima at the Study in China International Summer School, Shanghai University of Traditional Chinese Medicine",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "journey-2026",
+          "alt": "SheOnTheRun members arm in arm in club jackets",
+          "w": [
+            480,
+            960
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "nature-lilies",
+          "alt": "Water lilies on a pond",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "nature-lotus",
+          "alt": "A white lotus in flower",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "ph-badge",
+          "alt": "Fatima at work, conference badge around her neck",
+          "w": [
+            480
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-graduation",
+          "alt": "Fatima in cap and gown on graduation day",
+          "w": [
+            480
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "ph-lau",
+          "alt": "Fatima at the Lebanese American University with her certificate",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-parliament",
+          "alt": "Fatima at work in Beirut, the Grand Serail lit behind her",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-podium",
+          "alt": "Fatima presenting on health data from the podium",
+          "w": [
+            480
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "ph-podium-wide",
+          "alt": "A training session on health data in progress",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-qudwa",
+          "alt": "The QUDWA programme team after a workshop",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-research-poster",
+          "alt": "Fatima beside her research poster on conflicts of interest in social media",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-training-room",
+          "alt": "Fatima delivering a training session",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-unicef-backs",
+          "alt": "Two colleagues in team UNICEF shirts",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-unicef-hug",
+          "alt": "Two UNICEF colleagues embracing, jackets reading 'We are inspiration in action'",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-unicef-pair",
+          "alt": "Fatima with a UNICEF colleague",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-unicef-team",
+          "alt": "The UNICEF volunteers team at an event",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-unicef-tent",
+          "alt": "A UNICEF 'for every child' team event",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-unv-training",
+          "alt": "UNV-UNICEF Youth Advocates assignment preparation training",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-water",
+          "alt": "Fatima with her certificate at a water diplomacy programme",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-water-cert",
+          "alt": "Closing ceremony of the Water Governance in Uncertain Times training course",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "ph-wids",
+          "alt": "Fatima at the Women in Data Science conference at AUB",
+          "w": [
+            480,
+            960
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "portrait-close",
+          "alt": "Fatima Mouzahem seated with a book",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "portrait-hero",
+          "alt": "Fatima Mouzahem, licensed dietitian and certified sports nutritionist, smiling in a lilac and yellow scarf",
+          "w": [
+            480,
+            896
+          ],
+          "r": 0.7498,
+          "seeded": true
+        },
+        {
+          "name": "portrait-studio",
+          "alt": "Fatima Mouzahem in Beirut at night, the Grand Serail lit behind her",
+          "w": [
+            480,
+            960,
+            1440,
+            2000
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "run-crosswalk",
+          "alt": "Fatima running across a crossing in Beirut",
+          "w": [
+            480,
+            547
+          ],
+          "r": 0.7597,
+          "seeded": true
+        },
+        {
+          "name": "run-road-detail",
+          "alt": "Running on the open road by the Beirut seafront",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-bag",
+          "alt": "A SheOnTheRun tote bag held up at an event",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-belt",
+          "alt": "A burgundy running belt bag worn across the body, with its inside shown",
+          "w": [
+            480,
+            628
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-bottle",
+          "alt": "Vacuum-insulated matte stainless steel water bottle",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-cap",
+          "alt": "Running kit on the road",
+          "w": [
+            480
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-cups",
+          "alt": "Matte stainless steel measuring cups and spoons set",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-jacket",
+          "alt": "SheOnTheRun club jackets",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-journal",
+          "alt": "Linen-bound wellness and food journal",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-portion",
+          "alt": "Visual portion guide plate set",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-scale",
+          "alt": "Minimalist digital kitchen food scale",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-shaker",
+          "alt": "Minimalist shaker and snack storage set",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-socks",
+          "alt": "Sports and grip socks laid out in white and black",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "shop-tee",
+          "alt": "The SheOnTheRun club tee, back print: She runs the world",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "sotr-hike",
+          "alt": "SheOnTheRun women walking a mountain trail together, backpacks on",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "sotr-picnic",
+          "alt": "SheOnTheRun women resting on picnic blankets during a mountain hike",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "sotr-selfie-park",
+          "alt": "The SheOnTheRun women gathered close for a group selfie",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.3333,
+          "seeded": true
+        },
+        {
+          "name": "sotr-selfie-sunset",
+          "alt": "A big SheOnTheRun group at sunset after a run",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.3333,
+          "seeded": true
+        },
+        {
+          "name": "sotr-startline",
+          "alt": "SheOnTheRun women in club tees lined up at a race start gate",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.3333,
+          "seeded": true
+        },
+        {
+          "name": "sotr-bloom",
+          "alt": "A SheOnTheRun chalkboard reading 'Tag us' among flowers",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "sotr-girls",
+          "alt": "The SheOnTheRun women together at a race in Beirut",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "sotr-girls-wide",
+          "alt": "The SheOnTheRun women together at a race in Beirut",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "sotr-jackets",
+          "alt": "SheOnTheRun members arm in arm in club jackets",
+          "w": [
+            480,
+            960
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "sotr-jackets-wide",
+          "alt": "SheOnTheRun members arm in arm in club jackets",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "sotr-pair",
+          "alt": "Two women walking together in running kit",
+          "w": [
+            480,
+            960
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "sotr-runlikeagirl",
+          "alt": "A SheOnTheRun runner holding a sign reading 'Run like a girl'",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "sotr-tote",
+          "alt": "Two women at a SheOnTheRun event, one holding a club tote",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "sotr-track-duo",
+          "alt": "Two women running together on the track",
+          "w": [
+            480
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "sotr-unicef-run",
+          "alt": "Fatima at a charity run in a UNICEF shirt",
+          "w": [
+            480,
+            960
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "sotr-yoga",
+          "alt": "A SheOnTheRun yoga session on a terrace in the mountains",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "sotr-yoga-tall",
+          "alt": "A SheOnTheRun yoga session on a terrace in the mountains",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "track-bib",
+          "alt": "Race number 959 pinned to Fatima's kit on the track",
+          "w": [
+            480,
+            960
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "track-duo",
+          "alt": "Fatima running alongside another athlete on the track",
+          "w": [
+            480
+          ],
+          "r": 1,
+          "seeded": true
+        },
+        {
+          "name": "track-race",
+          "alt": "Fatima Mouzahem racing on the track, wearing race number 209",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.5,
+          "seeded": true
+        },
+        {
+          "name": "track-race-tall",
+          "alt": "Fatima Mouzahem racing on the track, wearing race number 209",
+          "w": [
+            480
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
+          "name": "track-relay",
+          "alt": "Fatima Mouzahem running a relay leg, baton in hand",
+          "w": [
+            480
+          ],
+          "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "womens-nutrition",
+          "alt": "Two women out together in running kit",
+          "w": [
+            480,
+            960
+          ],
+          "r": 1.5,
+          "seeded": true
+        }
+      ]
+    },
+    "posts": {
+      "items": [
+        {
+          "slug": "a-month-in-shanghai",
+          "title": "A month in Shanghai",
+          "kicker": "Traditional wisdom",
+          "date": "2026-09-26",
+          "readingTime": "3 min",
+          "excerpt": "Evidence and tradition were never enemies. One month at the Shanghai University of Traditional Chinese Medicine, following curiosity.",
+          "image": "china-summer-school",
+          "draft": false,
+          "seoTitle": "A Month in Shanghai — Studying Traditional Chinese Medicine | Fatima Mouzahem",
+          "seoDescription": "Dietitian Fatima Mouzahem on the month she spent at the Shanghai University of Traditional Chinese Medicine, and why evidence and tradition were never enemies.",
+          "bodyHtml": "<p>In 2025 I travelled to China for a month to study Traditional Chinese Medicine at the Shanghai University of Traditional Chinese Medicine, through the Study in China International Summer School.</p>\n\n<p>I didn't go to swap one way of looking at health for another. I'm a dietitian, and I work from evidence. I went because I was curious — about a system of health that has shaped how millions of people eat, rest and look after themselves for centuries, and about what it might add to the way I already work.</p>\n\n<h2>What I went looking for</h2>\n\n<p>Nutrition science is very good at the measurable: grams, calories, blood markers. Traditional approaches tend to start somewhere else — with rhythm, balance, the season, the whole person. The more I work with women one-on-one, the more I see that both conversations matter.</p>\n\n<h2>What I brought home</h2>\n\n<p>Mostly, a wider lens. The month deepened my interest in holistic approaches to health, and it's part of why my consultations look at how you sleep, move, rest and live — not only at what's on your plate.</p>\n\n<blockquote>Evidence and tradition were never enemies. Curiosity is how you find where they meet.</blockquote>\n\n<p>Back home, SheOnTheRun kept growing, and DietOnTheRun grew through my work with women one-on-one — both a little richer for that month.</p>\n\n<p class=\"measured mt-l\">This article is general information, not individual advice.</p>",
+          "ar": {
             "title": "شهر في شنغهاي",
             "kicker": "حكمة تقليدية",
             "excerpt": "الأدلة والتقاليد لم تكونا يوماً على خلاف. شهر في جامعة شنغهاي للطب الصيني التقليدي، بدافع الفضول. (المقال بالإنجليزية)",
             "readingTime": "3 دقائق"
-          },
-          "fuelling-your-first-10k": {
+          }
+        },
+        {
+          "slug": "fuelling-your-first-10k",
+          "title": "Fuelling your first 10k",
+          "kicker": "Sports & active nutrition",
+          "date": "2026-09-02",
+          "readingTime": "7 min",
+          "excerpt": "What to eat the week before, the morning of, and — the part nobody talks about — in the hour after you finish.",
+          "image": "journal-10k",
+          "draft": false,
+          "seoTitle": "Fuelling Your First 10k — What to Eat Before, During & After",
+          "seoDescription": "A licensed dietitian and certified sports nutritionist on what to eat the week before your first 10k, the morning of the race, and in the hours after you finish.",
+          "bodyHtml": "<p>Ten kilometres is a wonderful distance. It's long enough that what you ate matters, and short enough that you don't need a nutrition plan with a spreadsheet attached. Most of the women I work with are doing their first one, and most of them are nervous about exactly the wrong things.</p>\n\n<p>So here's the whole thing, in order.</p>\n\n<h2>The week before</h2>\n\n<p>Nothing dramatic. This is the week to <strong>stop experimenting</strong>, not start. Every new supplement, every \"race week detox\", every food you've never eaten before is a risk with no upside.</p>\n\n<ul>\n  <li>Keep eating the way you normally do, with a little more carbohydrate in the two or three days before — rice, bread, potato, pasta, fruit. You're topping up the fuel in your muscles, not stuffing yourself.</li>\n  <li>Drink to thirst across the week and check the colour of your urine: pale straw is the target, not clear.</li>\n  <li>Ease off very high-fibre foods in the last day or two if your stomach is sensitive. Lentils the night before a race is a decision you make once.</li>\n</ul>\n\n<h2>The night before</h2>\n\n<p>A normal dinner you've eaten a hundred times, slightly higher in carbohydrate, moderate in fat, not enormous. Rice with chicken. Pasta with a simple sauce. Something you know.</p>\n\n<p>You are not going to fix months of training with one meal, and you can absolutely ruin a morning with one.</p>\n\n<h2>The morning of</h2>\n\n<p>The general guidance for endurance events is a carbohydrate-focused meal <strong>one to four hours before the start</strong>, sized to how much time you have. The more time before the gun, the bigger it can be.</p>\n\n<ul>\n  <li><strong>3–4 hours before:</strong> a proper breakfast — bread or oats, a little protein, some fruit.</li>\n  <li><strong>1–2 hours before:</strong> something small and simple — a banana, toast with honey or jam, a small bowl of cereal.</li>\n  <li><strong>Under an hour:</strong> a banana or a date or two, if anything at all.</li>\n</ul>\n\n<p>Keep fat and fibre low in that last meal — they slow stomach emptying, and a slow stomach at kilometre four is its own kind of misery. Drink around 400–600 ml of water in the couple of hours beforehand, then stop drinking large volumes right before the start.</p>\n\n<p>If you normally drink coffee, drink your coffee. Race morning is not the day to find out what you're like without it.</p>\n\n<blockquote>The golden rule of race-day nutrition: nothing new. Not the food, not the drink, not the shoes, not the sports bra.</blockquote>\n\n<h2>During the race</h2>\n\n<p>Here's the part that surprises people: for a 10k, <strong>most runners don't need to eat anything at all</strong>. Carbohydrate feeding during exercise starts to matter for efforts lasting beyond roughly an hour — below that, your existing glycogen stores have it covered, assuming you ate properly beforehand.</p>\n\n<p>Water at the stations if it's warm or if you're out there longer than an hour. That's genuinely it. Gels are not a rite of passage.</p>\n\n<h2>After you finish</h2>\n\n<p>This is the part nobody talks about, and it's the part that decides how you feel tomorrow.</p>\n\n<p>Within a couple of hours of finishing, aim for a meal containing <strong>carbohydrate to refill what you used, and around 20–30 g of protein</strong> to support recovery. Eggs and bread. Labneh with fruit and nuts. Chicken and rice. A glass of milk is a perfectly respectable recovery drink and considerably cheaper than the powder version.</p>\n\n<p>Then keep drinking across the afternoon, not all at once. And eat a normal dinner. The most common recovery mistake I see isn't the wrong protein — it's women who \"earned\" the race and then barely eat for the rest of the day, and wonder why they feel wrecked on Monday.</p>\n\n<h2>Three things to skip</h2>\n\n<ul>\n  <li><strong>Cutting carbohydrate in race week.</strong> Low-carb training may have a place in some athletes' programmes; the week of your first 10k is not it.</li>\n  <li><strong>A new supplement you saw online.</strong> If it worked as advertised, you'd have heard about it from your doctor and not from an ad.</li>\n  <li><strong>Racing fasted because a video told you to.</strong> If you want to train some sessions in a fasted state, that's a conversation for your training block, not for race morning.</li>\n</ul>\n\n<h2>The honest summary</h2>\n\n<p>Eat normally. Add a bit more carbohydrate in the two or three days before. Have something small and familiar on the morning. Drink water. Don't try anything new. Eat a real meal afterwards.</p>\n\n<p>Everything else is detail — and detail is what the individual plan is for, because your stomach, your schedule, your medication and your training load are not the same as anyone else's.</p>\n\n<p class=\"measured mt-l\">This article is general information, not individual advice. If you have a health condition, take medication, are pregnant, or have a history of disordered eating, please work with a dietitian directly.</p>",
+          "ar": {
             "title": "تغذية أول سباق 10 كلم",
             "kicker": "التغذية الرياضية",
             "excerpt": "ماذا تأكلين في الأسبوع السابق، وصباح السباق، و— الجزء الذي لا يتحدث عنه أحد — في الساعة التي تلي خط النهاية. (المقال بالإنجليزية)",
             "readingTime": "7 دقائق"
           }
-        },
-        "gallery": {
-          "sotr-girls": "يوم السباق، معاً",
-          "sotr-hike": "يوم مسار في الجبال",
-          "sotr-startline": "عند خط الانطلاق",
-          "sotr-yoga-tall": "يوغا فوق الوادي",
-          "sotr-selfie-park": "الجميع في الصورة",
-          "sotr-jackets": "يداً بيد",
-          "sotr-picnic": "استراحة الطريق",
-          "sotr-selfie-sunset": "الغروب، بعد الجري",
-          "ph-unicef-tent": "اليونيسف — من أجل كل طفل",
-          "ph-qudwa": "ورشة برنامج قدوة",
-          "ph-water": "برنامج الدبلوماسية المائية",
-          "ph-unv-training": "متطوعو الأمم المتحدة الشباب مع اليونيسف",
-          "ph-training-room": "تقديم التدريب",
-          "ph-wids": "مؤتمر النساء في علوم البيانات، الجامعة الأميركية في بيروت",
-          "ph-unicef-team": "فريق المتطوعين",
-          "ph-unicef-hug": "نحن الإلهام في العمل",
-          "ph-research-poster": "ملصق بحثي، الجامعة الأميركية في بيروت",
-          "ph-unicef-pair": "زميلات في اليونيسف",
-          "ph-podium": "عرض بيانات صحية",
-          "ph-water-cert": "حفل الختام، حوكمة المياه"
         }
-      }
+      ]
+    },
+    "gallery": {
+      "community": [
+        {
+          "img": "sotr-girls",
+          "caption": "Race day, together",
+          "ar": {
+            "caption": "يوم السباق، معاً"
+          }
+        },
+        {
+          "img": "sotr-hike",
+          "caption": "Trail day in the mountains",
+          "ar": {
+            "caption": "يوم مسار في الجبال"
+          }
+        },
+        {
+          "img": "sotr-startline",
+          "caption": "At the start line",
+          "ar": {
+            "caption": "عند خط الانطلاق"
+          }
+        },
+        {
+          "img": "sotr-yoga-tall",
+          "caption": "Yoga above the valley",
+          "ar": {
+            "caption": "يوغا فوق الوادي"
+          }
+        },
+        {
+          "img": "sotr-selfie-park",
+          "caption": "Everyone in the frame",
+          "ar": {
+            "caption": "الجميع في الصورة"
+          }
+        },
+        {
+          "img": "sotr-jackets",
+          "caption": "Arm in arm",
+          "ar": {
+            "caption": "يداً بيد"
+          }
+        },
+        {
+          "img": "sotr-picnic",
+          "caption": "The rest stop",
+          "ar": {
+            "caption": "استراحة الطريق"
+          }
+        },
+        {
+          "img": "sotr-selfie-sunset",
+          "caption": "Sunset, after the run",
+          "ar": {
+            "caption": "الغروب، بعد الجري"
+          }
+        }
+      ],
+      "fieldwork": [
+        {
+          "img": "ph-unicef-tent",
+          "caption": "UNICEF — for every child",
+          "ar": {
+            "caption": "اليونيسف — من أجل كل طفل"
+          }
+        },
+        {
+          "img": "ph-qudwa",
+          "caption": "QUDWA programme workshop",
+          "ar": {
+            "caption": "ورشة برنامج قدوة"
+          }
+        },
+        {
+          "img": "ph-water",
+          "caption": "Water diplomacy programme",
+          "ar": {
+            "caption": "برنامج الدبلوماسية المائية"
+          }
+        },
+        {
+          "img": "ph-unv-training",
+          "caption": "UNV–UNICEF Youth Advocates",
+          "ar": {
+            "caption": "متطوعو الأمم المتحدة الشباب مع اليونيسف"
+          }
+        },
+        {
+          "img": "ph-training-room",
+          "caption": "Training delivery",
+          "ar": {
+            "caption": "تقديم التدريب"
+          }
+        },
+        {
+          "img": "ph-wids",
+          "caption": "Women in Data Science, AUB",
+          "ar": {
+            "caption": "مؤتمر النساء في علوم البيانات، الجامعة الأميركية في بيروت"
+          }
+        },
+        {
+          "img": "ph-unicef-team",
+          "caption": "The volunteers team",
+          "ar": {
+            "caption": "فريق المتطوعين"
+          }
+        },
+        {
+          "img": "ph-unicef-hug",
+          "caption": "We are inspiration in action",
+          "ar": {
+            "caption": "نحن الإلهام في العمل"
+          }
+        },
+        {
+          "img": "ph-research-poster",
+          "caption": "Research poster, AUB",
+          "ar": {
+            "caption": "ملصق بحثي، الجامعة الأميركية في بيروت"
+          }
+        },
+        {
+          "img": "ph-unicef-pair",
+          "caption": "UNICEF colleagues",
+          "ar": {
+            "caption": "زميلات في اليونيسف"
+          }
+        },
+        {
+          "img": "ph-podium",
+          "caption": "Presenting health data",
+          "ar": {
+            "caption": "عرض بيانات صحية"
+          }
+        },
+        {
+          "img": "ph-water-cert",
+          "caption": "Closing ceremony, Water Governance",
+          "ar": {
+            "caption": "حفل الختام، حوكمة المياه"
+          }
+        }
+      ]
     }
-  },
-  "images": [
-    {
-      "name": "about-armchair",
-      "alt": "Fatima seated in a teal armchair by a bookshelf, smiling"
-    },
-    {
-      "name": "about-cafe",
-      "alt": "Fatima at a cafe in Beirut"
-    },
-    {
-      "name": "about-coffee",
-      "alt": "Fatima with a coffee among the palms"
-    },
-    {
-      "name": "about-human",
-      "alt": "Fatima reading, off duty"
-    },
-    {
-      "name": "about-lotus",
-      "alt": "A white lotus in bloom with morning water droplets"
-    },
-    {
-      "name": "about-professional",
-      "alt": "Fatima Mouzahem in Beirut at night, the Grand Serail lit behind her"
-    },
-    {
-      "name": "about-reading",
-      "alt": "Fatima reading in a quiet corner"
-    },
-    {
-      "name": "china-flags",
-      "alt": "Fatima seated among international flags during her studies in China"
-    },
-    {
-      "name": "china-garden",
-      "alt": "Fatima in a classical Chinese garden"
-    },
-    {
-      "name": "china-graduation",
-      "alt": "Fatima at the closing ceremony of her studies in China"
-    },
-    {
-      "name": "china-pavilion",
-      "alt": "A garden pavilion hung with red lanterns in China"
-    },
-    {
-      "name": "china-summer-school",
-      "alt": "Study in China International Summer School, Shanghai University of Traditional Chinese Medicine"
-    },
-    {
-      "name": "dotr-cafe",
-      "alt": "Fatima Mouzahem at a cafe in Beirut, smiling over a cappuccino"
-    },
-    {
-      "name": "dotr-detail",
-      "alt": "A SheOnTheRun chalkboard and a drink among flowers"
-    },
-    {
-      "name": "dotr-hero",
-      "alt": "Fatima Mouzahem, licensed dietitian, in a quiet corner in Beirut"
-    },
-    {
-      "name": "dotr-portrait",
-      "alt": "Fatima Mouzahem, licensed dietitian, seated with a book"
-    },
-    {
-      "name": "dotr-reading",
-      "alt": "Fatima reading in a quiet corner"
-    },
-    {
-      "name": "focus-sports",
-      "alt": "Race number 959 pinned to Fatima's kit on the track"
-    },
-    {
-      "name": "focus-weight",
-      "alt": "Fatima reading in a quiet corner"
-    },
-    {
-      "name": "focus-wellbeing",
-      "alt": "Fatima with a coffee among the palms"
-    },
-    {
-      "name": "hero-road",
-      "alt": "Fatima Mouzahem in running kit on an empty road by the Beirut seafront"
-    },
-    {
-      "name": "hero-road-tall",
-      "alt": "Fatima Mouzahem in running kit on an empty road by the Beirut seafront"
-    },
-    {
-      "name": "hero-road-wide",
-      "alt": "Fatima Mouzahem in running kit on an empty road by the Beirut seafront"
-    },
-    {
-      "name": "journal-10k",
-      "alt": "A runner holding a sign reading 'Run like a girl' at a race in Beirut"
-    },
-    {
-      "name": "journey-2014",
-      "alt": "Fatima running a relay leg in competition"
-    },
-    {
-      "name": "journey-2016",
-      "alt": "Fatima at the Lebanese American University with her certificate"
-    },
-    {
-      "name": "journey-2017",
-      "alt": "Fatima in cap and gown on graduation day"
-    },
-    {
-      "name": "journey-2018",
-      "alt": "UNV-UNICEF Youth Advocates assignment preparation training"
-    },
-    {
-      "name": "journey-2019",
-      "alt": "Two UNICEF colleagues embracing, jackets reading 'We are inspiration in action'"
-    },
-    {
-      "name": "journey-2022",
-      "alt": "Two colleagues in team UNICEF shirts"
-    },
-    {
-      "name": "journey-2023",
-      "alt": "Fatima presenting on health data from the podium"
-    },
-    {
-      "name": "journey-2024",
-      "alt": "Fatima racing on the track, wearing race number 209"
-    },
-    {
-      "name": "journey-2025",
-      "alt": "Fatima at the Study in China International Summer School, Shanghai University of Traditional Chinese Medicine"
-    },
-    {
-      "name": "journey-2026",
-      "alt": "SheOnTheRun members arm in arm in club jackets"
-    },
-    {
-      "name": "nature-lilies",
-      "alt": "Water lilies on a pond"
-    },
-    {
-      "name": "nature-lotus",
-      "alt": "A white lotus in flower"
-    },
-    {
-      "name": "ph-badge",
-      "alt": "Fatima at work, conference badge around her neck"
-    },
-    {
-      "name": "ph-graduation",
-      "alt": "Fatima in cap and gown on graduation day"
-    },
-    {
-      "name": "ph-lau",
-      "alt": "Fatima at the Lebanese American University with her certificate"
-    },
-    {
-      "name": "ph-parliament",
-      "alt": "Fatima at work in Beirut, the Grand Serail lit behind her"
-    },
-    {
-      "name": "ph-podium",
-      "alt": "Fatima presenting on health data from the podium"
-    },
-    {
-      "name": "ph-podium-wide",
-      "alt": "A training session on health data in progress"
-    },
-    {
-      "name": "ph-qudwa",
-      "alt": "The QUDWA programme team after a workshop"
-    },
-    {
-      "name": "ph-research-poster",
-      "alt": "Fatima beside her research poster on conflicts of interest in social media"
-    },
-    {
-      "name": "ph-training-room",
-      "alt": "Fatima delivering a training session"
-    },
-    {
-      "name": "ph-unicef-backs",
-      "alt": "Two colleagues in team UNICEF shirts"
-    },
-    {
-      "name": "ph-unicef-hug",
-      "alt": "Two UNICEF colleagues embracing, jackets reading 'We are inspiration in action'"
-    },
-    {
-      "name": "ph-unicef-pair",
-      "alt": "Fatima with a UNICEF colleague"
-    },
-    {
-      "name": "ph-unicef-team",
-      "alt": "The UNICEF volunteers team at an event"
-    },
-    {
-      "name": "ph-unicef-tent",
-      "alt": "A UNICEF 'for every child' team event"
-    },
-    {
-      "name": "ph-unv-training",
-      "alt": "UNV-UNICEF Youth Advocates assignment preparation training"
-    },
-    {
-      "name": "ph-water",
-      "alt": "Fatima with her certificate at a water diplomacy programme"
-    },
-    {
-      "name": "ph-water-cert",
-      "alt": "Closing ceremony of the Water Governance in Uncertain Times training course"
-    },
-    {
-      "name": "ph-wids",
-      "alt": "Fatima at the Women in Data Science conference at AUB"
-    },
-    {
-      "name": "portrait-close",
-      "alt": "Fatima Mouzahem seated with a book"
-    },
-    {
-      "name": "portrait-hero",
-      "alt": "Fatima Mouzahem, licensed dietitian and certified sports nutritionist, smiling in a lilac and yellow scarf"
-    },
-    {
-      "name": "portrait-studio",
-      "alt": "Fatima Mouzahem in Beirut at night, the Grand Serail lit behind her"
-    },
-    {
-      "name": "run-crosswalk",
-      "alt": "Fatima running across a crossing in Beirut"
-    },
-    {
-      "name": "run-road-detail",
-      "alt": "Running on the open road by the Beirut seafront"
-    },
-    {
-      "name": "shop-bag",
-      "alt": "A SheOnTheRun tote bag held up at an event"
-    },
-    {
-      "name": "shop-belt",
-      "alt": "A burgundy running belt bag worn across the body, with its inside shown"
-    },
-    {
-      "name": "shop-bottle",
-      "alt": "Vacuum-insulated matte stainless steel water bottle"
-    },
-    {
-      "name": "shop-cap",
-      "alt": "Running kit on the road"
-    },
-    {
-      "name": "shop-cups",
-      "alt": "Matte stainless steel measuring cups and spoons set"
-    },
-    {
-      "name": "shop-jacket",
-      "alt": "SheOnTheRun club jackets"
-    },
-    {
-      "name": "shop-journal",
-      "alt": "Linen-bound wellness and food journal"
-    },
-    {
-      "name": "shop-portion",
-      "alt": "Visual portion guide plate set"
-    },
-    {
-      "name": "shop-scale",
-      "alt": "Minimalist digital kitchen food scale"
-    },
-    {
-      "name": "shop-shaker",
-      "alt": "Minimalist shaker and snack storage set"
-    },
-    {
-      "name": "shop-socks",
-      "alt": "Sports and grip socks laid out in white and black"
-    },
-    {
-      "name": "shop-tee",
-      "alt": "The SheOnTheRun club tee, back print: She runs the world"
-    },
-    {
-      "name": "sotr-hike",
-      "alt": "SheOnTheRun women walking a mountain trail together, backpacks on"
-    },
-    {
-      "name": "sotr-picnic",
-      "alt": "SheOnTheRun women resting on picnic blankets during a mountain hike"
-    },
-    {
-      "name": "sotr-selfie-park",
-      "alt": "The SheOnTheRun women gathered close for a group selfie"
-    },
-    {
-      "name": "sotr-selfie-sunset",
-      "alt": "A big SheOnTheRun group at sunset after a run"
-    },
-    {
-      "name": "sotr-startline",
-      "alt": "SheOnTheRun women in club tees lined up at a race start gate"
-    },
-    {
-      "name": "sotr-bloom",
-      "alt": "A SheOnTheRun chalkboard reading 'Tag us' among flowers"
-    },
-    {
-      "name": "sotr-girls",
-      "alt": "The SheOnTheRun women together at a race in Beirut"
-    },
-    {
-      "name": "sotr-girls-wide",
-      "alt": "The SheOnTheRun women together at a race in Beirut"
-    },
-    {
-      "name": "sotr-jackets",
-      "alt": "SheOnTheRun members arm in arm in club jackets"
-    },
-    {
-      "name": "sotr-jackets-wide",
-      "alt": "SheOnTheRun members arm in arm in club jackets"
-    },
-    {
-      "name": "sotr-pair",
-      "alt": "Two women walking together in running kit"
-    },
-    {
-      "name": "sotr-runlikeagirl",
-      "alt": "A SheOnTheRun runner holding a sign reading 'Run like a girl'"
-    },
-    {
-      "name": "sotr-tote",
-      "alt": "Two women at a SheOnTheRun event, one holding a club tote"
-    },
-    {
-      "name": "sotr-track-duo",
-      "alt": "Two women running together on the track"
-    },
-    {
-      "name": "sotr-unicef-run",
-      "alt": "Fatima at a charity run in a UNICEF shirt"
-    },
-    {
-      "name": "sotr-yoga",
-      "alt": "A SheOnTheRun yoga session on a terrace in the mountains"
-    },
-    {
-      "name": "sotr-yoga-tall",
-      "alt": "A SheOnTheRun yoga session on a terrace in the mountains"
-    },
-    {
-      "name": "track-bib",
-      "alt": "Race number 959 pinned to Fatima's kit on the track"
-    },
-    {
-      "name": "track-duo",
-      "alt": "Fatima running alongside another athlete on the track"
-    },
-    {
-      "name": "track-race",
-      "alt": "Fatima Mouzahem racing on the track, wearing race number 209"
-    },
-    {
-      "name": "track-race-tall",
-      "alt": "Fatima Mouzahem racing on the track, wearing race number 209"
-    },
-    {
-      "name": "track-relay",
-      "alt": "Fatima Mouzahem running a relay leg, baton in hand"
-    },
-    {
-      "name": "womens-nutrition",
-      "alt": "Two women out together in running kit"
-    }
-  ]
+  }
 }

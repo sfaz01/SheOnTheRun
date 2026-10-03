@@ -18,7 +18,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export function loadDataFiles(dir = join(root, "data")) {
   const sandbox = { window: {} };
   vm.createContext(sandbox);
-  for (const f of ["config", "products", "runs", "packages", "testimonials", "ar", "images"]) {
+  for (const f of ["config", "products", "runs", "packages", "testimonials", "ar", "images", "posts", "gallery"]) {
     vm.runInContext(readFileSync(join(dir, f + ".js"), "utf8"), sandbox, { filename: f + ".js" });
   }
   // Plain JSON copy, so nothing from the VM context leaks out.
@@ -57,13 +57,41 @@ export function buildSeed(w) {
   const testimonials = { items: w.SITE_TESTIMONIALS };
   const settings = { ...w.SITE };
 
-  // Arabic the panel doesn't edit yet (phase 2) — carried through untouched.
+  // Arabic the panel doesn't edit item-by-item (publications and topics stay carried through untouched).
   const extras = { ar: {} };
-  for (const k of ["publications", "topics", "posts", "gallery"]) if (A[k] !== undefined) extras.ar[k] = A[k];
+  for (const k of ["publications", "topics"]) if (A[k] !== undefined) extras.ar[k] = A[k];
 
-  const images = Object.entries(w.SITE_IMAGES || {}).map(([name, v]) => ({ name, alt: v.alt || "" }));
+  // Photos: everything the site needs to draw them, plus an Arabic alt-text slot.
+  const images = {
+    items: Object.entries(w.SITE_IMAGES || {}).map(([name, v]) => ({
+      name, alt: v.alt || "", w: v.w, r: v.r, seeded: true,
+    })),
+  };
 
-  return { version: 1, areas: { shop, runs, offer, testimonials, settings, extras }, images };
+  // Gallery runs: Arabic captions are matched by photo name today; move each onto its item.
+  const gallery = {};
+  for (const run of ["community", "fieldwork"]) {
+    gallery[run] = (w.SITE_GALLERY[run] || []).map((g) => withAr({ ...g }, (A.gallery || {})[g.img] ? { caption: A.gallery[g.img] } : null));
+  }
+
+  // Journal: today's two articles, with the body and search wording read from their own pages.
+  const posts = {
+    items: (w.SITE_POSTS || []).map((p) => {
+      const html = readFileSync(join(root, "journal", p.slug + ".html"), "utf8").split("\r\n").join("\n");
+      const body = (/<div class="prose mt-l">\n([\s\S]*?)\n        <\/div>\n\n        <div class="discovery/.exec(html) || [, ""])[1];
+      const unesc = (t) => t.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+      const seoTitle = unesc((/<title>([\s\S]*?)<\/title>/.exec(html) || [, ""])[1]);
+      const seoDesc = unesc((/<meta name="description" content="([^"]*)"/.exec(html) || [, ""])[1]);
+      const ar = (A.posts || {})[p.slug];
+      return withAr({
+        slug: p.slug, title: p.title, kicker: p.kicker, date: p.date, readingTime: p.readingTime, excerpt: p.excerpt,
+        image: p.image, draft: !!p.draft, seoTitle, seoDescription: seoDesc,
+        bodyHtml: body.split("\n").map((l) => l.replace(/^ {10}/, "")).join("\n").trim(),
+      }, ar);
+    }),
+  };
+
+  return { version: 1, areas: { shop, runs, offer, testimonials, settings, extras, images, posts, gallery } };
 }
 
 if (import.meta.url === `file://${process.argv[1].replace(/\\/g, "/")}` || process.argv[1]?.endsWith("export-content.mjs")) {
@@ -75,5 +103,5 @@ if (import.meta.url === `file://${process.argv[1].replace(/\\/g, "/")}` || proce
   console.log(`Wrote ${out}`);
   console.log(`  products: ${a.shop.categories.reduce((n, c) => n + c.items.length, 0)} in ${a.shop.categories.length} categories`);
   console.log(`  events: ${a.runs.events.length} · services: ${a.offer.services.length} · packages: ${a.offer.packages.length}`);
-  console.log(`  testimonials: ${a.testimonials.items.length} · images: ${seed.images.length}`);
+  console.log(`  testimonials: ${a.testimonials.items.length} · photos: ${a.images.items.length} · articles: ${a.posts.items.length}`);
 }

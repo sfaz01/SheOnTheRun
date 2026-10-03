@@ -118,11 +118,17 @@ final class Validator
                 $seen = [];
                 foreach ($value as $i => $item) {
                     $clean = $this->object($f['item'], $item, self::join($path, $i));
-                    if (isset($clean['id']) && $clean['id'] !== '') {
-                        if (isset($seen[$clean['id']])) {
-                            $this->err(self::join($path, $i) . '.id', 'Another ' . ($f['noun'] ?? 'entry') . ' already uses this reference.');
+                    $idKey = 'id';
+                    foreach ($f['item'] as $sub) {
+                        if ($sub['type'] === 'id') {
+                            $idKey = $sub['key'];
                         }
-                        $seen[$clean['id']] = true;
+                    }
+                    if (isset($clean[$idKey]) && $clean[$idKey] !== '') {
+                        if (isset($seen[$clean[$idKey]])) {
+                            $this->err(self::join($path, $i) . '.' . $idKey, 'Another ' . ($f['noun'] ?? 'entry') . ' already uses this reference.');
+                        }
+                        $seen[$clean[$idKey]] = true;
                     }
                     $out[] = $clean;
                 }
@@ -229,6 +235,25 @@ final class Validator
                 return $value;
         }
 
+        if ($type === 'richtext') {
+            $raw = is_string($value) ? $value : '';
+            if (strlen($raw) > $max * 3) {
+                $this->err($path, 'This is far too long.');
+                return '';
+            }
+            $clean = Sanitizer::clean($raw);
+            if (trim(strip_tags($clean)) === '') {
+                if ($required) {
+                    $this->err($path, $label . ' can’t be empty.');
+                }
+                return '';
+            }
+            if (mb_strlen($clean) > $max) {
+                $this->err($path, 'Too long for one article (' . number_format($max) . ' characters at most).');
+            }
+            return $clean;
+        }
+
         // Text-like types.
         if ($value === null) {
             $value = '';
@@ -273,6 +298,11 @@ final class Validator
             case 'digits':
                 if (!$placeholder && !preg_match('/^\d{8,15}$/', $value)) {
                     $this->err($path, 'Digits only, 8 to 15 of them — e.g. 96170123456 (no +, no spaces).');
+                }
+                break;
+            case 'date':
+                if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value, $m) || !checkdate((int) $m[2], (int) $m[3], (int) $m[1])) {
+                    $this->err($path, 'Enter a date.');
                 }
                 break;
             case 'datetime':
@@ -345,6 +375,14 @@ final class Validator
             foreach ($doc['events'] ?? [] as $i => $e) {
                 if (($e['starts'] ?? '') !== '' && ($e['ends'] ?? '') !== '' && $e['ends'] < $e['starts']) {
                     $this->err("events.$i.ends", 'The end is before the start.');
+                }
+            }
+        }
+
+        if ($area === 'posts') {
+            foreach ($doc['items'] ?? [] as $i => $p) {
+                if (empty($p['draft']) && (($p['image'] ?? '') === '')) {
+                    $this->err("items.$i.image", 'Choose a cover photo (or keep this article as a draft).');
                 }
             }
         }

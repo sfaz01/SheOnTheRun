@@ -14,6 +14,7 @@
   var cur = null;           // { area, schema, doc, rev, dirty, errors }
   var fresh = new WeakSet(); // items created this session: their reference follows their name
 
+  S.invalidateSchema = function () { schemaCache = null; };
   S.loadSchema = function () {
     return schemaCache ? Promise.resolve(schemaCache)
       : S.api("GET", "/admin/schema").then(function (r) { schemaCache = r; return r; });
@@ -246,6 +247,10 @@
           value: v == null ? "" : v, oninput: function (e) { set(e.target.value === "" ? null : e.target.value); } }, common));
       case "bool":
         return h("input", Object.assign({ type: "checkbox", checked: !!v, onchange: function (e) { set(e.target.checked); } }, common));
+      case "date":
+        return h("input", Object.assign({ type: "date", value: v || "", oninput: function (e) { set(e.target.value); } }, common));
+      case "richtext":
+        return richText(obj, key, path, common);
       case "datetime":
         return h("input", Object.assign({ type: "datetime-local", step: 60, value: v || "", oninput: function (e) { set(e.target.value); if (!isAr) autoId(obj, key); } }, common));
       case "select":
@@ -273,13 +278,81 @@
       } }, common));
   }
 
+  /* ---------------------------------------------------------- rich text */
+
+  var RT_TAGS = { P: 1, H2: 1, H3: 1, UL: 1, OL: 1, LI: 1, BLOCKQUOTE: 1, STRONG: 1, EM: 1, A: 1, BR: 1 };
+  var RT_RENAME = { B: "strong", I: "em", H1: "h2", H4: "h3", H5: "h3", H6: "h3", DIV: "p" };
+  var RT_DROP = { SCRIPT: 1, STYLE: 1, IFRAME: 1, OBJECT: 1, EMBED: 1, FORM: 1, SVG: 1, NOSCRIPT: 1, TEMPLATE: 1 };
+
+  /** Copy only allowed markup into the editing box (the server cleans again on save). */
+  function rtCopy(srcNode, into) {
+    Array.prototype.forEach.call(srcNode.childNodes, function (n) {
+      if (n.nodeType === 3) { into.appendChild(document.createTextNode(n.nodeValue)); return; }
+      if (n.nodeType !== 1 || RT_DROP[n.tagName]) return;
+      var tag = RT_RENAME[n.tagName] || n.tagName.toLowerCase();
+      if (!RT_TAGS[tag.toUpperCase()]) { rtCopy(n, into); return; }
+      var el = document.createElement(tag);
+      if (tag === "a") {
+        var href = n.getAttribute("href") || "";
+        if (/^(https?:|mailto:|tel:|\/|#|[\w.-]+\.html)/i.test(href)) el.setAttribute("href", href);
+      }
+      if (tag === "p" && n.getAttribute("class") === "measured mt-l") el.className = "measured mt-l";
+      rtCopy(n, el);
+      into.appendChild(el);
+    });
+  }
+
+  function richText(obj, key, path, common) {
+    var area = h("div", { class: "rt-area prose", contenteditable: "true", role: "textbox", "aria-multiline": "true", "aria-label": "Article text", id: common.id });
+    rtCopy(new DOMParser().parseFromString("<body>" + (obj[key] || "") + "</body>", "text/html").body, area);
+    function changedText() { obj[key] = area.innerHTML; changed(path); }
+    function cmd(name, arg) {
+      area.focus();
+      document.execCommand(name, false, arg || null);
+      changedText();
+    }
+    function btn(label, title, fn, extra) {
+      return h("button", { type: "button", class: "rt-btn " + (extra || ""), title: title, "aria-label": title,
+        onmousedown: function (e) { e.preventDefault(); }, onclick: fn }, label);
+    }
+    var bar = h("div", { class: "rt-bar", role: "toolbar", "aria-label": "Formatting" },
+      btn("B", "Bold", function () { cmd("bold"); }, "b"),
+      btn("I", "Italic", function () { cmd("italic"); }, "i"),
+      btn("Heading", "Heading", function () { cmd("formatBlock", "h2"); }),
+      btn("Subheading", "Subheading", function () { cmd("formatBlock", "h3"); }),
+      btn("Paragraph", "Normal paragraph", function () { cmd("formatBlock", "p"); }),
+      btn("• List", "Bulleted list", function () { cmd("insertUnorderedList"); }),
+      btn("1. List", "Numbered list", function () { cmd("insertOrderedList"); }),
+      btn("“ Quote", "Quote", function () { cmd("formatBlock", "blockquote"); }),
+      btn("Link", "Add a link", function () {
+        var sel = window.getSelection();
+        if (!sel || sel.isCollapsed) { S.toast("Select the words you want to link first.", "warn"); return; }
+        var url = window.prompt("Link address (starting with https://)", "https://");
+        if (url && /^(https?:\/\/|mailto:|tel:)/i.test(url.trim())) cmd("createLink", url.trim());
+      }),
+      btn("Remove link", "Remove link", function () { cmd("unlink"); }),
+      btn("Clear", "Clear formatting", function () { cmd("removeFormat"); cmd("formatBlock", "p"); }));
+    area.addEventListener("input", changedText);
+    // Pasted text arrives as plain words, so nothing from Word or a web page sneaks in.
+    area.addEventListener("paste", function (e) {
+      e.preventDefault();
+      var text = (e.clipboardData || window.clipboardData).getData("text/plain");
+      document.execCommand("insertText", false, text);
+    });
+    area.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && !e.shiftKey && !area.firstChild) document.execCommand("formatBlock", false, "p");
+    });
+    return h("div", { class: "rt" }, bar, area);
+  }
+
   function imagePicker(f, obj, key, path, common) {
     var imgs = (schemaCache && schemaCache.images) || [];
     var thumb = h("img", { class: "thumb", alt: "", hidden: true });
     function show(name) {
-      if (!name) { thumb.hidden = true; return; }
+      var hit = imgs.filter(function (i) { return i.name === name; })[0];
+      if (!name || !hit) { thumb.hidden = true; return; }
       thumb.hidden = false;
-      thumb.src = "/public/images/" + name + "-480.webp";
+      thumb.src = "/public/images/" + name + "-" + hit.w[0] + ".jpg";
     }
     thumb.addEventListener("error", function () { thumb.hidden = true; });
     var known = imgs.some(function (i) { return i.name === obj[key]; });
@@ -294,7 +367,7 @@
   /* References (ids): generated from the name for new items, fixed afterwards. */
   function renderId(f, obj, path) {
     var box = h("p", { class: "ref muted" });
-    function paint() { S.put(box, "Reference: ", h("code", {}, obj.id || "(made from the " + (f.from === "title" ? "title" : "name") + ")")); }
+    function paint() { S.put(box, (f.key === "slug" ? "Web address: " : "Reference: "), h("code", {}, obj[f.key] || "(made from the " + (f.from === "title" ? "title" : "name") + ")")); }
     paint();
     obj.__paintId = paint;
     return h("div", { class: "field" }, box, h("div", { "data-err-for": path }, errNodes(path)));
@@ -307,17 +380,18 @@
     if (!idField || idField.from !== key && idField.withDate !== key) return;
     var base = S.slug(obj[idField.from]);
     if (idField.withDate && obj[idField.withDate]) base += "-" + String(obj[idField.withDate]).slice(0, 10);
-    obj.id = unique(base || "item", obj, r);
+    obj[idField.key] = unique(base || "item", obj, r, idField.key);
     if (obj.__paintId) obj.__paintId();
   }
 
-  function unique(base, self, r) {
+  function unique(base, self, r, idKey) {
+    idKey = idKey || "id";
     var taken = {};
     // Products must be unique across every category; everything else within its own list.
     var lists = cur.area === "shop" && r.field && r.field.key === "items"
       ? (cur.doc.categories || []).map(function (c) { return c.items || []; })
       : cur.area === "offer" ? [cur.doc.services || [], cur.doc.packages || []] : [r.parent || []];
-    lists.forEach(function (l) { l.forEach(function (x) { if (x !== self && x.id) taken[x.id] = true; }); });
+    lists.forEach(function (l) { l.forEach(function (x) { if (x !== self && x[idKey]) taken[x[idKey]] = true; }); });
     var id = base, n = 2;
     while (taken[id]) id = base + "-" + n++;
     return id;
@@ -413,6 +487,7 @@
       }
     }
     if (item.sample) out.push(["Hidden", "muted"]);
+    if ("draft" in item && item.draft) out.push(["Draft", "warn"]);
     if (item.featured) out.push(["Featured", "info"]);
     if (item.ends && item.ends < S.nowBeirut()) out.push(["Ended", "muted"]);
     if (arMissing(f.item, item)) out.push(["Arabic missing", "warn"]);
@@ -467,7 +542,8 @@
     var copy = JSON.parse(JSON.stringify(r.obj, function (k, v) { return k === "__paintId" ? undefined : v; }));
     var tk = r.field.title;
     if (copy[tk]) copy[tk] = copy[tk] + " (copy)";
-    copy.id = "";
+    var dupKey = (r.fields.filter(function (x) { return x.type === "id"; })[0] || { key: "id" }).key;
+    copy[dupKey] = "";
     fresh.add(copy);
     r.parent.splice(r.index + 1, 0, copy);
     var parentPath = r.base.replace(/\.\d+$/, "");
@@ -476,7 +552,7 @@
     if (idField) {
       var base = S.slug(copy[idField.from]);
       if (idField.withDate && copy[idField.withDate]) base += "-" + String(copy[idField.withDate]).slice(0, 10);
-      copy.id = unique(base || "item", copy, r);
+      copy[idField.key] = unique(base || "item", copy, r, idField.key);
     }
     changed(parentPath);
     location.hash = "#edit/" + cur.area + "/" + parentPath + "." + (r.index + 1);

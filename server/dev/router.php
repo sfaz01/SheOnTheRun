@@ -28,6 +28,16 @@ if (preg_match('#^/admin(/|$)#', $path)) {
         return true;
     }
 }
+// Files published from the local admin live in server/storage/dev-site/data (see config.dev.php).
+if (preg_match('#^/data/(config|products|runs|packages|testimonials|ar)\.js$#', $path, $m)) {
+    $published = $root . '/server/storage/dev-site/data/' . $m[1] . '.js';
+    if (is_file($published)) {
+        header('Content-Type: text/javascript; charset=utf-8');
+        header('Cache-Control: no-cache');
+        readfile($published);
+        return true;
+    }
+}
 $file = $root . $path;
 if (is_file($file)) {
     return false; // let the built-in server send it

@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       include_content:
-        description: "Also upload content the admin panel will own (data/*.js, journal/, feed.xml, sitemap.xml). Turn OFF once the panel is live, so a deploy never overwrites her edits."
+        description: "Also upload the data files the admin panel owns (products, runs, packages, testimonials, config, ar). Leave OFF — turning it on overwrites what was published from the admin."
         type: boolean
-        default: true
+        default: false
 
 permissions:
   contents: read
@@ -28,8 +28,8 @@ jobs:
         run: find api server -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Unit tests
         run: php server/tests/unit.php
-      - name: API flow tests
-        run: node --test server/tests/flow.test.mjs
+      - name: API, round-trip and content tests
+        run: node --test server/tests/*.test.mjs
 
   deploy:
     needs: test
@@ -43,7 +43,8 @@ jobs:
         run: |
           EXTRA=()
           if [ "$INCLUDE_CONTENT" != "true" ]; then
-            EXTRA+=(--exclude '/data/*.js' --exclude '/journal/' --exclude '/feed.xml' --exclude '/sitemap.xml')
+            # These are written by the admin panel's Publish button on the server.
+            for f in config products runs packages testimonials ar; do EXTRA+=(--exclude "/data/$f.js"); done
           fi
           rsync -a ./ _site/ \
             --exclude '.git' --exclude '.github' --exclude '.claude' --exclude '_site' \
@@ -55,7 +56,6 @@ jobs:
           mkdir -p _site/server/storage
 
       - name: Build feed and sitemap
-        if: ${{ inputs.include_content }}
         run: node tools/build.js _site
 
       # Checks the six secrets before anything is uploaded. It prints each one's LENGTH (never its
@@ -92,7 +92,7 @@ jobs:
           install -m 700 -d ~/.ssh
           printf '%s\n' "$S_KEY" | tr -d '\r' > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
           printf '%s\n' "$S_KNOWN" | tr -d '\r' > ~/.ssh/known_hosts
-          echo "Key fingerprint (compare with 'ssh-keygen -lf ~/.ssh/sotr-deploy.pub' on your PC):"
+          echo "Key fingerprint (compare with 'ssh-keygen -lf ~/.ssh/sotr-actions.pub' on your PC):"
           ssh-keygen -lf ~/.ssh/deploy_key || { echo "::error::The private key could not be read. Re-copy it into HOSTINGER_SSH_KEY."; exit 1; }
 
       - name: Test the connection

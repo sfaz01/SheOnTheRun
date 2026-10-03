@@ -22,7 +22,7 @@ export function phpCommand(extraIni = []) {
   const ini = ["display_errors=1", "error_reporting=E_ALL", "date.timezone=UTC", ...extraIni];
   if (process.platform === "win32") {
     ini.push(`extension_dir="${join(dirname(php), "ext")}"`);
-    for (const e of ["mbstring", "openssl", "fileinfo", "gd", "pdo_sqlite", "sqlite3"]) ini.push(`extension=${e}`);
+    for (const e of ["mbstring", "openssl", "fileinfo", "gd", "exif", "pdo_sqlite", "sqlite3"]) ini.push(`extension=${e}`);
   }
   const iniPath = join(mkdtempSync(join(tmpdir(), "sotr-ini-")), "php.ini");
   writeFileSync(iniPath, ini.join("\n") + "\n");

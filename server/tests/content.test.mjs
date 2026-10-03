@@ -38,7 +38,7 @@ test("content needs a signed-in admin", async () => {
 test("first use imports the website's content; nothing is waiting to publish", async () => {
   const schema = await owner.call("GET", "/api/admin/schema");
   assert.equal(schema.status, 200);
-  assert.deepEqual(Object.keys(schema.json.areas), ["shop", "runs", "offer", "testimonials", "settings"]);
+  assert.deepEqual(Object.keys(schema.json.areas), ["shop", "runs", "offer", "testimonials", "settings", "posts", "gallery"]);
   assert.ok(schema.json.images.length > 50, "image list for the photo picker");
 
   const status = await owner.call("GET", "/api/admin/status");

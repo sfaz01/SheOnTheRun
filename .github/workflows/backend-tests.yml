@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install PHP
-        run: sudo apt-get update && sudo apt-get install -y php-cli php-sqlite3 php-mbstring
+        run: sudo apt-get update && sudo apt-get install -y php-cli php-sqlite3 php-mbstring php-gd php-xml
       - name: PHP syntax check
         run: find api server -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Unit tests

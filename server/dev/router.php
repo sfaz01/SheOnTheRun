@@ -14,7 +14,7 @@ if (preg_match('#^/(server|docs|tools|\.git|\.github|\.claude)(/|$)#', $path) ||
 }
 if (preg_match('#^/admin(/|$)#', $path)) {
     // Same policy as admin/.htaccess, so a violation shows up locally instead of on the live site.
-    header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+    header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
     header('Cache-Control: no-store');
     $target = $root . $path;
     if (is_dir($target)) {
@@ -29,10 +29,12 @@ if (preg_match('#^/admin(/|$)#', $path)) {
     }
 }
 // Files published from the local admin live in server/storage/dev-site/data (see config.dev.php).
-if (preg_match('#^/data/(config|products|runs|packages|testimonials|ar)\.js$#', $path, $m)) {
-    $published = $root . '/server/storage/dev-site/data/' . $m[1] . '.js';
+// (also the photos, articles, feed and sitemap that Publish and uploads write locally)
+if (preg_match('#^/(data/(?:config|products|runs|packages|testimonials|ar|posts|images|gallery)\.js|journal/[a-z0-9-]+\.html|public/images/[a-z0-9-]+\.(?:jpg|webp)|feed\.xml|sitemap\.xml)$#', $path, $m)) {
+    $published = $root . '/server/storage/dev-site/' . $m[1];
     if (is_file($published)) {
-        header('Content-Type: text/javascript; charset=utf-8');
+        $ext = pathinfo($published, PATHINFO_EXTENSION);
+        header('Content-Type: ' . ['js' => 'text/javascript; charset=utf-8', 'html' => 'text/html; charset=utf-8', 'jpg' => 'image/jpeg', 'webp' => 'image/webp', 'xml' => 'application/xml'][$ext]);
         header('Cache-Control: no-cache');
         readfile($published);
         return true;

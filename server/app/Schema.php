@@ -15,10 +15,13 @@ namespace Sotr;
 final class Schema
 {
     /** Areas the editor shows, in menu order. */
-    public const EDITABLE = ['shop', 'runs', 'offer', 'testimonials', 'settings'];
+    public const EDITABLE = ['shop', 'runs', 'offer', 'testimonials', 'settings', 'posts', 'gallery', 'images'];
+
+    /** Areas the generic editor may save. 'images' changes only through the photo tools (they own widths and file names). */
+    public const GENERIC = ['shop', 'runs', 'offer', 'testimonials', 'settings', 'posts', 'gallery'];
 
     /** Every area kept in the database. 'extras' and 'images' have no editor (yet). */
-    public const ALL = ['shop', 'runs', 'offer', 'testimonials', 'settings', 'extras', 'images'];
+    public const ALL = ['shop', 'runs', 'offer', 'testimonials', 'settings', 'posts', 'gallery', 'images', 'extras'];
 
     private static function f(string $key, string $type, string $label, array $extra = []): array
     {
@@ -150,6 +153,44 @@ final class Schema
                     ]]),
                 ],
             ],
+            'posts' => [
+                'label' => 'Journal',
+                'intro' => 'Articles. A draft stays off the website; everything else goes live when you publish.',
+                'fields' => [
+                    $f('items', 'collection', 'Articles', ['noun' => 'article', 'title' => 'title', 'subtitle' => 'date', 'item' => [
+                        $f('slug', 'id', 'Web address', ['from' => 'title', 'hint' => 'Made from the title when the article is created. It becomes sheontherun.com/journal/…']),
+                        $f('title', 'text', 'Title', ['required' => true, 'ar' => true, 'max' => 120]),
+                        $f('kicker', 'text', 'Topic', ['required' => true, 'ar' => true, 'max' => 60, 'hint' => 'The small line above the title, e.g. “Sports & active nutrition”.']),
+                        $f('date', 'date', 'Date', ['required' => true]),
+                        $f('readingTime', 'text', 'Reading time', ['ar' => true, 'max' => 20, 'hint' => 'e.g. 5 min']),
+                        $f('excerpt', 'textarea', 'Summary', ['required' => true, 'ar' => true, 'max' => 300, 'hint' => 'One or two sentences that make someone want to read it. Shown on cards and in Google.']),
+                        $f('image', 'image', 'Cover photo', ['hint' => 'Pick from the photo library.']),
+                        $f('draft', 'bool', 'Keep as a draft', ['hint' => 'A draft is not on the website at all, not even in the list.']),
+                        $f('bodyHtml', 'richtext', 'Article', ['required' => true, 'max' => 60000]),
+                        $f('seoTitle', 'text', 'Google title (optional)', ['max' => 140, 'hint' => 'Leave empty to use the title.']),
+                        $f('seoDescription', 'textarea', 'Google description (optional)', ['max' => 300, 'hint' => 'Leave empty to use the summary.']),
+                    ]]),
+                ],
+            ],
+            'gallery' => [
+                'label' => 'Photo galleries',
+                'intro' => 'Which photos appear in the scrolling runs, and in what order. Choose from the photo library.',
+                'fields' => [
+                    $f('community', 'collection', '“Moments on the run” (SheOnTheRun page)', ['noun' => 'photo', 'title' => 'caption', 'subtitle' => 'img', 'item' => [
+                        $f('img', 'image', 'Photo', ['required' => true]),
+                        $f('caption', 'text', 'Caption', ['ar' => true, 'max' => 80]),
+                    ]]),
+                    $f('fieldwork', 'collection', '“8 years in the humanitarian field” (Public Health page)', ['noun' => 'photo', 'title' => 'caption', 'subtitle' => 'img', 'item' => [
+                        $f('img', 'image', 'Photo', ['required' => true]),
+                        $f('caption', 'text', 'Caption', ['ar' => true, 'max' => 80]),
+                    ]]),
+                ],
+            ],
+            'images' => [
+                'label' => 'Photos',
+                'intro' => '',
+                'fields' => [],
+            ],
             'settings' => [
                 'label' => 'Site settings',
                 'intro' => 'Contact details and switches used across the whole site.',
@@ -180,7 +221,7 @@ final class Schema
     {
         $all = self::all();
         $out = [];
-        foreach (self::EDITABLE as $area) {
+        foreach (self::GENERIC as $area) {
             $out[$area] = $all[$area];
         }
         return $out;

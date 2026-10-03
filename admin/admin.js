@@ -167,10 +167,13 @@
     ["edit/offer", "Services & packages", "offer"],
     ["edit/testimonials", "Testimonials", "testimonials"],
     ["edit/settings", "Site settings", "settings"],
+    ["photos", "Photos", "images"],
+    ["edit/gallery", "Photo galleries", "gallery"],
+    ["edit/posts", "Journal", "posts"],
     ["publish", "Publish"],
     ["account", "Account"]
   ];
-  var SOON = [["Photos", "Phase 2"], ["Journal", "Phase 2"], ["Orders", "Phase 3"], ["Messages", "Phase 3"]];
+  var SOON = [["Orders", "Phase 3"], ["Messages", "Phase 3"]];
 
   var status = { changed: {}, last_publish: null };
   var navEl, main, lastHash = "";
@@ -229,6 +232,7 @@
     show();
   }
 
+  function areaHref(a) { return a === "images" ? "#photos" : "#edit/" + a; }
   function areaLabel(a) { var n = NAV.filter(function (x) { return x[2] === a; })[0]; return n ? n[1] : a; }
 
   function show() {
@@ -237,6 +241,7 @@
     S.refreshNav();
     var m = /^edit\/([a-z]+)(?:\/([\w.]+))?$/.exec(hash);
     var p = m ? S.editor(main, m[1], m[2] || "")
+      : hash === "photos" ? S.photosView(main)
       : hash === "publish" ? publishView(main)
       : hash === "account" ? accountView(main)
       : overview(main);
@@ -269,6 +274,8 @@
           h("ul", { class: "quick" },
             h("li", {}, h("a", { href: "#edit/runs" }, "Add a run or event")),
             h("li", {}, h("a", { href: "#edit/shop" }, "Update products, prices or stock")),
+            h("li", {}, h("a", { href: "#photos" }, "Add photos")),
+            h("li", {}, h("a", { href: "#edit/posts" }, "Write a Journal article")),
             h("li", {}, h("a", { href: "#edit/offer" }, "Change consultation or package prices")),
             h("li", {}, h("a", { href: "/", target: "_blank", rel: "noopener" }, "Open the website ↗")))),
         h("details", { class: "panel" }, h("summary", {}, h("span", { class: "h2like" }, "Hosting check "), pill), list));
@@ -303,7 +310,7 @@
       if (changed.length) {
         publishBox.append(
           h("p", {}, "These sections have saved changes that aren’t on the website yet:"),
-          h("ul", {}, changed.map(function (a) { return h("li", {}, h("a", { href: "#edit/" + a }, areaLabel(a))); })),
+          h("ul", {}, changed.map(function (a) { return h("li", {}, h("a", { href: areaHref(a) }, areaLabel(a))); })),
           form([field("note", "What changed? (optional)", { type: "text", maxlength: 200, placeholder: "e.g. Added October runs, new tee prices" })],
             "Publish now", function (f) {
               return api("POST", "/admin/publish", { note: val(f, "note") }).then(function () {
@@ -314,7 +321,7 @@
                   var errs = (err.data && err.data.errors) || [];
                   S.put(result, h("div", { class: "alert error" }, h("p", {}, err.message),
                     h("ul", {}, errs.map(function (e) {
-                      return h("li", {}, h("a", { href: "#edit/" + e.area }, areaLabel(e.area)), " — " + e.message);
+                      return h("li", {}, h("a", { href: areaHref(e.area) }, areaLabel(e.area)), " — " + e.message);
                     }))));
                   return;
                 }

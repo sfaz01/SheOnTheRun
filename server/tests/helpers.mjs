@@ -27,7 +27,7 @@ export async function startServer({ port, setupToken }) {
     await new Promise((r) => setTimeout(r, 100));
   }
   return {
-    base, site,
+    base, site, db: join(work, "test.sqlite"),
     stop() { proc.kill(); try { rmSync(work, { recursive: true, force: true }); } catch { /* Windows file locks */ } },
   };
 }
@@ -48,8 +48,22 @@ export function client(base) {
     try { json = await res.json(); } catch { /* not JSON */ }
     return { status: res.status, json };
   }
+  /** multipart upload (the one non-JSON request) */
+  async function upload(path, fields, file) {
+    const headers = {};
+    if (jar.size) headers.cookie = [...jar].map(([k, v]) => `${k}=${v}`).join("; ");
+    if (csrf) headers["x-csrf-token"] = csrf;
+    const fd = new FormData();
+    for (const [k, v] of Object.entries(fields)) fd.append(k, v);
+    if (file) fd.append("file", new Blob([file.bytes], { type: file.type }), file.name);
+    const res = await fetch(base + path, { method: "POST", headers, body: fd });
+    let json = null;
+    try { json = await res.json(); } catch { /* not JSON */ }
+    return { status: res.status, json };
+  }
   return {
     call,
+    upload,
     async state() { const r = await call("GET", "/api/auth/state"); csrf = r.json.csrf; return r.json; },
   };
 }
@@ -81,4 +95,28 @@ export async function enrol(c) {
   if (ok.status !== 200) throw new Error("enrolment failed: " + JSON.stringify(ok.json));
   await c.state();
   return begin.json.secret;
+}
+
+/** A real PNG (a colour gradient) of the given size, made without any library. */
+export async function makePng(width, height) {
+  const zlib = await import("node:zlib");
+  const raw = Buffer.alloc((width * 3 + 1) * height);
+  for (let y = 0; y < height; y++) {
+    const row = y * (width * 3 + 1);
+    raw[row] = 0;
+    for (let x = 0; x < width; x++) {
+      raw[row + 1 + x * 3] = Math.round((x / width) * 255);
+      raw[row + 2 + x * 3] = Math.round((y / height) * 255);
+      raw[row + 3 + x * 3] = 128;
+    }
+  }
+  const chunk = (type, data) => {
+    const len = Buffer.alloc(4); len.writeUInt32BE(data.length);
+    const body = Buffer.concat([Buffer.from(type), data]);
+    const crc = Buffer.alloc(4); crc.writeUInt32BE(zlib.crc32(body) >>> 0);
+    return Buffer.concat([len, body, crc]);
+  };
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(width, 0); ihdr.writeUInt32BE(height, 4); ihdr[8] = 8; ihdr[9] = 2;
+  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ihdr), chunk("IDAT", zlib.deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]);
 }

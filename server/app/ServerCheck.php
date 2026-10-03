@@ -33,7 +33,9 @@ final class ServerCheck
             'mbstring' => 'fail',
             'openssl'  => 'fail',
             'fileinfo' => 'warn',  // checking uploaded photos are really images
-            'gd'       => 'warn',  // resizing photos on the server, if we ever need to
+            'gd'       => 'fail',  // resizing uploaded photos
+            'exif'     => 'warn',  // turning phone photos the right way up
+            'dom'      => 'fail',  // cleaning article text
             'curl'     => 'warn',  // talking to payment gateways later
             'zip'      => 'warn',  // order/backup exports
         ];
@@ -56,13 +58,13 @@ final class ServerCheck
             'storage'       => Config::storagePath(),
             'data'          => $root . '/data',
             'journal'       => $root . '/journal',
-            'uploads'       => $root . '/uploads',
+            'photos'        => $root . '/public/images',
         ] as $name => $path) {
             $exists = is_dir($path);
             $add(
                 'dir_' . $name,
                 'Writable folder: ' . $name,
-                $exists && is_writable($path) ? 'ok' : ($name === 'uploads' && !$exists ? 'warn' : 'fail'),
+                $exists && is_writable($path) ? 'ok' : 'fail',
                 $exists ? (is_writable($path) ? 'writable' : 'not writable') : 'folder not found'
             );
         }

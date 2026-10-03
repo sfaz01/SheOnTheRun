@@ -282,7 +282,7 @@
     var widths = m.w;
     var biggest = widths[widths.length - 1];
     var sizes = opt.sizes || "(min-width: 900px) 45vw, 92vw";
-    var alt = opt.alt != null ? opt.alt : m.alt;
+    var alt = opt.alt != null ? opt.alt : (AR && m.altAr ? m.altAr : m.alt);
 
     function set(ext) {
       return widths.map(function (w) {

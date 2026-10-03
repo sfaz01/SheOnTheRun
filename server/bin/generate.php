@@ -5,6 +5,7 @@
 declare(strict_types=1);
 
 use Sotr\Generator;
+use Sotr\Journal;
 use Sotr\Schema;
 use Sotr\Validator;
 
@@ -32,5 +33,12 @@ foreach (Schema::EDITABLE as $area) {
 foreach (Generator::files($docs) as $name => $contents) {
     file_put_contents($out . '/' . $name, $contents);
 }
+$live = Journal::published($docs['posts']);
+@mkdir($out . '/journal');
+foreach ($live as $p) {
+    file_put_contents($out . '/journal/' . $p['slug'] . '.html', Journal::page($p));
+}
+file_put_contents($out . '/feed.xml', Journal::feed($live));
+file_put_contents($out . '/sitemap.xml', Journal::sitemap($live));
 echo "Wrote " . count(Generator::FILES) . " files to $out" . ($problems ? " ($problems validation problems)" : '') . "\n";
 exit($problems ? 2 : 0);

@@ -69,7 +69,7 @@ final class Validator
                 } else {
                     $out[$key] = $value;
                 }
-            } elseif ($present || !$empty) {
+            } elseif ($present || (!$empty && $f['type'] !== 'bool')) { // an untouched "off" switch stays absent
                 $out[$key] = $value;
             }
 

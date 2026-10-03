@@ -162,6 +162,8 @@
   /* ------------------------------------------------------------------ shell */
   var NAV = [
     ["overview", "Overview"],
+    ["orders", "Orders", null, "orders_new"],
+    ["messages", "Messages", null, "messages_unread"],
     ["edit/shop", "Shop & products", "shop"],
     ["edit/runs", "Runs & events", "runs"],
     ["edit/offer", "Services & packages", "offer"],
@@ -173,9 +175,13 @@
     ["publish", "Publish"],
     ["account", "Account"]
   ];
-  var SOON = [["Orders", "Phase 3"], ["Messages", "Phase 3"]];
+  var SOON = [];
 
   var status = { changed: {}, last_publish: null };
+  var counts = { orders_new: 0, messages_unread: 0 };
+  S.refreshCounts = function () {
+    return api("GET", "/admin/counts").then(function (c) { counts = c; S.refreshNav(); }).catch(function () {});
+  };
   var navEl, main, lastHash = "";
 
   S.refreshStatus = function () {
@@ -194,6 +200,7 @@
         return h("li", {}, h("a", { href: "#" + n[0], "aria-current": active ? "page" : false },
           h("span", {}, n[1]),
           n[0] === "publish" && count ? h("span", { class: "badge" }, String(count)) : null,
+          n[3] && counts[n[3]] ? h("span", { class: "badge hot" }, String(counts[n[3]])) : null,
           dirty ? h("span", { class: "dot unsaved", title: "Unsaved changes" }, h("span", { class: "vh-label" }, "Unsaved changes"))
             : pending ? h("span", { class: "dot pending", title: "Saved, not published yet" }, h("span", { class: "vh-label" }, "Not published yet")) : null));
       }),
@@ -214,6 +221,9 @@
     lastHash = location.hash;
     window.onhashchange = onHash;
     S.refreshStatus();
+    S.refreshCounts();
+    clearInterval(S.countTimer);
+    S.countTimer = setInterval(function () { if (S.session.stage === "full" && !document.hidden) S.refreshCounts(); }, 60000);
     show();
   }
 
@@ -241,6 +251,8 @@
     S.refreshNav();
     var m = /^edit\/([a-z]+)(?:\/([\w.]+))?$/.exec(hash);
     var p = m ? S.editor(main, m[1], m[2] || "")
+      : hash === "orders" ? S.ordersView(main)
+      : hash === "messages" ? S.messagesView(main)
       : hash === "photos" ? S.photosView(main)
       : hash === "publish" ? publishView(main)
       : hash === "account" ? accountView(main)
@@ -272,6 +284,7 @@
         h("section", { class: "panel" },
           h("h2", {}, "Quick links"),
           h("ul", { class: "quick" },
+            h("li", {}, h("a", { href: "#orders" }, "See new orders")),
             h("li", {}, h("a", { href: "#edit/runs" }, "Add a run or event")),
             h("li", {}, h("a", { href: "#edit/shop" }, "Update products, prices or stock")),
             h("li", {}, h("a", { href: "#photos" }, "Add photos")),

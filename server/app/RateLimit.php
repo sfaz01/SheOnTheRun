@@ -46,4 +46,29 @@ final class RateLimit
         Db::run('DELETE FROM login_attempts WHERE throttle_key = ?', [$key]);
         Db::run('DELETE FROM login_attempts WHERE created_at < ?', [Db::now(time() - 86400)]);
     }
+
+    /**
+     * For public forms: allow at most $max requests per $window seconds for this key and IP, and
+     * $max * 12 for the key across all visitors (so a botnet can't flood the shop either).
+     * Every request is recorded (success = 2, which the sign-in lock-out never counts).
+     */
+    public static function throttle(string $key, string $ip, int $max, int $window = 3600): void
+    {
+        $since = Db::now(time() - $window);
+        $mine = (int) (Db::one(
+            'SELECT COUNT(*) AS n FROM login_attempts WHERE throttle_key = ? AND ip = ? AND success = 2 AND created_at > ?',
+            [$key, $ip, $since]
+        )['n'] ?? 0);
+        $all = (int) (Db::one(
+            'SELECT COUNT(*) AS n FROM login_attempts WHERE throttle_key = ? AND success = 2 AND created_at > ?',
+            [$key, $since]
+        )['n'] ?? 0);
+        if ($mine >= $max || $all >= $max * 12) {
+            throw new HttpError(429, 'Too many requests just now. Please wait a little and try again, or contact us on WhatsApp.', 'slow_down', ['retry_after' => $window]);
+        }
+        Db::run(
+            'INSERT INTO login_attempts (throttle_key, ip, success, created_at) VALUES (?, ?, 2, ?)',
+            [$key, $ip, Db::now()]
+        );
+    }
 }

@@ -4,7 +4,7 @@
 
 **Not in scope.** The design, layout and page structure of the public site. They stay as they are.
 
-**Status (4 Oct 2026): phases 0, 1 and 2 are built (phase 2 awaiting deploy).**
+**Status (4 Oct 2026): phases 0–3 are built (phases 2 and 3 awaiting deploy).**
 
 **Earlier status (1 Oct 2026):** Phase 0 code is built and tested locally (sign-in, 2-step code, recovery codes, hosting check, deploy workflow). Waiting on the hosting steps in [hostinger-setup.md](hostinger-setup.md).
 

@@ -213,7 +213,27 @@ final class Content
         if ($row === null) {
             throw new HttpError(404, 'That version no longer exists.');
         }
-        self::replaceDrafts(json_decode($row['snapshot'], true) ?? [], $userId);
+        $snap = json_decode($row['snapshot'], true) ?? [];
+        // Orders have changed the stock since then; an old version must not bring old stock numbers back.
+        $now = (self::lastSnapshot() ?? [])['shop'] ?? null;
+        if (is_array($now) && isset($snap['shop'])) {
+            $stock = [];
+            foreach ($now['categories'] ?? [] as $c) {
+                foreach ($c['items'] ?? [] as $p) {
+                    if (array_key_exists('stock', $p)) {
+                        $stock[$p['id']] = $p['stock'];
+                    }
+                }
+            }
+            foreach ($snap['shop']['categories'] ?? [] as $ci => $c) {
+                foreach ($c['items'] ?? [] as $ii => $p) {
+                    if (isset($stock[$p['id']])) {
+                        $snap['shop']['categories'][$ci]['items'][$ii]['stock'] = $stock[$p['id']];
+                    }
+                }
+            }
+        }
+        self::replaceDrafts($snap, $userId);
         Audit::log($userId, 'content.restored', '#' . $publishId);
     }
 
@@ -263,7 +283,7 @@ final class Content
      * Write each file to a temporary name first, then swap them all in, so visitors never see half a file.
      * @param array<string,string> $files path (from the site root) => contents
      */
-    private static function writeFiles(array $files): void
+    public static function writeFiles(array $files): void
     {
         $root = Config::siteRoot();
         $tmp = [];

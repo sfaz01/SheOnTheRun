@@ -85,3 +85,26 @@ are not behind it (they have their own sign-in).
 
 **To launch:** delete that block from `.htaccess`, commit, and run *Deploy to Hostinger*.
 Optionally delete `.htpasswd` afterwards. To change the preview password, regenerate that file.
+
+## Phase 3 — turning on orders and messages (one-time)
+
+The checkout and the Connect form keep working exactly as before until you switch the new inbox on, so nothing changes by surprise.
+
+1. **Create a mailbox for the alerts.** hPanel → Emails → create `orders@sheontherun.com` (any address on the domain works) and note its password.
+2. **Tell the admin about it.** In `domains/sheontherun.com/sotr-config.php` add this block (the same file that holds the database details):
+
+   ```php
+   'mail' => [
+       'from'      => 'orders@sheontherun.com',
+       'smtp_host' => 'smtp.hostinger.com',
+       'smtp_port' => 465,
+       'smtp_user' => 'orders@sheontherun.com',
+       'smtp_pass' => 'THE-MAILBOX-PASSWORD',
+   ],
+   ```
+3. **Check where alerts go.** In the admin: Site settings → *Main email* gets shop-order alerts; *Where each Connect-form subject goes* picks the inbox per subject.
+4. **Switch it on.** Site settings → tick *Take shop orders in this admin* and *Take Connect-form messages in this admin* → Save draft → Publish.
+5. **Test it yourself.** Place one order on the shop with your own phone number. It should appear under **Orders**, the email should arrive, and the product's stock should drop. Cancel the order afterwards to put the stock back (or delete it).
+   If the order shows "The email alert couldn't be sent", re-check step 2 (the Hosting check on the Overview page also reports email).
+
+**Privacy note:** orders and messages contain customers' names, phone numbers and addresses. Only signed-in admins can see them. Delete an order or message once it's no longer needed; mention this in the site's privacy wording before launch.

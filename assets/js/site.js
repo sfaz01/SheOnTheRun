@@ -128,6 +128,13 @@
     "Your order opens in WhatsApp, ready to send. I'll confirm before it's sent.": "سيُفتح طلبك في واتساب جاهزاً للإرسال. سأؤكّده معك قبل إرساله.",
     "Your order opens in your email app, ready to send. I'll confirm before it's sent.": "سيُفتح طلبك في تطبيق البريد جاهزاً للإرسال. سأؤكّده معك قبل إرساله.",
     "Order received": "تمّ استلام الطلب",
+    "That didn't go through.": "لم يتمّ الإرسال.",
+    "Whish / OMT transfer": "تحويل ويش / OMT",
+    "I'll message you to confirm your order and send the payment details.": "سأراسلك لتأكيد طلبك وإرسال تفاصيل الدفع.",
+    "I'll send you the payment details when I confirm your order.": "سأرسل لك تفاصيل الدفع عندما أؤكّد طلبك.",
+    "Payment: <b>cash on delivery</b> or a <b>Whish / OMT transfer</b>, anywhere in Lebanon.": "الدفع: <b>نقداً عند الاستلام</b> أو <b>تحويل ويش / OMT</b>، في أي مكان في لبنان.",
+    "Your order number: {x}": "رقم طلبك: {x}",
+    "Payment: Whish / OMT transfer": "الدفع: تحويل ويش / OMT",
     "Thank you, {x}.": "شكراً، {x}.",
     "I'll call you to confirm your order and delivery. You pay in cash when it arrives.": "سأتصل بك لتأكيد الطلب والتوصيل. الدفع نقداً عند الوصول.",
     "That didn't go through. Opening your email app with the order written out instead…": "لم يتمّ الإرسال. سيُفتح تطبيق البريد مع الطلب مكتوباً…",
@@ -1162,6 +1169,9 @@
       }).join("\n");
     }
 
+    var ADMIN_ORDERS = !!CFG.adminOrders;
+    var lastOrderNo = "";
+    var lastPay = "cod";
     var ORDER_ENDPOINT = [CFG.orderEndpoint, CFG.formEndpoint].filter(function (u) {
       return /^https:\/\//.test(String(u || ""));
     })[0] || "";
@@ -1181,7 +1191,7 @@
           }).join("") + "</ul>" +
           '<p class="bag-total">' + (t.priced ? tr("Total") + " <b class=\"num\">$" + t.total + "</b>" :
             tr("Prices for some items are confirmed with your order.")) + "</p>" +
-          '<p class="pay-note"><span class="pay-dot" aria-hidden="true"></span><span>' + tr("Payment: <b>cash on delivery</b>, anywhere in Lebanon.") + "</span></p>" +
+          '<p class="pay-note"><span class="pay-dot" aria-hidden="true"></span><span>' + (ADMIN_ORDERS ? tr("Payment: <b>cash on delivery</b> or a <b>Whish / OMT transfer</b>, anywhere in Lebanon.") : tr("Payment: <b>cash on delivery</b>, anywhere in Lebanon.")) + "</span></p>" +
           '<button class="btn lilac block lg mt-s" type="button" data-checkout>' + tr("Checkout") + ' <span class="arw" aria-hidden="true">→</span></button>'
         : '<p class="prose mt-s">' + tr("Your cart is empty.") + "</p>";
     }
@@ -1207,8 +1217,12 @@
           '<textarea class="textarea" id="co-address" name="address" required rows="3" ' +
           'placeholder="' + tr("Area, street, building, floor — and a landmark if it helps") + '"></textarea></div>' +
         '<fieldset class="co-pay"><legend class="field-label">' + tr("Payment") + "</legend>" +
-          '<label class="pay-option"><input type="radio" name="payment" value="Pay on delivery" checked>' +
-          '<span><b>' + tr("Pay on delivery") + "</b><small>" + tr("Cash, when your order arrives.") + "</small></span></label></fieldset>" +
+          '<label class="pay-option"><input type="radio" name="payment" value="cod" checked>' +
+          '<span><b>' + tr("Pay on delivery") + "</b><small>" + tr("Cash, when your order arrives.") + "</small></span></label>" +
+          (ADMIN_ORDERS ? '<label class="pay-option"><input type="radio" name="payment" value="transfer">' +
+            '<span><b>' + tr("Whish / OMT transfer") + "</b><small>" + tr("I'll send you the payment details when I confirm your order.") + "</small></span></label>" : "") +
+          "</fieldset>" +
+          (ADMIN_ORDERS ? '<div class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>' : "") +
         '<button class="btn lilac block lg" type="submit">' + tr("Place order") + ' <span class="arw" aria-hidden="true">→</span></button>' +
         '<p class="form-note co-note">' + (ORDER_ENDPOINT
           ? tr("I'll call you to confirm before it's sent.")
@@ -1220,8 +1234,11 @@
     function doneHTML(name) {
       return '<div class="form-done" role="status" tabindex="-1">' +
         '<span class="measured">' + tr("Order received") + "</span>" +
+        (lastOrderNo ? '<p class="measured mt-s">' + tr("Your order number: {x}", { x: "<b>" + esc(lastOrderNo) + "</b>" }) + "</p>" : "") +
         '<p class="pull mt-s">' + (name ? tr("Thank you, {x}.", { x: esc(name.split(" ")[0]) }) : tr("Thank you") + ".") + "</p>" +
-        '<p class="prose mt-s">' + tr("I'll call you to confirm your order and delivery. You pay in cash when it arrives.") + "</p></div>";
+        '<p class="prose mt-s">' + (lastPay === "transfer"
+          ? tr("I'll message you to confirm your order and send the payment details.")
+          : tr("I'll call you to confirm your order and delivery. You pay in cash when it arrives.")) + "</p></div>";
     }
 
     function renderBag(name) {
@@ -1254,7 +1271,7 @@
         "\n" + tr("Total: {x}", { x: t.priced ? "$" + t.total : tr("to confirm") }) +
         "\n\n" + tr("Name: {x}", { x: f("name") }) + "\n" + tr("Phone: {x}", { x: f("phone") }) +
         "\n" + tr("Governorate: {x}", { x: f("governorate") }) + "\n" + tr("Address: {x}", { x: f("address") }) +
-        "\n" + tr("Payment: Pay on delivery");
+        "\n" + (f("payment") === "transfer" ? tr("Payment: Whish / OMT transfer") : tr("Payment: Pay on delivery"));
       var subject = tr("Shop order — {x}", { x: f("name") });
 
       function finish() {
@@ -1263,6 +1280,43 @@
         var d = $(".form-done", panel); if (d) d.focus();
       }
 
+      if (ADMIN_ORDERS) {
+        var abtn = $('button[type="submit"]', form);
+        var anote = $(".co-note", form);
+        if (abtn) { abtn.disabled = true; abtn.textContent = tr("Placing your order…"); }
+        var reset = function () {
+          if (abtn) { abtn.disabled = false; abtn.innerHTML = tr("Place order") + ' <span class="arw" aria-hidden="true">→</span>'; }
+        };
+        fetch("/api/orders", {
+          method: "POST",
+          headers: { "Accept": "application/json", "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: f("name"), phone: f("phone"), governorate: f("governorate"), address: f("address"),
+            payment_method: f("payment") || "cod", website: f("website"),
+            items: bag.map(function (x) { return { id: x.id, option: x.option, qty: x.qty }; })
+          })
+        }).then(function (r) {
+          return r.json().catch(function () { return {}; }).then(function (d) { return { r: r, d: d }; });
+        }).then(function (res) {
+          if (res.r.ok) { lastOrderNo = res.d.order_number || ""; lastPay = f("payment") || "cod"; finish(); return; }
+          if (res.r.status >= 400 && res.r.status < 500) {
+            /* The shop says no (sold out, a field to fix, slow down): show why, keep the bag. */
+            reset();
+            if (anote) anote.textContent = res.d.error || tr("That didn't go through.");
+            return;
+          }
+          throw new Error("status " + res.r.status);
+        }).catch(function () {
+          /* The server is unreachable: never lose the order, hand it over on WhatsApp or email instead. */
+          reset();
+          if (anote) anote.textContent = tr("That didn't go through. Opening your email app with the order written out instead…");
+          setTimeout(function () {
+            var u = WA_READY ? "https://wa.me/" + WA_DIGITS + "?text=" + encodeURIComponent(tr("Hi Fatima! ") + body) : mailLink(subject, body);
+            if (WA_READY) window.open(u, "_blank", "noopener"); else window.location.href = u;
+          }, 900);
+        });
+        return;
+      }
       if (ORDER_ENDPOINT) {
         var btn = $('button[type="submit"]', form);
         if (btn) { btn.disabled = true; btn.textContent = tr("Placing your order…"); }
@@ -1652,7 +1706,16 @@
       };
     }
 
-    var ENDPOINT = /^https:\/\//.test(String(CFG.formEndpoint || "")) ? CFG.formEndpoint : "";
+    var ADMIN_MSG = !!CFG.adminMessages;
+    var ENDPOINT = ADMIN_MSG ? "/api/messages" : (/^https:\/\//.test(String(CFG.formEndpoint || "")) ? CFG.formEndpoint : "");
+    if (ADMIN_MSG) {
+      /* A field real visitors never see; a form-filling bot fills it in and is ignored. */
+      var trap = document.createElement("div");
+      trap.setAttribute("aria-hidden", "true");
+      trap.style.cssText = "position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden";
+      trap.innerHTML = '<label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>';
+      form.appendChild(trap);
+    }
     var submitBtn = $('button[type="submit"]', form);
     var noteEl = $(".form-note", form);
     if (ENDPOINT) {
@@ -1683,13 +1746,23 @@
       fetch(ENDPOINT, {
         method: "POST",
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: c.name, email: c.email, about: c.interest, inbox: c.to,
-          message: c.message, _subject: c.subject
-        })
+        body: JSON.stringify(ADMIN_MSG
+          ? { name: c.name, email: c.email, about: currentInterest(), message: c.message, website: (form.elements.website || {}).value || "" }
+          : { name: c.name, email: c.email, about: c.interest, inbox: c.to, message: c.message, _subject: c.subject })
       }).then(function (r) {
-        if (!r.ok) throw new Error("status " + r.status);
-        sent();
+        if (r.ok) { sent(); return; }
+        if (ADMIN_MSG && r.status >= 400 && r.status < 500) {
+          /* Say what to fix (or to slow down) instead of silently opening an email app. */
+          return r.json().catch(function () { return {}; }).then(function (d) {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = tr("Send message") + ' <span class="arw" aria-hidden="true">→</span>';
+            }
+            if (noteEl) noteEl.textContent = d.error || tr("That didn't go through.");
+            return "handled";
+          });
+        }
+        throw new Error("status " + r.status);
       }).catch(function () {
         /* The service is down or blocked: never lose the message — hand it to
            the visitor's email app instead. */

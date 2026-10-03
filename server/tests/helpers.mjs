@@ -10,13 +10,13 @@ import { phpCommand } from "./php.mjs";
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
-export async function startServer({ port, setupToken }) {
+export async function startServer({ port, setupToken, extra = "" }) {
   const work = mkdtempSync(join(tmpdir(), "sotr-test-"));
   const site = join(work, "site");
   mkdirSync(join(site, "data"), { recursive: true });
   const fwd = (p) => p.replace(/\\/g, "/");
   const cfg = join(work, "config.php");
-  writeFileSync(cfg, `<?php return ['env'=>'dev','setup_token'=>'${setupToken}','site_root'=>'${fwd(site)}','db'=>['driver'=>'sqlite','path'=>'${fwd(join(work, "test.sqlite"))}']];\n`);
+  writeFileSync(cfg, `<?php return ['env'=>'dev','setup_token'=>'${setupToken}','site_root'=>'${fwd(site)}','db'=>['driver'=>'sqlite','path'=>'${fwd(join(work, "test.sqlite"))}']${extra ? "," + extra : ""}];\n`);
   const [php, args] = phpCommand();
   const proc = spawn(php, [...args, "-S", `localhost:${port}`, "-t", root, join(root, "server", "dev", "router.php")], {
     env: { ...process.env, SOTR_CONFIG: cfg }, stdio: "ignore",
@@ -61,9 +61,18 @@ export function client(base) {
     try { json = await res.json(); } catch { /* not JSON */ }
     return { status: res.status, json };
   }
+  /** a plain GET returning the body as text (for downloads) */
+  async function text(path) {
+    const headers = {};
+    if (jar.size) headers.cookie = [...jar].map(([k, v]) => `${k}=${v}`).join("; ");
+    const res = await fetch(base + path, { headers });
+    const bytes = Buffer.from(await res.arrayBuffer());
+    return { status: res.status, text: bytes.toString("utf8"), bytes, headers: res.headers };
+  }
   return {
     call,
     upload,
+    text,
     async state() { const r = await call("GET", "/api/auth/state"); csrf = r.json.csrf; return r.json; },
   };
 }
@@ -120,3 +129,5 @@ export async function makePng(width, height) {
   ihdr.writeUInt32BE(width, 0); ihdr.writeUInt32BE(height, 4); ihdr[8] = 8; ihdr[9] = 2;
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ihdr), chunk("IDAT", zlib.deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]);
 }
+
+export { startSmtp } from "./smtp.mjs";

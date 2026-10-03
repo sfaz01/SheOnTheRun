@@ -172,6 +172,8 @@ test("enrolment: a wrong code fails, the right code enables 2-step and issues re
   const wrong = await owner.call("POST", "/api/auth/2fa/enable", { code: "000000" === totp(secret) ? "111111" : "000000" });
   assert.equal(wrong.status, 401);
 
+  const enrolStep = Math.floor(Date.now() / 30000); // the 30-second slot this first code belongs to
+  globalThis.__enrolStep = enrolStep;
   const ok = await owner.call("POST", "/api/auth/2fa/enable", { code: totp(secret) });
   assert.equal(ok.status, 200);
   recovery = ok.json.recovery_codes;
@@ -212,10 +214,12 @@ test("login: wrong password is a generic 401; then password + the NEXT authentic
   assert.equal(ok.json.next, "2fa");
   await owner.state();
   // the current step was consumed at enrolment, so a replay must fail…
-  const replay = await owner.call("POST", "/api/auth/2fa", { code: totp(secret, 0) });
+  // offsets are relative to the clock NOW, so a test that straddles a 30 s boundary still tests the right slots
+  const slot = (n) => n - Math.floor(Date.now() / 30000);
+  const replay = await owner.call("POST", "/api/auth/2fa", { code: totp(secret, slot(globalThis.__enrolStep)) });
   assert.equal(replay.status, 401, "a code that was already used must not work twice");
   // …and the next step is accepted (within the one-step clock-drift window)
-  const good = await owner.call("POST", "/api/auth/2fa", { code: totp(secret, 1) });
+  const good = await owner.call("POST", "/api/auth/2fa", { code: totp(secret, slot(globalThis.__enrolStep + 1)) });
   assert.equal(good.status, 200);
   const s = await owner.state();
   assert.equal(s.stage, "full");

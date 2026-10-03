@@ -11,8 +11,11 @@ use Sotr\Config;
 use Sotr\Db;
 use Sotr\Http;
 use Sotr\HttpError;
+use Sotr\Messages;
 use Sotr\Migrator;
+use Sotr\Orders;
 use Sotr\Photos;
+use Sotr\RateLimit;
 use Sotr\Schema;
 use Sotr\ServerCheck;
 
@@ -47,6 +50,29 @@ try {
 
     if ($method === 'GET' && $path === '/auth/state') {
         Http::json(Auth::state());
+    }
+
+    /* Public forms (no sign-in): JSON + same-origin + honeypot + rate limits. */
+    if ($method === 'POST' && ($path === '/orders' || $path === '/messages')) {
+        Http::guardPublic();
+        $ip = Http::ip();
+        $limits = (array) Config::get('limits', []);
+        if ($path === '/orders') {
+            RateLimit::throttle('public:orders', $ip, (int) ($limits['orders_per_hour'] ?? 5));
+            Http::json(['ok' => true] + Orders::create(Http::body()), 201);
+        }
+        RateLimit::throttle('public:messages', $ip, (int) ($limits['messages_per_hour'] ?? 5));
+        Http::json(Messages::create(Http::body()), 201);
+    }
+
+    if ($method === 'GET' && $path === '/admin/orders/export') {
+        Auth::requireUser();
+        header_remove('Content-Type');
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="sheontherun-orders-' . gmdate('Y-m-d') . '.csv"');
+        $out = fopen('php://output', 'w');
+        Orders::exportCsv($out);
+        exit;
     }
 
     // Photo upload is the one multipart request; it gets the same origin + CSRF checks as every write.
@@ -110,6 +136,18 @@ try {
             Http::json(['checks' => ServerCheck::run()]);
 
         /* --------------------------------------------------------- content */
+        case 'GET /admin/counts':
+            Auth::requireUser();
+            Http::json(['orders_new' => Orders::counts()['new'], 'messages_unread' => Messages::counts()['unread']]);
+
+        case 'GET /admin/orders':
+            Auth::requireUser();
+            Http::json(Orders::list((string) ($_GET['status'] ?? ''), (string) ($_GET['q'] ?? ''), (int) ($_GET['page'] ?? 1)));
+
+        case 'GET /admin/messages':
+            Auth::requireUser();
+            Http::json(Messages::list((string) ($_GET['status'] ?? ''), (int) ($_GET['page'] ?? 1)));
+
         case 'GET /admin/photos':
             Auth::requireUser();
             Content::ensureSeeded();
@@ -170,6 +208,42 @@ try {
         if ($method === 'DELETE') {
             Photos::delete($m[1], (int) $user['id']);
             Http::json(['ok' => true]);
+        }
+    }
+    if (preg_match('#^/admin/orders/(\d+)(?:/(status|payment|notes))?$#', $path, $m)) {
+        $user = Auth::requireUser();
+        $id = (int) $m[1];
+        $part = $m[2] ?? '';
+        if ($part === '' && $method === 'GET') {
+            Http::json(Orders::get($id));
+        }
+        if ($part === '' && $method === 'DELETE') {
+            Orders::delete($id, (int) $user['id']);
+            Http::json(['ok' => true]);
+        }
+        if ($part === 'status' && $method === 'PUT') {
+            Http::json(Orders::setStatus($id, Http::str('status', 30), (int) $user['id']));
+        }
+        if ($part === 'payment' && $method === 'PUT') {
+            Http::json(Orders::setPayment($id, Http::str('payment_status', 10), Http::str('payment_ref', 100), (int) $user['id']));
+        }
+        if ($part === 'notes' && $method === 'PUT') {
+            Http::json(Orders::setNotes($id, Http::raw('notes', 2000), (int) $user['id']));
+        }
+    }
+    if (preg_match('#^/admin/messages/(\d+)(?:/(status|notes))?$#', $path, $m)) {
+        $user = Auth::requireUser();
+        $id = (int) $m[1];
+        $part = $m[2] ?? '';
+        if ($part === '' && $method === 'DELETE') {
+            Messages::delete($id, (int) $user['id']);
+            Http::json(['ok' => true]);
+        }
+        if ($part === 'status' && $method === 'PUT') {
+            Http::json(Messages::setStatus($id, Http::str('status', 30), (int) $user['id']));
+        }
+        if ($part === 'notes' && $method === 'PUT') {
+            Http::json(Messages::setNotes($id, Http::raw('notes', 2000), (int) $user['id']));
         }
     }
     if ($method === 'POST' && preg_match('#^/admin/history/(\d+)/restore$#', $path, $m)) {

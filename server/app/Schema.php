@@ -204,6 +204,8 @@ final class Schema
                         $email('research', 'Research'),
                         $email('general', 'General'),
                     ]]),
+                    $f('adminOrders', 'bool', 'Take shop orders in this admin', ['hint' => 'On: the checkout sends orders here (you get an email and see them under Orders). Off: orders go to WhatsApp or email as before.']),
+                    $f('adminMessages', 'bool', 'Take Connect-form messages in this admin', ['hint' => 'On: messages arrive under Messages and by email. Off: the form opens the visitor’s email app.']),
                     $f('instagram', 'url', 'Instagram link'),
                     $f('instagramHandle', 'text', 'Instagram handle', ['max' => 40, 'hint' => 'e.g. @sheontherun.lb']),
                     $f('bookingUrl', 'url', 'Online booking link', ['hint' => 'A Cal.com or Calendly link. Empty = booking happens on WhatsApp.']),

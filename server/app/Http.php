@@ -126,6 +126,29 @@ final class Http
         }
     }
 
+    /**
+     * Public forms (checkout, contact) have no session, so no CSRF token. They are protected by:
+     * JSON only (a cross-site <form> can't send it and we never allow CORS), an Origin that must be
+     * our own host, a hidden honeypot field, and rate limits.
+     */
+    public static function guardPublic(): void
+    {
+        $type = strtolower((string) ($_SERVER['CONTENT_TYPE'] ?? ''));
+        if (!str_starts_with($type, 'application/json')) {
+            throw new HttpError(415, 'Send JSON.');
+        }
+        $origin = (string) ($_SERVER['HTTP_ORIGIN'] ?? '');
+        if ($origin === '') {
+            throw new HttpError(403, 'Cross-site request blocked.'); // browsers always send Origin on a JSON POST
+        }
+        $host = parse_url($origin, PHP_URL_HOST);
+        $port = parse_url($origin, PHP_URL_PORT);
+        $originHost = $host . ($port ? ':' . $port : '');
+        if (!hash_equals(strtolower((string) ($_SERVER['HTTP_HOST'] ?? '')), strtolower((string) $originHost))) {
+            throw new HttpError(403, 'Cross-site request blocked.');
+        }
+    }
+
     public static function csrfToken(): string
     {
         if (empty($_SESSION['csrf'])) {

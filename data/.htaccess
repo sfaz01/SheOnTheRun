@@ -1,0 +1,8 @@
+# The admin panel rewrites these files when someone presses Publish. Browsers must check
+# for a newer copy every time (cheap: an unchanged file comes back as "304 Not Modified").
+<IfModule mod_headers.c>
+  Header set Cache-Control "no-cache"
+</IfModule>
+<IfModule mod_expires.c>
+  ExpiresActive Off
+</IfModule>

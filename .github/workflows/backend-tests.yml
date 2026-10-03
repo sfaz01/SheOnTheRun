@@ -20,5 +20,5 @@ jobs:
         run: find api server -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Unit tests
         run: php server/tests/unit.php
-      - name: API flow tests
-        run: node --test server/tests/flow.test.mjs
+      - name: API, round-trip and content tests
+        run: node --test server/tests/*.test.mjs

@@ -1,0 +1,1231 @@
+{
+  "version": 1,
+  "areas": {
+    "shop": {
+      "categories": [
+        {
+          "id": "sheontherun",
+          "name": "SheOnTheRun",
+          "blurb": "Club kit for the women who show up. Worn on the corniche, at Biel, and on the days you nearly didn't come.",
+          "comingSoon": false,
+          "items": [
+            {
+              "id": "sotr-tee",
+              "name": "SheOnTheRun Tee",
+              "blurb": "The club tee. Soft cotton, relaxed fit, wears in rather than out.",
+              "price": null,
+              "image": "shop-tee",
+              "options": [
+                "S",
+                "M",
+                "L",
+                "XL"
+              ],
+              "soldOut": false,
+              "ar": {
+                "name": "قميص SheOnTheRun",
+                "blurb": "قميص النادي. قطن ناعم وقصّة مريحة، يزداد جمالاً مع الاستعمال."
+              }
+            },
+            {
+              "id": "sotr-cap",
+              "name": "SheOnTheRun Cap",
+              "blurb": "Light, packable, and good for sunset runs when the light comes in sideways.",
+              "price": null,
+              "image": "shop-cap",
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "قبّعة SheOnTheRun",
+                "blurb": "خفيفة وسهلة الحمل، ومثالية لجري الغروب حين تأتي الشمس من الجانب."
+              }
+            },
+            {
+              "id": "sotr-bag",
+              "name": "Run Bag",
+              "blurb": "Holds a change of clothes, a water bottle and everything you tell yourself you don't need.",
+              "price": null,
+              "image": "shop-bag",
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "حقيبة الجري",
+                "blurb": "تتّسع لملابس بديلة وقارورة ماء وكل ما تقولين لنفسك إنك لا تحتاجينه."
+              }
+            },
+            {
+              "id": "sotr-socks",
+              "name": "Sports Socks",
+              "blurb": "Cushioned crew socks and grip socks for Pilates — the cheapest upgrade to how a session feels.",
+              "price": null,
+              "image": "shop-socks",
+              "options": [
+                "36–39",
+                "40–43"
+              ],
+              "soldOut": false,
+              "ar": {
+                "name": "جوارب رياضية",
+                "blurb": "جوارب مبطّنة وجوارب مانعة للانزلاق للبيلاتس — أرخص ترقية لشعورك أثناء التمرين."
+              }
+            }
+          ],
+          "ar": {
+            "name": "SheOnTheRun",
+            "blurb": "ملابس النادي للنساء اللواتي يحضرن."
+          }
+        },
+        {
+          "id": "wellness-tools",
+          "name": "Wellness Tools",
+          "blurb": "The practical things I actually ask clients to own. Nothing here is a supplement, and nothing here is magic — they just make eating well easier to do.",
+          "comingSoon": false,
+          "items": [
+            {
+              "id": "food-scale",
+              "name": "Digital Food Scale",
+              "blurb": "Not for weighing everything forever — for two weeks of learning what a portion really looks like.",
+              "price": null,
+              "image": "shop-scale",
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "ميزان طعام رقمي",
+                "blurb": "ليس لوزن كل شيء إلى الأبد — بل لأسبوعين تتعلّم فيهما كيف تبدو الحصة الحقيقية."
+              }
+            },
+            {
+              "id": "measuring-cups",
+              "name": "Measuring Cups & Spoons",
+              "blurb": "For recipes, for oil, and for the moment you realise how much tahini you've been using.",
+              "price": null,
+              "image": "shop-cups",
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "أكواب وملاعق قياس",
+                "blurb": "للوصفات، وللزيت، وللحظة التي تكتشف فيها كمية الطحينة التي كنت تستعملها."
+              }
+            },
+            {
+              "id": "portion-set",
+              "name": "Portion Guide Set",
+              "blurb": "A simple visual system for building a plate without counting anything.",
+              "price": null,
+              "image": "shop-portion",
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "مجموعة دليل الحصص",
+                "blurb": "نظام بصري بسيط لتكوين طبقك من دون عدّ أي شيء."
+              }
+            },
+            {
+              "id": "journal",
+              "name": "Habit & Food Journal",
+              "blurb": "Pen and paper, on purpose. Writing it down changes it more than any app I've tried.",
+              "price": null,
+              "image": "shop-journal",
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "دفتر العادات والطعام",
+                "blurb": "ورقة وقلم، عن قصد. الكتابة تُحدث فرقاً أكبر من أي تطبيق جرّبته."
+              }
+            }
+          ],
+          "ar": {
+            "name": "أدوات العافية",
+            "blurb": "الأدوات العملية التي أطلب فعلاً من عملائي امتلاكها."
+          }
+        },
+        {
+          "id": "my-picks",
+          "name": "My Picks",
+          "blurb": "Things I personally use, like or recommend — across running, nutrition, wellness and learning. If it's here, it's in my own bag or on my own shelf.",
+          "comingSoon": false,
+          "items": [
+            {
+              "id": "pick-belt",
+              "name": "Running Belt",
+              "blurb": "Running · Carries a phone and a key without bouncing. That's the whole review.",
+              "price": null,
+              "image": "shop-belt",
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "حزام الجري",
+                "blurb": "للجري · يحمل الهاتف والمفتاح من دون أن يرتدّ. هذا كل شيء."
+              }
+            },
+            {
+              "id": "pick-bottle",
+              "name": "Insulated Bottle",
+              "blurb": "Wellness · Cold water in a Beirut summer is a habit-changer, not a luxury.",
+              "price": null,
+              "image": "shop-bottle",
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "قارورة معزولة",
+                "blurb": "للعافية · الماء البارد في صيف بيروت عادة تغيّر الكثير، لا رفاهية."
+              }
+            },
+            {
+              "id": "pick-shaker",
+              "name": "Shaker & Snack Set",
+              "blurb": "Nutrition · For fuelling around training when you're going straight from work to the track.",
+              "price": null,
+              "image": "shop-shaker",
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "مجموعة شيكر ووجبات خفيفة",
+                "blurb": "للتغذية · لتغذية نفسك حول التمرين حين تذهب من العمل مباشرة إلى المضمار."
+              }
+            }
+          ],
+          "ar": {
+            "name": "اختياراتي",
+            "blurb": "أشياء أستخدمها بنفسي وأنصح بها."
+          }
+        },
+        {
+          "id": "modest-activewear",
+          "name": "Modest Activewear",
+          "blurb": "Kit designed for women who cover, made for actually moving in — breathable, long-line, and cut for running rather than adapted for it. In development now.",
+          "comingSoon": true,
+          "items": [],
+          "ar": {
+            "name": "ملابس رياضية محتشمة",
+            "blurb": "ملابس مصمّمة للنساء المحجّبات، مصنوعة للحركة الفعلية — تسمح بالتهوية، طويلة، ومفصّلة للجري لا معدّلة له. قيد التطوير الآن."
+          }
+        }
+      ],
+      "governorates": [
+        "Beirut",
+        "Mount Lebanon",
+        "North Lebanon",
+        "Akkar",
+        "Baalbek-Hermel",
+        "Beqaa",
+        "South Lebanon",
+        "Nabatieh"
+      ],
+      "ar": {
+        "governorates": [
+          "بيروت",
+          "جبل لبنان",
+          "الشمال",
+          "عكار",
+          "بعلبك - الهرمل",
+          "البقاع",
+          "الجنوب",
+          "النبطية"
+        ]
+      }
+    },
+    "runs": {
+      "recurring": {
+        "title": "Sunset runs",
+        "days": "Tuesdays & Thursdays",
+        "time": "6:30 PM",
+        "place": "Biel, Beirut",
+        "detail": "30 minutes at an easy, talking pace. No one gets left behind, and no one is too slow to come.",
+        "ar": {
+          "days": "الثلاثاء والخميس",
+          "time": "6:30 مساءً",
+          "place": "بيال، بيروت",
+          "detail": "30 دقيقة بوتيرة هادئة تسمح بالحديث. لا أحد يُترك خلفاً، ولا أحد أبطأ من أن يأتي."
+        }
+      },
+      "events": [
+        {
+          "id": "sunset-22-sep",
+          "kind": "run",
+          "title": "Sunset Run",
+          "starts": "2026-09-22T18:30",
+          "ends": "2026-09-22T19:30",
+          "place": "Biel, Beirut",
+          "detail": "30 minutes, easy conversation pace. We regroup at every turn.",
+          "note": "All paces welcome",
+          "featured": false,
+          "ar": {
+            "title": "جري الغروب",
+            "place": "بيال، بيروت",
+            "detail": "30 دقيقة بوتيرة هادئة تسمح بالحديث. نتجمّع عند كل منعطف.",
+            "note": "جميع الوتيرات مرحّب بها"
+          }
+        },
+        {
+          "id": "sunset-24-sep",
+          "kind": "run",
+          "title": "Sunset Run",
+          "starts": "2026-09-24T18:30",
+          "ends": "2026-09-24T19:30",
+          "place": "Biel, Beirut",
+          "detail": "30 minutes along the seafront. Free to join.",
+          "note": "All paces welcome",
+          "featured": false,
+          "ar": {
+            "title": "جري الغروب",
+            "place": "بيال، بيروت",
+            "detail": "30 دقيقة على الواجهة البحرية. المشاركة مجانية.",
+            "note": "جميع الوتيرات مرحّب بها"
+          }
+        },
+        {
+          "id": "sunset-29-sep",
+          "kind": "run",
+          "title": "Sunset Run",
+          "starts": "2026-09-29T18:30",
+          "ends": "2026-09-29T19:30",
+          "place": "Biel, Beirut",
+          "detail": "30 minutes, easy pace. Nobody runs alone.",
+          "note": "",
+          "featured": false,
+          "ar": {
+            "title": "جري الغروب",
+            "place": "بيال، بيروت",
+            "detail": "30 دقيقة بوتيرة هادئة. لا أحد يركض وحده."
+          }
+        },
+        {
+          "id": "yoga-mountain",
+          "kind": "class",
+          "title": "Morning Yoga & Movement",
+          "starts": "2026-10-03T09:00",
+          "ends": "2026-10-03T10:30",
+          "place": "Broumana, Mount Lebanon",
+          "detail": "Gentle mobility, breathwork and recovery session overlooking the valley.",
+          "note": "Limited to 15 women",
+          "featured": false,
+          "ar": {
+            "title": "يوغا وحركة صباحية",
+            "place": "برمانا، جبل لبنان",
+            "detail": "جلسة لطيفة للمرونة والتنفّس والتعافي مطلّة على الوادي.",
+            "note": "لـ15 امرأة فقط"
+          }
+        },
+        {
+          "id": "backontherun",
+          "kind": "challenge",
+          "title": "BackOnTheRun",
+          "starts": "2026-09-14T00:00",
+          "ends": "2026-10-25T23:59",
+          "place": "Online — join from anywhere",
+          "detail": "A 6-week group nutrition challenge to help you build healthier habits, stay accountable, and feel better — with support along the way.",
+          "note": "$40 for 6 weeks",
+          "featured": true,
+          "link": "dietontherun.html#backontherun",
+          "ar": {
+            "place": "أونلاين — انضمّي من أي مكان",
+            "detail": "تحدٍّ غذائي جماعي لمدة 6 أسابيع يساعدك على بناء عادات أصحّ، والالتزام، والشعور بتحسّن — مع دعم طوال الطريق.",
+            "note": "40$ لمدة 6 أسابيع"
+          }
+        }
+      ]
+    },
+    "offer": {
+      "services": [
+        {
+          "id": "initial-consultation",
+          "number": "01",
+          "title": "Initial Nutrition Consultation",
+          "bestFor": "Anyone looking to understand their nutrition, lose or gain weight, improve their eating habits, support their health, or get started with a personalised nutrition plan.",
+          "includes": [
+            "Comprehensive nutrition & lifestyle assessment",
+            "Discussion of your goals, habits, challenges and preferences",
+            "Review of relevant health history",
+            "Personalised nutrition recommendations",
+            "Practical guidance tailored to your lifestyle",
+            "Personalised nutrition plan, where appropriate",
+            "Follow-up recommendations"
+          ],
+          "duration": "50–60 minutes",
+          "price": 40,
+          "modes": [
+            "in-person",
+            "online"
+          ],
+          "cta": "Book your consultation",
+          "ar": {
+            "title": "استشارة التغذية الأولى",
+            "bestFor": "لكل من يريد أن يفهم تغذيته، أو يخسر الوزن أو يزيده، أو يحسّن عاداته الغذائية، أو يدعم صحته، أو يبدأ بخطة تغذية شخصية.",
+            "includes": [
+              "تقييم شامل للتغذية ونمط الحياة",
+              "نقاش حول أهدافك وعاداتك وتحدياتك وتفضيلاتك",
+              "مراجعة التاريخ الصحي ذي الصلة",
+              "توصيات غذائية شخصية",
+              "إرشادات عملية تناسب نمط حياتك",
+              "خطة تغذية شخصية، عند الحاجة",
+              "توصيات للمتابعة"
+            ],
+            "duration": "50–60 دقيقة",
+            "cta": "حجز الاستشارة"
+          }
+        },
+        {
+          "id": "follow-up",
+          "number": "02",
+          "title": "Follow-Up Consultation",
+          "tagline": "Because nutrition isn't a one-and-done thing.",
+          "bestFor": "Existing clients who want to review progress, troubleshoot challenges and adjust their plan.",
+          "includes": [
+            "Progress review",
+            "What's working / what isn't",
+            "Nutrition plan adjustments",
+            "Goal setting",
+            "Questions & guidance",
+            "Accountability and support"
+          ],
+          "duration": "30–45 minutes",
+          "price": 25,
+          "modes": [
+            "in-person",
+            "online"
+          ],
+          "cta": "Book a follow-up",
+          "ar": {
+            "title": "استشارة المتابعة",
+            "tagline": "لأن التغذية ليست أمراً يُنجَز مرة واحدة.",
+            "bestFor": "للعملاء الحاليين الذين يريدون مراجعة تقدّمهم، ومعالجة الصعوبات، وتعديل خطتهم.",
+            "includes": [
+              "مراجعة التقدّم",
+              "ما الذي ينجح وما الذي لا ينجح",
+              "تعديلات على خطة التغذية",
+              "تحديد الأهداف",
+              "أسئلة وإرشاد",
+              "متابعة ودعم"
+            ],
+            "duration": "30–45 دقيقة",
+            "cta": "حجز المتابعة"
+          }
+        },
+        {
+          "id": "body-composition",
+          "number": "03",
+          "title": "Body Composition Assessment",
+          "bestFor": "Anyone who wants to look past the number on the scale and understand what their weight is actually made of.",
+          "includes": [
+            "Body weight & BMI",
+            "Body fat percentage",
+            "Muscle mass",
+            "Visceral fat",
+            "Metabolic age",
+            "Body composition analysis",
+            "A brief explanation of your results and what they mean"
+          ],
+          "duration": "20 minutes",
+          "price": 15,
+          "modes": [
+            "in-person"
+          ],
+          "cta": "Book a body composition assessment",
+          "ar": {
+            "title": "تحليل تكوين الجسم",
+            "bestFor": "لكل من يريد أن ينظر أبعد من الرقم على الميزان ويفهم مِمّ يتكوّن وزنه فعلاً.",
+            "includes": [
+              "وزن الجسم ومؤشر كتلة الجسم",
+              "نسبة الدهون في الجسم",
+              "الكتلة العضلية",
+              "الدهون الحشوية",
+              "العمر الأيضي",
+              "تحليل تكوين الجسم",
+              "شرح مختصر لنتائجك وما تعنيه"
+            ],
+            "duration": "20 دقيقة",
+            "cta": "حجز تحليل تكوين الجسم"
+          }
+        }
+      ],
+      "packages": [
+        {
+          "id": "the-start",
+          "name": "The Start",
+          "length": "1 month / 4 weeks",
+          "line": "For when you're ready to begin.",
+          "includes": [
+            "1 initial consultation",
+            "Personalised nutrition assessment, including a body composition test in person",
+            "Personalised nutrition plan",
+            "1 follow-up",
+            "Email / WhatsApp support between sessions"
+          ],
+          "omitOnline": [
+            "Personalised nutrition assessment, including a body composition test in person"
+          ],
+          "addOnline": [
+            "Personalised nutrition assessment"
+          ],
+          "price": 50,
+          "featured": false,
+          "ar": {
+            "length": "شهر واحد / 4 أسابيع",
+            "line": "حين تكون مستعداً للبداية.",
+            "includes": [
+              "استشارة أولى واحدة",
+              "تقييم غذائي شخصي، يشمل تحليل تكوين الجسم حضورياً",
+              "خطة تغذية شخصية",
+              "متابعة واحدة",
+              "دعم عبر البريد الإلكتروني / واتساب بين الجلسات"
+            ],
+            "omitOnline": [
+              "تقييم غذائي شخصي، يشمل تحليل تكوين الجسم حضورياً"
+            ],
+            "addOnline": [
+              "تقييم غذائي شخصي"
+            ]
+          }
+        },
+        {
+          "id": "the-reset",
+          "name": "The Reset",
+          "length": "6 weeks",
+          "line": "For when you want more structure and support.",
+          "includes": [
+            "1 initial comprehensive consultation",
+            "3 follow-up consultations with body composition tests",
+            "Personalised nutrition plan",
+            "Adjustments throughout the programme",
+            "Habit & goal setting",
+            "Between-session support"
+          ],
+          "omitOnline": [
+            "3 follow-up consultations with body composition tests"
+          ],
+          "addOnline": [
+            "3 follow-up consultations"
+          ],
+          "price": 100,
+          "featured": true,
+          "badge": "Most chosen",
+          "ar": {
+            "length": "6 أسابيع",
+            "line": "حين تريد مزيداً من التنظيم والدعم.",
+            "includes": [
+              "استشارة أولى شاملة",
+              "3 استشارات متابعة مع تحليل تكوين الجسم",
+              "خطة تغذية شخصية",
+              "تعديلات طوال البرنامج",
+              "بناء العادات وتحديد الأهداف",
+              "دعم بين الجلسات"
+            ],
+            "omitOnline": [
+              "3 استشارات متابعة مع تحليل تكوين الجسم"
+            ],
+            "addOnline": [
+              "3 استشارات متابعة"
+            ],
+            "badge": "الأكثر اختياراً"
+          }
+        },
+        {
+          "id": "the-journey",
+          "name": "The Journey",
+          "length": "10 weeks",
+          "line": "For meaningful, long-term change.",
+          "includes": [
+            "1 initial consultation",
+            "5–6 follow-up consultations with body composition tests",
+            "Personalised nutrition plan",
+            "Ongoing adjustments",
+            "Habit & lifestyle coaching",
+            "Regular progress reviews",
+            "Between-session support"
+          ],
+          "omitOnline": [
+            "5–6 follow-up consultations with body composition tests"
+          ],
+          "addOnline": [
+            "5–6 follow-up consultations"
+          ],
+          "price": 150,
+          "featured": false,
+          "ar": {
+            "length": "10 أسابيع",
+            "line": "لتغيير حقيقي وطويل الأمد.",
+            "includes": [
+              "استشارة أولى واحدة",
+              "5–6 استشارات متابعة مع تحليل تكوين الجسم",
+              "خطة تغذية شخصية",
+              "تعديلات مستمرة",
+              "إرشاد في العادات ونمط الحياة",
+              "مراجعات منتظمة للتقدّم",
+              "دعم بين الجلسات"
+            ],
+            "omitOnline": [
+              "5–6 استشارات متابعة مع تحليل تكوين الجسم"
+            ],
+            "addOnline": [
+              "5–6 استشارات متابعة"
+            ]
+          }
+        }
+      ],
+      "challenge": {
+        "id": "backontherun",
+        "name": "BackOnTheRun",
+        "kicker": "6-week group nutrition challenge",
+        "dates": "14 September – 25 October",
+        "line": "Ready to get back on track?",
+        "body": "A 6-week group challenge to help you build healthier habits, stay accountable, and feel better — with support along the way.",
+        "includes": [
+          "Online nutrition & lifestyle assessment",
+          "Personalised nutrition plan",
+          "Meal guides & easy recipes",
+          "Weekly check-ins & accountability",
+          "Group support & motivation"
+        ],
+        "price": 40,
+        "priceNote": "for 6 weeks",
+        "cta": "Join BackOnTheRun",
+        "ar": {
+          "kicker": "تحدٍّ غذائي جماعي لمدة 6 أسابيع",
+          "dates": "14 أيلول – 25 تشرين الأول",
+          "line": "مستعدّة للعودة إلى المسار؟",
+          "body": "تحدٍّ جماعي لمدة 6 أسابيع يساعدك على بناء عادات أصحّ، والالتزام، والشعور بتحسّن — مع دعم طوال الطريق.",
+          "includes": [
+            "تقييم أونلاين للتغذية ونمط الحياة",
+            "خطة تغذية شخصية",
+            "أدلّة للوجبات ووصفات سهلة",
+            "متابعة أسبوعية والتزام",
+            "دعم وتحفيز من المجموعة"
+          ],
+          "priceNote": "لمدة 6 أسابيع",
+          "cta": "الانضمام إلى BackOnTheRun"
+        }
+      },
+      "fit": {
+        "goal": {
+          "question": "What brings you here?",
+          "options": [
+            {
+              "id": "weight",
+              "label": "Losing or gaining weight, sustainably",
+              "why": "we'll build a way of eating you can keep, not a diet you'll abandon"
+            },
+            {
+              "id": "energy",
+              "label": "More energy and better everyday habits",
+              "why": "we'll look at your real week and fix the parts that drain you"
+            },
+            {
+              "id": "sport",
+              "label": "Fuelling my running or training",
+              "why": "you'll get sports-nutrition guidance built around your training"
+            },
+            {
+              "id": "women",
+              "label": "Women's health and feeling at home in my body",
+              "why": "women's nutrition is the part of this work I care about most"
+            }
+          ]
+        },
+        "support": {
+          "question": "How much support would you like?",
+          "options": [
+            {
+              "id": "one",
+              "label": "One session to get me started",
+              "pick": "initial-consultation"
+            },
+            {
+              "id": "month",
+              "label": "A month to build the basics",
+              "pick": "the-start"
+            },
+            {
+              "id": "structure",
+              "label": "Six weeks of structure and check-ins",
+              "pick": "the-reset"
+            },
+            {
+              "id": "long",
+              "label": "Long-term change, properly",
+              "pick": "the-journey"
+            },
+            {
+              "id": "group",
+              "label": "Doing it alongside other women",
+              "pick": "challenge"
+            }
+          ]
+        },
+        "returning": {
+          "question": "Have you had a consultation with me before?",
+          "options": [
+            {
+              "id": "new",
+              "label": "No, this would be my first"
+            },
+            {
+              "id": "back",
+              "label": "Yes, I'm coming back",
+              "pick": "follow-up"
+            }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "n": "01",
+          "title": "Say hello",
+          "body": "Message me on WhatsApp, or book a free 15-minute call if you're not sure what you need yet."
+        },
+        {
+          "n": "02",
+          "title": "We meet",
+          "body": "In my clinic in Beirut or on a video call. We go through your health, your routine, your food, your training and what you actually want."
+        },
+        {
+          "n": "03",
+          "title": "You get a plan that fits",
+          "body": "Personalised, evidence-based, and built around the way you already live — not around a diet you'll abandon in three weeks."
+        },
+        {
+          "n": "04",
+          "title": "We adjust as you go",
+          "body": "Follow-ups, check-ins and support between sessions. Real life changes, so the plan changes with it."
+        }
+      ],
+      "ar": {
+        "fit": {
+          "goal": {
+            "question": "ما الذي أتى بك إلى هنا؟",
+            "options": {
+              "weight": {
+                "label": "خسارة الوزن أو زيادته بطريقة مستدامة",
+                "why": "سنبني طريقة أكل يمكنك الاستمرار عليها، لا حمية ستتخلّى عنها"
+              },
+              "energy": {
+                "label": "طاقة أكبر وعادات يومية أفضل",
+                "why": "سننظر إلى أسبوعك الحقيقي ونُصلح ما يستنزفك"
+              },
+              "sport": {
+                "label": "تغذية الجري أو التمارين",
+                "why": "ستحصل على إرشاد في التغذية الرياضية مبنيّ حول تدريبك"
+              },
+              "women": {
+                "label": "صحة المرأة والشعور بالراحة في جسدي",
+                "why": "تغذية المرأة هي الجزء الأقرب إلى قلبي في هذا العمل"
+              }
+            }
+          },
+          "support": {
+            "question": "ما مقدار الدعم الذي تحتاجه؟",
+            "options": {
+              "one": {
+                "label": "جلسة واحدة للبداية"
+              },
+              "month": {
+                "label": "شهر لبناء الأساسيات"
+              },
+              "structure": {
+                "label": "ستة أسابيع من التنظيم والمتابعة"
+              },
+              "long": {
+                "label": "تغيير طويل الأمد، كما يجب"
+              },
+              "group": {
+                "label": "القيام بذلك مع نساء أخريات"
+              }
+            }
+          },
+          "returning": {
+            "question": "هل سبق أن أجريت استشارة معي؟",
+            "options": {
+              "new": {
+                "label": "لا، ستكون هذه الأولى"
+              },
+              "back": {
+                "label": "نعم، أنا عائد/ة"
+              }
+            }
+          }
+        }
+      }
+    },
+    "testimonials": {
+      "items": [
+        {
+          "quote": "I came in wanting to lose weight and left understanding my own body for the first time. Nothing was taken away from me — Fatima showed me how to fuel properly and build each plate sustainably.",
+          "name": "Maya K.",
+          "detail": "The Reset · Beirut clinic",
+          "sample": true
+        },
+        {
+          "quote": "I'd tried almost every restrictive diet on the internet. This was the first time a professional asked what my work and family week actually look like before building a realistic nutrition plan.",
+          "name": "Nour H.",
+          "detail": "The Journey · Online consultation",
+          "sample": true
+        },
+        {
+          "quote": "I joined my first sunset run not knowing a single soul and could barely jog ten minutes. Six months later I completed my first 10k race feeling energized and confident. The nutrition structure made all the difference.",
+          "name": "Rania S.",
+          "detail": "SheOnTheRun · BackOnTheRun Challenge",
+          "sample": true
+        }
+      ]
+    },
+    "settings": {
+      "whatsapp": "[[WHATSAPP NUMBER]]",
+      "email": "fatimahmouzahem08@gmail.com",
+      "emails": {
+        "nutrition": "dietontherun@gmail.com",
+        "sheontherun": "sheonzrun@gmail.com",
+        "events": "sheonzrun@gmail.com",
+        "research": "fatimahmouzahem08@gmail.com",
+        "general": "fatimahmouzahem08@gmail.com"
+      },
+      "address": "Gemmayze, Accaoui Street, next to Belbol Ameublement, Blue Building, Beirut, Lebanon",
+      "mapsUrl": "https://maps.app.goo.gl/m3EG91gCSahm8Har7",
+      "instagram": "https://www.instagram.com/sheontherun.lb/",
+      "instagramHandle": "@sheontherun.lb",
+      "linkedin": "",
+      "location": "Beirut, Lebanon",
+      "formEndpoint": "",
+      "bookingUrl": "",
+      "newsletterEndpoint": "",
+      "plausibleDomain": "",
+      "cloudflareToken": "",
+      "orderEndpoint": ""
+    },
+    "extras": {
+      "ar": {
+        "publications": [
+          {
+            "summary": "مراجعة منهجية تناولت تضارب المصالح والتمويل في التواصل الصحي على وسائل التواصل الاجتماعي، باستخدام منهجية المراجعة المنهجية وتجميع الأدلة."
+          },
+          {
+            "summary": "المساهمة في تحديث قاعدة الأدلة حول أبحاث أمراض القلب والأوعية الدموية في المنطقة العربية."
+          }
+        ],
+        "topics": [
+          "التواصل الصحي",
+          "الأنظمة الصحية العامة",
+          "التغذية",
+          "علم الأوبئة",
+          "العدالة الصحية",
+          "تغيير السلوك",
+          "الرصد والتقييم",
+          "البيانات والأدلة"
+        ],
+        "posts": {
+          "a-month-in-shanghai": {
+            "title": "شهر في شنغهاي",
+            "kicker": "حكمة تقليدية",
+            "excerpt": "الأدلة والتقاليد لم تكونا يوماً على خلاف. شهر في جامعة شنغهاي للطب الصيني التقليدي، بدافع الفضول. (المقال بالإنجليزية)",
+            "readingTime": "3 دقائق"
+          },
+          "fuelling-your-first-10k": {
+            "title": "تغذية أول سباق 10 كلم",
+            "kicker": "التغذية الرياضية",
+            "excerpt": "ماذا تأكلين في الأسبوع السابق، وصباح السباق، و— الجزء الذي لا يتحدث عنه أحد — في الساعة التي تلي خط النهاية. (المقال بالإنجليزية)",
+            "readingTime": "7 دقائق"
+          }
+        },
+        "gallery": {
+          "sotr-girls": "يوم السباق، معاً",
+          "sotr-hike": "يوم مسار في الجبال",
+          "sotr-startline": "عند خط الانطلاق",
+          "sotr-yoga-tall": "يوغا فوق الوادي",
+          "sotr-selfie-park": "الجميع في الصورة",
+          "sotr-jackets": "يداً بيد",
+          "sotr-picnic": "استراحة الطريق",
+          "sotr-selfie-sunset": "الغروب، بعد الجري",
+          "ph-unicef-tent": "اليونيسف — من أجل كل طفل",
+          "ph-qudwa": "ورشة برنامج قدوة",
+          "ph-water": "برنامج الدبلوماسية المائية",
+          "ph-unv-training": "متطوعو الأمم المتحدة الشباب مع اليونيسف",
+          "ph-training-room": "تقديم التدريب",
+          "ph-wids": "مؤتمر النساء في علوم البيانات، الجامعة الأميركية في بيروت",
+          "ph-unicef-team": "فريق المتطوعين",
+          "ph-unicef-hug": "نحن الإلهام في العمل",
+          "ph-research-poster": "ملصق بحثي، الجامعة الأميركية في بيروت",
+          "ph-unicef-pair": "زميلات في اليونيسف",
+          "ph-podium": "عرض بيانات صحية",
+          "ph-water-cert": "حفل الختام، حوكمة المياه"
+        }
+      }
+    }
+  },
+  "images": [
+    {
+      "name": "about-armchair",
+      "alt": "Fatima seated in a teal armchair by a bookshelf, smiling"
+    },
+    {
+      "name": "about-cafe",
+      "alt": "Fatima at a cafe in Beirut"
+    },
+    {
+      "name": "about-coffee",
+      "alt": "Fatima with a coffee among the palms"
+    },
+    {
+      "name": "about-human",
+      "alt": "Fatima reading, off duty"
+    },
+    {
+      "name": "about-lotus",
+      "alt": "A white lotus in bloom with morning water droplets"
+    },
+    {
+      "name": "about-professional",
+      "alt": "Fatima Mouzahem in Beirut at night, the Grand Serail lit behind her"
+    },
+    {
+      "name": "about-reading",
+      "alt": "Fatima reading in a quiet corner"
+    },
+    {
+      "name": "china-flags",
+      "alt": "Fatima seated among international flags during her studies in China"
+    },
+    {
+      "name": "china-garden",
+      "alt": "Fatima in a classical Chinese garden"
+    },
+    {
+      "name": "china-graduation",
+      "alt": "Fatima at the closing ceremony of her studies in China"
+    },
+    {
+      "name": "china-pavilion",
+      "alt": "A garden pavilion hung with red lanterns in China"
+    },
+    {
+      "name": "china-summer-school",
+      "alt": "Study in China International Summer School, Shanghai University of Traditional Chinese Medicine"
+    },
+    {
+      "name": "dotr-cafe",
+      "alt": "Fatima Mouzahem at a cafe in Beirut, smiling over a cappuccino"
+    },
+    {
+      "name": "dotr-detail",
+      "alt": "A SheOnTheRun chalkboard and a drink among flowers"
+    },
+    {
+      "name": "dotr-hero",
+      "alt": "Fatima Mouzahem, licensed dietitian, in a quiet corner in Beirut"
+    },
+    {
+      "name": "dotr-portrait",
+      "alt": "Fatima Mouzahem, licensed dietitian, seated with a book"
+    },
+    {
+      "name": "dotr-reading",
+      "alt": "Fatima reading in a quiet corner"
+    },
+    {
+      "name": "focus-sports",
+      "alt": "Race number 959 pinned to Fatima's kit on the track"
+    },
+    {
+      "name": "focus-weight",
+      "alt": "Fatima reading in a quiet corner"
+    },
+    {
+      "name": "focus-wellbeing",
+      "alt": "Fatima with a coffee among the palms"
+    },
+    {
+      "name": "hero-road",
+      "alt": "Fatima Mouzahem in running kit on an empty road by the Beirut seafront"
+    },
+    {
+      "name": "hero-road-tall",
+      "alt": "Fatima Mouzahem in running kit on an empty road by the Beirut seafront"
+    },
+    {
+      "name": "hero-road-wide",
+      "alt": "Fatima Mouzahem in running kit on an empty road by the Beirut seafront"
+    },
+    {
+      "name": "journal-10k",
+      "alt": "A runner holding a sign reading 'Run like a girl' at a race in Beirut"
+    },
+    {
+      "name": "journey-2014",
+      "alt": "Fatima running a relay leg in competition"
+    },
+    {
+      "name": "journey-2016",
+      "alt": "Fatima at the Lebanese American University with her certificate"
+    },
+    {
+      "name": "journey-2017",
+      "alt": "Fatima in cap and gown on graduation day"
+    },
+    {
+      "name": "journey-2018",
+      "alt": "UNV-UNICEF Youth Advocates assignment preparation training"
+    },
+    {
+      "name": "journey-2019",
+      "alt": "Two UNICEF colleagues embracing, jackets reading 'We are inspiration in action'"
+    },
+    {
+      "name": "journey-2022",
+      "alt": "Two colleagues in team UNICEF shirts"
+    },
+    {
+      "name": "journey-2023",
+      "alt": "Fatima presenting on health data from the podium"
+    },
+    {
+      "name": "journey-2024",
+      "alt": "Fatima racing on the track, wearing race number 209"
+    },
+    {
+      "name": "journey-2025",
+      "alt": "Fatima at the Study in China International Summer School, Shanghai University of Traditional Chinese Medicine"
+    },
+    {
+      "name": "journey-2026",
+      "alt": "SheOnTheRun members arm in arm in club jackets"
+    },
+    {
+      "name": "nature-lilies",
+      "alt": "Water lilies on a pond"
+    },
+    {
+      "name": "nature-lotus",
+      "alt": "A white lotus in flower"
+    },
+    {
+      "name": "ph-badge",
+      "alt": "Fatima at work, conference badge around her neck"
+    },
+    {
+      "name": "ph-graduation",
+      "alt": "Fatima in cap and gown on graduation day"
+    },
+    {
+      "name": "ph-lau",
+      "alt": "Fatima at the Lebanese American University with her certificate"
+    },
+    {
+      "name": "ph-parliament",
+      "alt": "Fatima at work in Beirut, the Grand Serail lit behind her"
+    },
+    {
+      "name": "ph-podium",
+      "alt": "Fatima presenting on health data from the podium"
+    },
+    {
+      "name": "ph-podium-wide",
+      "alt": "A training session on health data in progress"
+    },
+    {
+      "name": "ph-qudwa",
+      "alt": "The QUDWA programme team after a workshop"
+    },
+    {
+      "name": "ph-research-poster",
+      "alt": "Fatima beside her research poster on conflicts of interest in social media"
+    },
+    {
+      "name": "ph-training-room",
+      "alt": "Fatima delivering a training session"
+    },
+    {
+      "name": "ph-unicef-backs",
+      "alt": "Two colleagues in team UNICEF shirts"
+    },
+    {
+      "name": "ph-unicef-hug",
+      "alt": "Two UNICEF colleagues embracing, jackets reading 'We are inspiration in action'"
+    },
+    {
+      "name": "ph-unicef-pair",
+      "alt": "Fatima with a UNICEF colleague"
+    },
+    {
+      "name": "ph-unicef-team",
+      "alt": "The UNICEF volunteers team at an event"
+    },
+    {
+      "name": "ph-unicef-tent",
+      "alt": "A UNICEF 'for every child' team event"
+    },
+    {
+      "name": "ph-unv-training",
+      "alt": "UNV-UNICEF Youth Advocates assignment preparation training"
+    },
+    {
+      "name": "ph-water",
+      "alt": "Fatima with her certificate at a water diplomacy programme"
+    },
+    {
+      "name": "ph-water-cert",
+      "alt": "Closing ceremony of the Water Governance in Uncertain Times training course"
+    },
+    {
+      "name": "ph-wids",
+      "alt": "Fatima at the Women in Data Science conference at AUB"
+    },
+    {
+      "name": "portrait-close",
+      "alt": "Fatima Mouzahem seated with a book"
+    },
+    {
+      "name": "portrait-hero",
+      "alt": "Fatima Mouzahem, licensed dietitian and certified sports nutritionist, smiling in a lilac and yellow scarf"
+    },
+    {
+      "name": "portrait-studio",
+      "alt": "Fatima Mouzahem in Beirut at night, the Grand Serail lit behind her"
+    },
+    {
+      "name": "run-crosswalk",
+      "alt": "Fatima running across a crossing in Beirut"
+    },
+    {
+      "name": "run-road-detail",
+      "alt": "Running on the open road by the Beirut seafront"
+    },
+    {
+      "name": "shop-bag",
+      "alt": "A SheOnTheRun tote bag held up at an event"
+    },
+    {
+      "name": "shop-belt",
+      "alt": "A burgundy running belt bag worn across the body, with its inside shown"
+    },
+    {
+      "name": "shop-bottle",
+      "alt": "Vacuum-insulated matte stainless steel water bottle"
+    },
+    {
+      "name": "shop-cap",
+      "alt": "Running kit on the road"
+    },
+    {
+      "name": "shop-cups",
+      "alt": "Matte stainless steel measuring cups and spoons set"
+    },
+    {
+      "name": "shop-jacket",
+      "alt": "SheOnTheRun club jackets"
+    },
+    {
+      "name": "shop-journal",
+      "alt": "Linen-bound wellness and food journal"
+    },
+    {
+      "name": "shop-portion",
+      "alt": "Visual portion guide plate set"
+    },
+    {
+      "name": "shop-scale",
+      "alt": "Minimalist digital kitchen food scale"
+    },
+    {
+      "name": "shop-shaker",
+      "alt": "Minimalist shaker and snack storage set"
+    },
+    {
+      "name": "shop-socks",
+      "alt": "Sports and grip socks laid out in white and black"
+    },
+    {
+      "name": "shop-tee",
+      "alt": "The SheOnTheRun club tee, back print: She runs the world"
+    },
+    {
+      "name": "sotr-hike",
+      "alt": "SheOnTheRun women walking a mountain trail together, backpacks on"
+    },
+    {
+      "name": "sotr-picnic",
+      "alt": "SheOnTheRun women resting on picnic blankets during a mountain hike"
+    },
+    {
+      "name": "sotr-selfie-park",
+      "alt": "The SheOnTheRun women gathered close for a group selfie"
+    },
+    {
+      "name": "sotr-selfie-sunset",
+      "alt": "A big SheOnTheRun group at sunset after a run"
+    },
+    {
+      "name": "sotr-startline",
+      "alt": "SheOnTheRun women in club tees lined up at a race start gate"
+    },
+    {
+      "name": "sotr-bloom",
+      "alt": "A SheOnTheRun chalkboard reading 'Tag us' among flowers"
+    },
+    {
+      "name": "sotr-girls",
+      "alt": "The SheOnTheRun women together at a race in Beirut"
+    },
+    {
+      "name": "sotr-girls-wide",
+      "alt": "The SheOnTheRun women together at a race in Beirut"
+    },
+    {
+      "name": "sotr-jackets",
+      "alt": "SheOnTheRun members arm in arm in club jackets"
+    },
+    {
+      "name": "sotr-jackets-wide",
+      "alt": "SheOnTheRun members arm in arm in club jackets"
+    },
+    {
+      "name": "sotr-pair",
+      "alt": "Two women walking together in running kit"
+    },
+    {
+      "name": "sotr-runlikeagirl",
+      "alt": "A SheOnTheRun runner holding a sign reading 'Run like a girl'"
+    },
+    {
+      "name": "sotr-tote",
+      "alt": "Two women at a SheOnTheRun event, one holding a club tote"
+    },
+    {
+      "name": "sotr-track-duo",
+      "alt": "Two women running together on the track"
+    },
+    {
+      "name": "sotr-unicef-run",
+      "alt": "Fatima at a charity run in a UNICEF shirt"
+    },
+    {
+      "name": "sotr-yoga",
+      "alt": "A SheOnTheRun yoga session on a terrace in the mountains"
+    },
+    {
+      "name": "sotr-yoga-tall",
+      "alt": "A SheOnTheRun yoga session on a terrace in the mountains"
+    },
+    {
+      "name": "track-bib",
+      "alt": "Race number 959 pinned to Fatima's kit on the track"
+    },
+    {
+      "name": "track-duo",
+      "alt": "Fatima running alongside another athlete on the track"
+    },
+    {
+      "name": "track-race",
+      "alt": "Fatima Mouzahem racing on the track, wearing race number 209"
+    },
+    {
+      "name": "track-race-tall",
+      "alt": "Fatima Mouzahem racing on the track, wearing race number 209"
+    },
+    {
+      "name": "track-relay",
+      "alt": "Fatima Mouzahem running a relay leg, baton in hand"
+    },
+    {
+      "name": "womens-nutrition",
+      "alt": "Two women out together in running kit"
+    }
+  ]
+}

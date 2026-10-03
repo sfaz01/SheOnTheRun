@@ -4,12 +4,15 @@
    ========================================================================== */
 declare(strict_types=1);
 
+use Sotr\Accounts;
 use Sotr\Auth;
+use Sotr\Content;
 use Sotr\Config;
 use Sotr\Db;
 use Sotr\Http;
 use Sotr\HttpError;
 use Sotr\Migrator;
+use Sotr\Schema;
 use Sotr\ServerCheck;
 
 require_once dirname(__DIR__) . '/server/app/bootstrap.php';
@@ -77,9 +80,78 @@ try {
             Auth::changePassword($user, Http::raw('current'), Http::raw('new'));
             Http::json(['ok' => true]);
 
+        case 'POST /auth/email':
+            $user = Auth::requireUser();
+            Accounts::changeEmail($user, Http::raw('password'), Http::str('email', 190));
+            Http::json(['ok' => true]);
+
+        case 'POST /auth/invite/accept':
+            Http::json(Accounts::acceptInvite(Http::str('email', 190), Http::str('code', 40), Http::raw('password')));
+
         case 'GET /admin/server-check':
             Auth::requireUser();
             Http::json(['checks' => ServerCheck::run()]);
+
+        /* --------------------------------------------------------- content */
+        case 'GET /admin/schema':
+            Auth::requireUser();
+            Content::ensureSeeded();
+            Http::json(['areas' => Schema::forClient(), 'images' => Content::get('images')['doc']['items'] ?? []]);
+
+        case 'GET /admin/status':
+            Auth::requireUser();
+            Content::ensureSeeded();
+            Http::json(Content::status());
+
+        case 'POST /admin/publish':
+            $user = Auth::requireUser();
+            Http::json(Content::publish((int) $user['id'], Http::str('note', 200)));
+
+        case 'GET /admin/history':
+            Auth::requireUser();
+            Http::json(['versions' => Content::history()]);
+
+        case 'POST /admin/discard':
+            $user = Auth::requireUser();
+            Content::discard((int) $user['id']);
+            Http::json(['ok' => true]);
+
+        /* ---------------------------------------------------------- admins */
+        case 'GET /admin/admins':
+            $user = Auth::requireUser();
+            Http::json(Accounts::list((int) $user['id']));
+
+        case 'POST /admin/admins/invite':
+            $user = Auth::requireUser();
+            Http::json(Accounts::invite($user, Http::str('email', 190)));
+    }
+
+    // Content area routes
+    if (preg_match('#^/admin/content/([a-z]+)$#', $path, $m)) {
+        $user = Auth::requireUser();
+        Content::ensureSeeded();
+        if ($method === 'GET') {
+            Http::json(Content::get($m[1]));
+        }
+        if ($method === 'PUT') {
+            $body = Http::body();
+            Http::json(Content::save($m[1], $body['doc'] ?? null, (int) ($body['rev'] ?? 0), (int) $user['id']));
+        }
+    }
+    if ($method === 'POST' && preg_match('#^/admin/history/(\d+)/restore$#', $path, $m)) {
+        $user = Auth::requireUser();
+        Content::restore((int) $m[1], (int) $user['id']);
+        Http::json(['ok' => true]);
+    }
+    if ($method === 'POST' && preg_match('#^/admin/admins/(\d+)/remove$#', $path, $m)) {
+        $user = Auth::requireUser();
+        Accounts::remove($user, (int) $m[1]);
+        Http::json(['ok' => true]);
+    }
+    if ($method === 'POST' && preg_match('#^/admin/invites/(\d+)/cancel$#', $path, $m)) {
+        $user = Auth::requireUser();
+        Accounts::cancelInvite($user, (int) $m[1]);
+        Http::json(['ok' => true]);
     }
 
     throw new HttpError(404, 'Not found.');

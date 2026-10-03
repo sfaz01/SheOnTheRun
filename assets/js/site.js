@@ -91,6 +91,8 @@
     "Hi Fatima! I'd like to join SheOnTheRun and come to a sunset run.": "مرحباً فاطمة! أودّ الانضمام إلى SheOnTheRun والمشاركة في جري الغروب.",
     "Join us": "انضمّي إلينا",
     "Sold out": "نفدت الكمية",
+    "{x} — sold out": "{x} — نفدت الكمية",
+    "Only {n} left": "بقي {n} فقط",
     "Add to cart": "إضافة إلى السلة",
     "Added ✓": "أُضيف ✓",
     "Option for {x}": "خيار {x}",
@@ -1039,12 +1041,31 @@
       return (p.price || p.price === 0) ? "$" + p.price : "";
     }
 
+    /* Stock, set in the admin: a number per size ({"S": 4, "M": 0}) or one number.
+       Anything without a number is not tracked and never runs out. */
+    function stockLeft(p, option) {
+      var st = p.stock;
+      if (st == null) return Infinity;
+      if (p.options && p.options.length) return (typeof st === "object" && st[option] != null) ? +st[option] : Infinity;
+      return typeof st === "number" ? st : Infinity;
+    }
+    function isSoldOut(p) {
+      if (p.soldOut) return true;
+      var opts = p.options && p.options.length ? p.options : [""];
+      return opts.every(function (o) { return stockLeft(p, o) <= 0; });
+    }
+    function inBag(id, option) {
+      var hit = bag.filter(function (y) { return y.id === id && y.option === option; })[0];
+      return hit ? hit.qty : 0;
+    }
+
     function productCard(x) {
       var p = x.p, c = x.cat;
       var hasOptions = p.options && p.options.length;
       var selId = "opt-" + p.id;
       var price = priceText(p);
-      var btn = p.soldOut
+      var firstFree = hasOptions ? p.options.filter(function (o) { return stockLeft(p, o) > 0; })[0] : "";
+      var btn = isSoldOut(p)
         ? '<span class="btn ghost sm" aria-disabled="true">' + tr("Sold out") + "</span>"
         : '<button class="btn lilac sm" type="button" data-add="' + esc(p.id) + '">' + tr("Add to cart") + "</button>";
       return '<article class="product" data-cat-id="' + esc(c.id) + '">' +
@@ -1055,7 +1076,11 @@
         (hasOptions
           ? '<label class="vh" for="' + esc(selId) + '">' + tr("Option for {x}", { x: esc(p.name) }) + "</label>" +
             '<select id="' + esc(selId) + '" data-option-for="' + esc(p.id) + '">' +
-            p.options.map(function (o) { return '<option value="' + esc(o) + '">' + esc(o) + "</option>"; }).join("") +
+            p.options.map(function (o) {
+              var out = stockLeft(p, o) <= 0;
+              return '<option value="' + esc(o) + '"' + (out ? " disabled" : "") + (o === firstFree ? " selected" : "") + ">" +
+                (out ? tr("{x} — sold out", { x: esc(o) }) : esc(o)) + "</option>";
+            }).join("") +
             "</select>"
           : "") +
         '<div class="pr-foot">' +
@@ -1274,6 +1299,12 @@
       if (!x) return;
       var sel = $("select[data-option-for]", b.closest(".product"));
       var option = sel ? sel.value : "";
+      var left = stockLeft(x.p, option);
+      if (inBag(id, option) >= left) {
+        b.textContent = tr("Only {n} left", { n: left });
+        setTimeout(function () { b.textContent = tr("Add to cart"); }, 1800);
+        return;
+      }
       var hit = bag.filter(function (y) { return y.id === id && y.option === option; })[0];
       if (hit) hit.qty += 1;
       else bag.push({ id: id, name: x.p.name, cat: x.cat.name, option: option,
@@ -1292,7 +1323,10 @@
       var q = e.target.closest("[data-qty]");
       if (!q) return;
       var i = +q.getAttribute("data-qty");
-      bag[i].qty += +q.getAttribute("data-d");
+      var d = +q.getAttribute("data-d");
+      var item = products.filter(function (y) { return y.p.id === bag[i].id; })[0];
+      if (d > 0 && item && bag[i].qty >= stockLeft(item.p, bag[i].option)) return;
+      bag[i].qty += d;
       if (bag[i].qty <= 0) bag.splice(i, 1);
       saveBag(); renderBag();
       if (!bag.length) openBag(false);

@@ -14,14 +14,15 @@ namespace Sotr;
  */
 final class Schema
 {
-    /** Areas the editor shows, in menu order. */
-    public const EDITABLE = ['shop', 'runs', 'offer', 'testimonials', 'settings', 'posts', 'gallery', 'images'];
+    /** Areas the editor shows, in menu order. ('plans' has no generic editor — the meal-plan library owns it.) */
+    public const EDITABLE = ['shop', 'runs', 'offer', 'testimonials', 'settings', 'posts', 'gallery', 'images', 'plans'];
 
     /** Areas the generic editor may save. 'images' changes only through the photo tools (they own widths and file names). */
     public const GENERIC = ['shop', 'runs', 'offer', 'testimonials', 'settings', 'posts', 'gallery'];
 
-    /** Every area kept in the database. 'extras' and 'images' have no editor (yet). */
-    public const ALL = ['shop', 'runs', 'offer', 'testimonials', 'settings', 'posts', 'gallery', 'images', 'extras'];
+    /** Every area kept in the database. 'extras' and 'images' have no generic editor, and
+        'plans' is written only by the meal-plan library. */
+    public const ALL = ['shop', 'runs', 'offer', 'testimonials', 'settings', 'posts', 'gallery', 'images', 'extras', 'plans'];
 
     private static function f(string $key, string $type, string $label, array $extra = []): array
     {

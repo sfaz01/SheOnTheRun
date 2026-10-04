@@ -10,7 +10,7 @@ namespace Sotr;
  */
 final class Generator
 {
-    public const FILES = ['config.js', 'products.js', 'runs.js', 'packages.js', 'testimonials.js', 'ar.js', 'posts.js', 'images.js', 'gallery.js'];
+    public const FILES = ['config.js', 'products.js', 'runs.js', 'packages.js', 'testimonials.js', 'ar.js', 'posts.js', 'images.js', 'gallery.js', 'plan.js'];
 
     /** @param array<string, array> $docs  area => document @return array<string, string> filename => contents */
     public static function files(array $docs): array
@@ -56,7 +56,18 @@ final class Generator
             'posts.js'        => self::js('SITE_POSTS', $publicPosts),
             'images.js'       => self::js('SITE_IMAGES', $publicImages),
             'gallery.js'      => self::js('SITE_GALLERY', $publicGallery),
+            'plan.js'         => self::js('SITE_PLAN', self::plan($docs['plans'] ?? [])),
         ];
+    }
+
+    /** Which plan page the tracker's sample button opens, and the spreadsheet template it hands out. */
+    private static function plan(array $doc): array
+    {
+        $sample = trim((string) ($doc['sample'] ?? ''));
+        if (!preg_match(Plans::NAME, $sample) || !str_ends_with($sample, '.html')) {
+            $sample = Plans::DEFAULT_SAMPLE;
+        }
+        return ['sample' => $sample, 'template' => Plans::TEMPLATE];
     }
 
     /** The document with every "ar" key removed. */

@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 use Sotr\Accounts;
 use Sotr\Auth;
+use Sotr\Backup;
 use Sotr\Content;
 use Sotr\Config;
 use Sotr\Db;
@@ -14,7 +15,10 @@ use Sotr\HttpError;
 use Sotr\Messages;
 use Sotr\Migrator;
 use Sotr\Orders;
+use Sotr\Overview;
 use Sotr\Photos;
+use Sotr\Plans;
+use Sotr\Preview;
 use Sotr\RateLimit;
 use Sotr\Schema;
 use Sotr\ServerCheck;
@@ -65,6 +69,29 @@ try {
         Http::json(Messages::create(Http::body()), 201);
     }
 
+    if ($method === 'GET' && $path === '/admin/backup') {
+        $user = Auth::requireUser();
+        \Sotr\Audit::log((int) $user['id'], 'backup.downloaded');
+        header_remove('Content-Type');
+        header('Content-Type: application/json; charset=utf-8');
+        header('Content-Disposition: attachment; filename="sheontherun-backup-' . gmdate('Y-m-d') . '.json"');
+        echo Backup::json();
+        exit;
+    }
+
+    /* Preview the website with the saved drafts on top. Signed in only, and it writes nothing. */
+    if ($method === 'GET' && $path === '/preview/page') {
+        Auth::requireUser();
+        Content::ensureSeeded();
+        Preview::page((string) ($_GET['p'] ?? ''));
+    }
+
+    if ($method === 'GET' && preg_match('#^/preview/data/([a-z0-9-]+\.js)$#', $path, $m)) {
+        Auth::requireUser();
+        Content::ensureSeeded();
+        Preview::data($m[1]);
+    }
+
     if ($method === 'GET' && $path === '/admin/orders/export') {
         Auth::requireUser();
         header_remove('Content-Type');
@@ -73,6 +100,19 @@ try {
         $out = fopen('php://output', 'w');
         Orders::exportCsv($out);
         exit;
+    }
+
+    // Plan files arrive as a form upload too; same origin + CSRF checks as every write.
+    if ($method === 'POST' && $path === '/admin/plans/upload') {
+        $user = Auth::requireUser();
+        Http::guardWrite(true);
+        Content::ensureSeeded();
+        $file = $_FILES['file'] ?? [];
+        Http::json(Plans::upload(
+            is_array($file) ? $file : [],
+            (string) ($_POST['name'] ?? ''),
+            (int) $user['id']
+        ), 201);
     }
 
     // Photo upload is the one multipart request; it gets the same origin + CSRF checks as every write.
@@ -136,6 +176,14 @@ try {
             Http::json(['checks' => ServerCheck::run()]);
 
         /* --------------------------------------------------------- content */
+        case 'GET /admin/overview':
+            Auth::requireUser();
+            Http::json(Overview::data());
+
+        case 'GET /admin/activity':
+            Auth::requireUser();
+            Http::json(Overview::activity((int) ($_GET['page'] ?? 1)));
+
         case 'GET /admin/counts':
             Auth::requireUser();
             Http::json(['orders_new' => Orders::counts()['new'], 'messages_unread' => Messages::counts()['unread']]);
@@ -152,6 +200,16 @@ try {
             Auth::requireUser();
             Content::ensureSeeded();
             Http::json(['photos' => Photos::list()]);
+
+        case 'GET /admin/plans':
+            Auth::requireUser();
+            Content::ensureSeeded();
+            Http::json(['files' => Plans::list(), 'sample' => Plans::sample(), 'default' => Plans::DEFAULT_SAMPLE, 'template' => Plans::TEMPLATE]);
+
+        case 'POST /admin/plans/sample':
+            $user = Auth::requireUser();
+            Content::ensureSeeded();
+            Http::json(Plans::setSample(Http::str('name', 80), (int) $user['id']));
 
         case 'GET /admin/schema':
             Auth::requireUser();
@@ -207,6 +265,14 @@ try {
         }
         if ($method === 'DELETE') {
             Photos::delete($m[1], (int) $user['id']);
+            Http::json(['ok' => true]);
+        }
+    }
+    if (preg_match('#^/admin/plans/([a-z0-9][a-z0-9-]{0,60}\.(?:html|csv|json))$#', $path, $m)) {
+        $user = Auth::requireUser();
+        Content::ensureSeeded();
+        if ($method === 'DELETE') {
+            Plans::delete($m[1], (int) $user['id']);
             Http::json(['ok' => true]);
         }
     }

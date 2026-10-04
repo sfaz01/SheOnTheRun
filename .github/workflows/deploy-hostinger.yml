@@ -44,7 +44,7 @@ jobs:
           EXTRA=()
           if [ "$INCLUDE_CONTENT" != "true" ]; then
             # These are written by the admin panel's Publish button on the server.
-            for f in config products runs packages testimonials ar posts images gallery; do EXTRA+=(--exclude "/data/$f.js"); done
+            for f in config products runs packages testimonials ar posts images gallery plan; do EXTRA+=(--exclude "/data/$f.js"); done
             # Article pages, the feed, the sitemap and uploaded photos are written by the admin panel too.
             EXTRA+=(--include '/journal/index.html' --exclude '/journal/*.html' --exclude '/feed.xml' --exclude '/sitemap.xml')
           fi

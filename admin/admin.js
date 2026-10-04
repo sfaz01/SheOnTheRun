@@ -274,41 +274,166 @@
 
   /* --------------------------------------------------------------- overview */
   function overview(page) {
-    return S.refreshStatus().then(function () {
+    return Promise.all([S.refreshStatus(), api("GET", "/admin/overview")]).then(function (res) {
+      var ov = res[1];
       var changed = Object.keys(status.changed || {}).filter(function (k) { return status.changed[k]; });
       var lp = status.last_publish;
-      var list = h("ul", { class: "checks" });
-      var pill = h("span", { class: "pill warn" }, "Checking…");
-      S.put(page, 
-        h("h1", {}, "Hello"),
-        h("p", { class: "muted" }, "Edit any section on the left, save, then Publish to put your changes on the website."),
-        h("section", { class: "panel" },
-          h("h2", {}, "Website", changed.length ? h("span", { class: "pill warn" }, changed.length + " section" + (changed.length > 1 ? "s" : "") + " not published") : h("span", { class: "pill ok" }, "Up to date")),
-          lp ? h("p", {}, "Last published ", h("strong", {}, S.fmtUtc(lp.at)), lp.by ? " by " + lp.by : "", lp.note ? " — “" + lp.note + "”" : "", ".") : null,
-          changed.length ? h("p", {}, "Waiting to go live: " + changed.map(areaLabel).join(", ") + ". ", h("a", { href: "#publish" }, "Review and publish")) : null),
-        h("section", { class: "panel" },
-          h("h2", {}, "Quick links"),
-          h("ul", { class: "quick" },
-            h("li", {}, h("a", { href: "#orders" }, "See new orders")),
-            h("li", {}, h("a", { href: "#edit/runs" }, "Add a run or event")),
-            h("li", {}, h("a", { href: "#edit/shop" }, "Update products, prices or stock")),
-            h("li", {}, h("a", { href: "#photos" }, "Add photos")),
-            h("li", {}, h("a", { href: "#edit/posts" }, "Write a Journal article")),
-            h("li", {}, h("a", { href: "#edit/offer" }, "Change consultation or package prices")),
-            h("li", {}, h("a", { href: "/", target: "_blank", rel: "noopener" }, "Open the website ↗")))),
-        h("details", { class: "panel" }, h("summary", {}, h("span", { class: "h2like" }, "Hosting check "), pill), list));
+
+      /* ---- stat cards ---- */
+      function stat(n, label, kind, href) {
+        return h("a", { class: "dash-stat", href: href },
+          h("span", { class: "dash-n" + (n > 0 && kind === "hot" ? " hot" : "") }, String(n)),
+          h("span", { class: "dash-label" }, label));
+      }
+      var ordN = (ov.orders && ov.orders.new) || 0;
+      var msgN = (ov.messages && ov.messages.unread) || 0;
+      var evtN = ov.events ? ov.events.length : 0;
+      var stockN = ov.low_stock ? ov.low_stock.length : 0;
+
+      var stats = h("div", { class: "dash-stats" },
+        stat(ordN, ordN === 1 ? "new order" : "new orders", "hot", "#orders"),
+        stat(msgN, msgN === 1 ? "unread message" : "unread messages", "hot", "#messages"),
+        stat(evtN, evtN === 1 ? "upcoming event" : "upcoming events", "info", "#edit/runs"),
+        stat(stockN, stockN === 1 ? "low stock item" : "low stock items", stockN > 0 ? "hot" : "info", "#edit/shop"));
+
+      /* ---- upcoming events ---- */
+      var eventsPanel = null;
+      if (ov.events && ov.events.length) {
+        eventsPanel = h("section", { class: "panel" },
+          h("h2", {}, "Upcoming"),
+          h("ul", { class: "dash-list" }, ov.events.map(function (e) {
+            var spotsBadge = e.spots === 0 ? h("span", { class: "flag bad" }, "Fully booked")
+              : e.spots != null && e.spots <= 5 ? h("span", { class: "flag warn" }, e.spots + " spot" + (e.spots === 1 ? "" : "s") + " left")
+              : null;
+            return h("li", {},
+              h("div", {}, h("strong", {}, e.title), spotsBadge ? h("span", { class: "row-flags" }, spotsBadge) : null,
+                h("div", { class: "muted small" }, S.fmtLocal(e.starts) + (e.place ? " · " + e.place : ""))));
+          })),
+          h("p", { class: "muted small" }, h("a", { href: "#edit/runs" }, "Edit runs & events")));
+      }
+
+      /* ---- low stock ---- */
+      var stockPanel = null;
+      if (ov.low_stock && ov.low_stock.length) {
+        stockPanel = h("section", { class: "panel" },
+          h("h2", {}, "Low stock", h("span", { class: "pill warn" }, String(ov.low_stock.length))),
+          h("ul", { class: "dash-list" }, ov.low_stock.map(function (s) {
+            var label = s.name + (s.option ? " — " + s.option : "");
+            return h("li", {},
+              h("div", {}, h("span", {}, label),
+                h("span", { class: "flag" + (s.left === 0 ? " bad" : " warn") }, s.left === 0 ? "Sold out" : s.left + " left")));
+          })),
+          h("p", { class: "muted small" }, h("a", { href: "#edit/shop" }, "Update stock")));
+      }
+
+      /* ---- recent orders ---- */
+      var recentPanel = null;
+      if (ov.recent_orders && ov.recent_orders.length) {
+        var statusLabel = { new: "New", confirmed: "Confirmed", out_for_delivery: "Out for delivery", delivered: "Delivered", cancelled: "Cancelled" };
+        var statusClass = { new: "info", confirmed: "ok", out_for_delivery: "warn", delivered: "ok", cancelled: "bad" };
+        recentPanel = h("section", { class: "panel" },
+          h("h2", {}, "Recent orders"),
+          h("ul", { class: "dash-list" }, ov.recent_orders.map(function (o) {
+            var priceStr = o.unpriced ? "Some prices TBD" : "$" + Number(o.total).toFixed(2);
+            return h("li", {},
+              h("a", { href: "#orders", class: "dash-order" },
+                h("span", {}, "#" + o.order_number + " · " + o.name),
+                h("span", { class: "row-flags" },
+                  h("span", { class: "flag " + (statusClass[o.status] || "") }, statusLabel[o.status] || o.status),
+                  h("span", { class: "flag" }, priceStr)),
+                h("span", { class: "muted small" }, S.fmtUtc(o.created_at))));
+          })),
+          h("p", { class: "muted small" }, h("a", { href: "#orders" }, "All orders")));
+      }
+
+      /* ---- website status ---- */
+      var websitePanel = h("section", { class: "panel" },
+        h("h2", {}, "Website", changed.length ? h("span", { class: "pill warn" }, changed.length + " section" + (changed.length > 1 ? "s" : "") + " not published") : h("span", { class: "pill ok" }, "Up to date")),
+        lp ? h("p", {}, "Last published ", h("strong", {}, S.fmtUtc(lp.at)), lp.by ? " by " + lp.by : "", lp.note ? " — \u201c" + lp.note + "\u201d" : "", ".") : null,
+        changed.length ? h("p", {}, "Waiting to go live: " + changed.map(areaLabel).join(", ") + ". ", h("a", { href: "#publish" }, "Review and publish")) : null);
+
+      /* ---- backups ---- */
+      var backupPanel = h("section", { class: "panel" },
+        h("h2", {}, "Backups"),
+        h("p", {}, ov.last_backup
+          ? h("span", {}, "Last automatic backup: ", h("strong", {}, S.fmtUtc(ov.last_backup)), ". Nightly backups keep the newest 14 days.")
+          : h("span", { class: "muted" }, "No automatic backup yet.")),
+        h("p", {},
+          h("a", { class: "btn ghost small", href: "/api/admin/backup", download: true }, "Download backup"),
+          h("span", { class: "muted small ml-sm" }, "Content, orders and messages — keep it private.")));
+
+      /* ---- quick links ---- */
+      var quickPanel = h("section", { class: "panel" },
+        h("h2", {}, "Quick links"),
+        h("ul", { class: "quick" },
+          h("li", {}, h("a", { href: "#orders" }, "See new orders")),
+          h("li", {}, h("a", { href: "#edit/runs" }, "Add a run or event")),
+          h("li", {}, h("a", { href: "#edit/shop" }, "Update products, prices or stock")),
+          h("li", {}, h("a", { href: "#photos" }, "Add photos")),
+          h("li", {}, h("a", { href: "#edit/posts" }, "Write a Journal article")),
+          h("li", {}, h("a", { href: "#edit/offer" }, "Change consultation or package prices")),
+          h("li", {}, h("a", { href: "/", target: "_blank", rel: "noopener" }, "Open the website \u2197"))));
+
+      /* ---- activity log ---- */
+      var logList = h("ul", { class: "dash-log" });
+      var logPager = h("div", { class: "pager" });
+      var logPanel = h("details", { class: "panel" },
+        h("summary", {}, h("span", { class: "h2like" }, "Activity log")),
+        logList, logPager);
+
+      function loadLog(pg) {
+        api("GET", "/admin/activity?page=" + pg).then(function (r) {
+          var items = r.items || [];
+          var total = r.total || 0;
+          var per = r.per || 50;
+          var pages = Math.ceil(total / per);
+          S.put(logList, items.length
+            ? items.map(function (e) {
+                return h("li", {},
+                  h("div", { class: "log-what" }, e.what),
+                  h("div", { class: "muted small" }, e.who + " · " + S.fmtUtc(e.at)));
+              })
+            : h("li", { class: "muted" }, "No activity recorded yet."));
+          S.put(logPager, pages > 1 ? [
+            pg > 1 ? h("button", { class: "btn ghost small", type: "button", onclick: function () { loadLog(pg - 1); } }, "\u2190 Newer") : null,
+            h("span", { class: "muted small" }, "Page " + pg + " of " + pages),
+            pg < pages ? h("button", { class: "btn ghost small", type: "button", onclick: function () { loadLog(pg + 1); } }, "Older \u2192") : null
+          ] : null);
+        }).catch(function (err) { S.put(logList, h("li", { class: "muted" }, err.message)); });
+      }
+      logPanel.addEventListener("toggle", function () { if (logPanel.open && !logList.children.length) loadLog(1); });
+
+      /* ---- hosting check ---- */
+      var checkList = h("ul", { class: "checks" });
+      var checkPill = h("span", { class: "pill warn" }, "Checking\u2026");
+      var checkPanel = h("details", { class: "panel" },
+        h("summary", {}, h("span", { class: "h2like" }, "Hosting check "), checkPill), checkList);
+
       api("GET", "/admin/server-check").then(function (r) {
         var bad = r.checks.filter(function (c) { return c.status === "fail"; }).length;
         var warn = r.checks.filter(function (c) { return c.status === "warn"; }).length;
-        pill.className = "pill " + (bad ? "fail" : warn ? "warn" : "ok");
-        pill.textContent = bad ? bad + " to fix" : warn ? warn + " to look at" : "All good";
+        checkPill.className = "pill " + (bad ? "fail" : warn ? "warn" : "ok");
+        checkPill.textContent = bad ? bad + " to fix" : warn ? warn + " to look at" : "All good";
         var order = { fail: 0, warn: 1, ok: 2 };
         r.checks.slice().sort(function (a, b) { return order[a.status] - order[b.status]; }).forEach(function (c) {
-          list.appendChild(h("li", {},
+          checkList.appendChild(h("li", {},
             h("span", { class: "pill " + c.status }, c.status === "ok" ? "OK" : c.status === "warn" ? "Check" : "Fix"),
             h("span", { class: "what" }, c.label), h("span", { class: "detail" }, c.detail)));
         });
-      }).catch(function (err) { pill.className = "pill fail"; pill.textContent = "Error"; list.appendChild(h("li", {}, err.message)); });
+      }).catch(function (err) { checkPill.className = "pill fail"; checkPill.textContent = "Error"; checkList.appendChild(h("li", {}, err.message)); });
+
+      /* ---- assemble ---- */
+      S.put(page,
+        h("h1", {}, "Overview"),
+        stats,
+        websitePanel,
+        eventsPanel,
+        stockPanel,
+        recentPanel,
+        backupPanel,
+        quickPanel,
+        logPanel,
+        checkPanel);
     });
   }
 

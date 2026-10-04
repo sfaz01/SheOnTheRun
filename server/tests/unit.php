@@ -68,9 +68,7 @@ Db::reset();
 $S = '\Sotr\Sanitizer';
 check('cleaner drops scripts, handlers and unknown classes', !preg_match('/script|onclick|evil/', $S::clean('<p class="evil" onclick="x()">Hi</p><script>alert(1)</script>')));
 check('cleaner keeps Arabic and accents intact', $S::clean('<p>مرحبا — café “quoted” &amp; more</p>') === '<p>مرحبا — café “quoted” &amp; more</p>');
-check('cleaner turns headings 1/4 into allowed ones', $S::clean('<h1>A</h1><h4>B</h4>') === "<h2>A</h2>
-
-<h3>B</h3>");
+check('cleaner turns headings 1/4 into allowed ones', $S::clean('<h1>A</h1><h4>B</h4>') === "<h2>A</h2>\n\n<h3>B</h3>");
 check('cleaner refuses javascript/data links but keeps the words', $S::clean('<p><a href="data:text/html,x">hi</a></p>') === '<p>hi</p>');
 check('cleaner allows .html and absolute-path links', str_contains($S::clean('<p><a href="shop.html">s</a></p>'), 'href="shop.html"') && str_contains($S::clean('<p><a href="/about.html">a</a></p>'), 'href="/about.html"'));
 $once = $S::clean('<p>One <b>two</b> <i>three</i></p><ul><li>a<li>b</ul>loose<br>text');

@@ -579,17 +579,20 @@
   }
   function updateSaveBar() {
     if (!bar) return;
+    var preview = h("a", { class: "btn ghost small", href: S.previewHref(cur.area), target: "_blank", rel: "noopener",
+      title: "Opens the website with your saved drafts — only you see it." }, "Preview");
     if (cur.dirty) {
       bar.className = "savebar dirty";
       S.put(bar, 
         h("span", {}, "You have unsaved changes"),
         h("span", { class: "savebar-actions" },
+          preview,
           h("button", { class: "btn ghost small", type: "button", onclick: undo }, "Undo"),
           h("button", { class: "btn small", type: "button", onclick: function () { save(); } }, "Save draft")));
     } else {
       bar.className = "savebar";
       S.put(bar, h("span", { class: "muted" }, "All changes saved as a draft. Publish puts them live."),
-        h("a", { class: "btn ghost small", href: "#publish" }, "Go to Publish"));
+        h("span", { class: "savebar-actions" }, preview, h("a", { class: "btn ghost small", href: "#publish" }, "Go to Publish")));
     }
   }
 

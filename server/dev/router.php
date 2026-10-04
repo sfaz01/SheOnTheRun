@@ -30,7 +30,7 @@ if (preg_match('#^/admin(/|$)#', $path)) {
 }
 // Files published from the local admin live in server/storage/dev-site/data (see config.dev.php).
 // (also the photos, articles, feed and sitemap that Publish and uploads write locally)
-if (preg_match('#^/(data/(?:config|products|runs|packages|testimonials|ar|posts|images|gallery)\.js|journal/[a-z0-9-]+\.html|public/images/[a-z0-9-]+\.(?:jpg|webp)|feed\.xml|sitemap\.xml)$#', $path, $m)) {
+if (preg_match('#^/(data/(?:config|products|runs|packages|testimonials|ar|posts|images|gallery|plan)\.js|data/plans/[a-z0-9][a-z0-9-]{0,60}\.(?:html|csv|json)|journal/[a-z0-9-]+\.html|public/images/[a-z0-9-]+\.(?:jpg|webp)|feed\.xml|sitemap\.xml)$#', $path, $m)) {
     $published = $root . '/server/storage/dev-site/' . $m[1];
     if (is_file($published)) {
         $ext = pathinfo($published, PATHINFO_EXTENSION);

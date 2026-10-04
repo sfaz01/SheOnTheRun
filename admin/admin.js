@@ -172,6 +172,7 @@
     ["photos", "Photos", "images"],
     ["edit/gallery", "Photo galleries", "gallery"],
     ["edit/posts", "Journal", "posts"],
+    ["plans", "Meal plans", "plans"],
     ["publish", "Publish"],
     ["account", "Account"]
   ];
@@ -242,7 +243,10 @@
     show();
   }
 
-  function areaHref(a) { return a === "images" ? "#photos" : "#edit/" + a; }
+  function areaHref(a) {
+    var n = NAV.filter(function (x) { return x[2] === a; })[0];
+    return n ? "#" + n[0] : "#edit/" + a;
+  }
   function areaLabel(a) { var n = NAV.filter(function (x) { return x[2] === a; })[0]; return n ? n[1] : a; }
 
   function show() {
@@ -254,6 +258,7 @@
       : hash === "orders" ? S.ordersView(main)
       : hash === "messages" ? S.messagesView(main)
       : hash === "photos" ? S.photosView(main)
+      : hash === "plans" ? S.plansView(main)
       : hash === "publish" ? publishView(main)
       : hash === "account" ? accountView(main)
       : overview(main);
@@ -342,6 +347,10 @@
               });
             }, null, { inline: true }),
           result,
+          h("p", { class: "muted small" },
+            "Want to see it first? ",
+            h("a", { href: S.previewHref(changed[0]), target: "_blank", rel: "noopener" }, "Preview the website with these changes"),
+            " — only you can see it."),
           h("p", { class: "muted small" },
             "Changed your mind? ",
             h("button", { type: "button", class: "linklike", onclick: function () {

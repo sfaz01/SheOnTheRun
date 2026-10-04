@@ -462,11 +462,14 @@
       save(); render(); return;
     }
     if (t.closest("[data-tr-sample]")) {
-      /* The sample is Fatima's own plan page; if it can't be fetched (the
-         site opened straight from disk), fall back to the built-in version. */
-      fetch(ROOT + "data/plans/fatimas-plate.html")
+      /* The sample is a real plan page from data/plans/ (the admin panel's Meal
+         plans screen chooses which one). If it can't be fetched (the site opened
+         straight from disk), fall back to the built-in version. */
+      var sample = String((window.SITE_PLAN || {}).sample || "");
+      if (!/^[a-z0-9][a-z0-9-]{0,60}\.html$/.test(sample)) sample = "fatimas-plate.html";
+      fetch(ROOT + "data/plans/" + sample)
         .then(function (r) { if (!r.ok) throw new Error(); return r.text(); })
-        .then(function (html) { openHTML(html, "fatimas-plate.html"); })
+        .then(function (html) { openHTML(html, sample); })
         .catch(function () { accept(window.SAMPLE_PLAN); });
       return;
     }

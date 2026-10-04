@@ -27,7 +27,7 @@ export async function startServer({ port, setupToken, extra = "" }) {
     await new Promise((r) => setTimeout(r, 100));
   }
   return {
-    base, site, db: join(work, "test.sqlite"),
+    base, site, db: join(work, "test.sqlite"), config: cfg,
     stop() { proc.kill(); try { rmSync(work, { recursive: true, force: true }); } catch { /* Windows file locks */ } },
   };
 }

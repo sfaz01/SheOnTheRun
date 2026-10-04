@@ -40,6 +40,11 @@ final class Content
                 Db::run('UPDATE publishes SET snapshot = ? WHERE id = ?', [self::encode($snap), $last['id']]);
             }
         }
+        // A website that predates phase 4 needs the meal-plan library's little area, so the
+        // sample choice can be part of Draft → Publish → History like everything else.
+        if (Db::one('SELECT area FROM content WHERE area = ?', ['plans']) === null) {
+            Db::run('INSERT INTO content (area, doc, rev, updated_at, updated_by) VALUES (?, ?, 1, ?, NULL)', ['plans', '{}', Db::now()]);
+        }
     }
 
     /** @return array<string, array> the website's current content, normalised the way a save would store it */

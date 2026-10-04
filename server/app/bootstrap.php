@@ -16,7 +16,7 @@ if (PHP_VERSION_ID < 80100) {
 
 define('SOTR_ROOT', dirname(__DIR__)); // …/server
 
-foreach (['Config', 'Db', 'Migrator', 'HttpError', 'Http', 'Totp', 'RateLimit', 'Audit', 'Auth', 'ServerCheck', 'Schema', 'Validator', 'Generator', 'Sanitizer', 'Journal', 'Photos', 'Mailer', 'Stock', 'Orders', 'Messages', 'Content', 'Accounts'] as $class) {
+foreach (['Config', 'Db', 'Migrator', 'HttpError', 'Http', 'Totp', 'RateLimit', 'Audit', 'Auth', 'ServerCheck', 'Schema', 'Validator', 'Generator', 'Sanitizer', 'Journal', 'Photos', 'Plans', 'Preview', 'Mailer', 'Stock', 'Orders', 'Messages', 'Content', 'Accounts', 'Backup', 'Overview'] as $class) {
     require_once __DIR__ . '/' . $class . '.php';
 }
 

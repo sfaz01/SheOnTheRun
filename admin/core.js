@@ -128,6 +128,17 @@
     return parts.year + "-" + parts.month + "-" + parts.day + "T" + parts.hour + ":" + parts.minute;
   };
 
+  /** The website page each section mostly shows; used by the Preview buttons. */
+  var PREVIEW_PAGES = {
+    shop: "shop.html", runs: "index.html", offer: "dietontherun.html",
+    testimonials: "dietontherun.html", settings: "index.html",
+    posts: "journal/index.html", gallery: "index.html", plans: "dietontherun.html"
+  };
+  /** A private, drafts-on-top view of the website — only a signed-in admin can open it. */
+  S.previewHref = function (area) {
+    return "/api/preview/page?p=" + encodeURIComponent(PREVIEW_PAGES[area] || "index.html");
+  };
+
   S.slug = function (s) {
     return String(s || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "")
       .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 50).replace(/-+$/, "");

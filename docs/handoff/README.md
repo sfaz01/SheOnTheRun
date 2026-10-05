@@ -35,4 +35,4 @@ Take the shots from the live admin (`https://sheontherun.com/admin`) or a local 
 
 ## 3. Before you send anything
 
-Read `HANDOVER-CHECKLIST.md` to the end first. **Never email a password** — use the invite code, a password-manager private share, or hand it over in person.
+Read `HANDOVER-CHECKLIST.md` to the end first. **Never email a password or the private first-time setup key** — use a password-manager private share or hand it over in person.

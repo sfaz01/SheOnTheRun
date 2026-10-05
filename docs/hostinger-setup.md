@@ -62,13 +62,13 @@ This file holds passwords. It never goes into GitHub, and being above `public_ht
    It runs the tests first, then uploads. It never deletes anything on the server.
 3. Open `https://sheontherun.com`. The site should load.
 
-## E. First sign-in
+## E. Fatima's first owner sign-in
 
-1. Go to `https://sheontherun.com/admin/`.
-2. Enter the **setup token** from step B, your email, and a strong password.
-3. Scan the QR code with an authenticator app, type the 6-digit code, and **save the recovery codes**.
-4. The dashboard's **Hosting check** lists anything that isn't right. Send me a screenshot of it.
-5. Once you're in, edit `sotr-config.php` and delete the `setup_token` line.
+1. Do **not** create an admin account for yourself. Give Fatima the private `setup_token` from step B through a password-manager private share.
+2. Fatima goes to `https://sheontherun.com/admin/` and creates her own owner account with her email and a strong password.
+3. She scans the QR code with an authenticator app, types the 6-digit code, and **saves the recovery codes**.
+4. She checks the dashboard's **Hosting check** for anything that isn't right.
+5. The first-time setup automatically closes as soon as her account exists. Remove the `setup_token` line from `sotr-config.php` afterwards as an extra precaution.
 
 ## If something goes wrong
 

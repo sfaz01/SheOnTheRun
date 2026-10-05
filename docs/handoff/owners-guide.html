@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SheOnTheRun &mdash; your website admin &mdash; a guide for Fatima</title>
+<style>
+  :root { --ink:#16151A; --ink2:#4A4750; --ink3:#6E6A75; --line:#DDD7CE; --lilac:#6E61C8; --soft:#F4F1EC; --warn:#8A5A00; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: #E9E5DD; color: var(--ink);
+    font: 15.5px/1.62 "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; }
+  .page { max-width: 46rem; margin: 1.5rem auto; background: #fff; padding: 3rem 3.25rem;
+    border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  a { color: var(--lilac); }
+  h1, h2, h3 { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif; font-weight: 600; line-height: 1.2; }
+  h2 { font-size: 1.5rem; margin: 2.2rem 0 .6rem; padding-bottom: .35rem; border-bottom: 1px solid var(--line); }
+  h2 .n { color: var(--lilac); font-size: 1rem; margin-right: .5rem; vertical-align: .13em; }
+  h3 { font-size: 1.1rem; margin: 1.3rem 0 .35rem; }
+  p, li { margin: .5rem 0; }
+  ul, ol { padding-left: 1.3rem; }
+  .lead { font-size: 1.06rem; color: var(--ink2); }
+  .muted { color: var(--ink3); }
+  .small { font-size: .92rem; }
+  strong { font-weight: 650; }
+  code { background: var(--soft); padding: .08rem .38rem; border-radius: 4px; font-size: .92em; }
+  table { width: 100%; border-collapse: collapse; margin: .6rem 0 1rem; font-size: .96rem; }
+  th, td { text-align: left; vertical-align: top; padding: .45rem .6rem; border-bottom: 1px solid var(--line); }
+  th { font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); font-weight: 700; }
+  .note { background: var(--soft); border-left: 3px solid var(--lilac); padding: .7rem .9rem;
+    border-radius: 0 6px 6px 0; margin: 1rem 0; }
+  .note.warn { border-left-color: var(--warn); }
+  .shot { border: 1.5px dashed #C7BFB2; border-radius: 8px; background: var(--soft); color: var(--ink3);
+    padding: 1.1rem 1rem; margin: .8rem 0; text-align: center; font-size: .9rem; }
+  .shot b { color: var(--ink2); }
+  ul.done { list-style: none; padding-left: 0; }
+  ul.done li { padding-left: 1.7rem; position: relative; margin: .55rem 0; }
+  ul.done li::before { content: ""; position: absolute; left: 0; top: .18rem; width: 1rem; height: 1rem;
+    border: 1.5px solid var(--ink3); border-radius: 3px; }
+  .kicker { letter-spacing: .12em; text-transform: uppercase; font-size: .76rem; color: var(--lilac); font-weight: 700; }
+  .cover { padding-bottom: 1.5rem; border-bottom: 3px solid var(--ink); margin-bottom: 1.5rem; }
+  .cover h1 { font-size: 2.4rem; margin: .35rem 0 .25rem; }
+  .cover .sub { font-size: 1.1rem; color: var(--ink2); margin-top: .2rem; }
+  .bar { max-width: 46rem; margin: 1rem auto 0; display: flex; justify-content: flex-end; }
+  .bar button { font: inherit; border: 0; background: var(--ink); color: #fff; padding: .6rem 1.1rem;
+    border-radius: 8px; cursor: pointer; }
+  .toc { columns: 2; column-gap: 2rem; font-size: .95rem; }
+  .toc a { text-decoration: none; }
+  footer { margin-top: 2.6rem; padding-top: .8rem; border-top: 1px solid var(--line); color: var(--ink3); font-size: .85rem; }
+  @media print {
+    body { background: #fff; }
+    .page { box-shadow: none; margin: 0; max-width: none; padding: 0; border-radius: 0; }
+    .noprint { display: none !important; }
+    a { color: inherit; text-decoration: none; }
+    .toc { columns: 2; }
+    h2 { break-after: avoid; }
+    table, .note, .shot, ul.done li, .cover { break-inside: avoid; }
+    @page { size: A4; margin: 18mm 16mm; }
+  }
+</style>
+</head>
+<body>
+<div class="bar noprint"><button onclick="window.print()">Print / save as PDF</button></div>
+<div class="page">
+  <header class="cover">
+    <div class="kicker">SheOnTheRun &middot; private admin</div>
+    <h1>Your website, run by you</h1>
+    <p class="sub">A short guide for Fatima &mdash; how to get in, what you can change, and how to feel safe doing it.</p>
+    <p class="muted small">Everything here is safe to try. Nothing appears on the website until you press <strong>Publish</strong>, and every publish can be undone in one tap.</p>
+  </header>
+
+  <nav class="toc" aria-label="Contents">
+    <p><a href="#s1">1. Signing in</a></p>
+    <p><a href="#s2">2. What you can manage</a></p>
+    <p><a href="#s3">3. Save, Preview, Publish</a></p>
+    <p><a href="#s4">4. Orders</a></p>
+    <p><a href="#s5">5. Messages</a></p>
+    <p><a href="#s6">6. Shop &amp; products</a></p>
+    <p><a href="#s7">7. Runs &amp; events</a></p>
+    <p><a href="#s8">8. Services &amp; packages</a></p>
+    <p><a href="#s9">9. Testimonials</a></p>
+    <p><a href="#s10">10. Site settings</a></p>
+    <p><a href="#s11">11. Photos &amp; galleries</a></p>
+    <p><a href="#s12">12. Journal</a></p>
+    <p><a href="#s13">13. Meal plans</a></p>
+    <p><a href="#s14">14. Backups</a></p>
+    <p><a href="#s15">15. If something looks wrong</a></p>
+    <p><a href="#check">Your first five minutes</a></p>
+  </nav>
+<section id="s1">
+    <h2><span class="n">1</span>Signing in</h2>
+    <ol>
+      <li>Open <code>https://sheontherun.com/admin</code> and add it to your phone's home screen, so it's one tap next time.</li>
+      <li>Type your email, then your password.</li>
+      <li>Open your authenticator app (Google Authenticator, Microsoft Authenticator, Authy or 1Password) and type the 6-digit code it shows for <strong>SheOnTheRun</strong>.</li>
+      <li>If you ever lose your phone, choose <strong>"I can't use my app — use a recovery code"</strong> and use one of the codes you saved. Each one works once.</li>
+    </ol>
+    <div class="shot">Screenshot to add: <b>the sign-in screen</b></div>
+    <div class="note"><strong>Keep your recovery codes safe.</strong> They are the only way in if your phone is lost. Save them in your password manager or printed somewhere private &mdash; not in your email.</div>
+
+    <h3>Creating your account (the first time)</h3>
+    <p>You do this once. Someone who is already an admin sends you an <strong>invite</strong> (usually on WhatsApp). It contains a one-time code like <code>abcde-fghij</code>.</p>
+    <ol>
+      <li>Open the admin address and choose <strong>"I have an invite code"</strong> &mdash; the small link under the sign-in button.</li>
+      <li>Type your <strong>email</strong> (the same address the invite was sent to), the <strong>invite code</strong>, and choose your <strong>password</strong> (at least 12 characters). Type it twice.</li>
+      <li>Press <strong>Continue</strong>, then set up your phone code: install an authenticator app, scan the square code on screen, and type the 6 digits it shows.</li>
+      <li>Save the <strong>recovery codes</strong> it gives you, tick the box, and continue. You're in.</li>
+    </ol>
+    <div class="note">The invite code <strong>works once and expires after 3 days</strong>. If it's lost or expired, just ask for a new one &mdash; that's normal and takes a moment.</div>
+    <div class="shot">Screenshot to add: <b>the "Join the admin" screen with the invite code</b></div>
+  </section>
+
+  <section id="s2">
+    <h2><span class="n">2</span>What you can manage</h2>
+    <p class="lead">The menu on the left is the whole panel (on a phone it appears as tabs). Every section works the same way.</p>
+    <table>
+      <thead><tr><th>Section</th><th>What it holds</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Overview</strong></td><td>New orders, unread messages, upcoming runs, low stock, the last publish, a hosting check and the activity log.</td></tr>
+        <tr><td><strong>Orders</strong></td><td>Every shop order: who, what, where and the total.</td></tr>
+        <tr><td><strong>Messages</strong></td><td>Everything sent through the Connect form.</td></tr>
+        <tr><td><strong>Shop &amp; products</strong></td><td>Products, prices, sizes, stock and delivery governorates.</td></tr>
+        <tr><td><strong>Runs &amp; events</strong></td><td>The SheOnTheRun calendar and the weekly runs.</td></tr>
+        <tr><td><strong>Services &amp; packages</strong></td><td>Consultations, packages and the BackOnTheRun challenge.</td></tr>
+        <tr><td><strong>Testimonials</strong></td><td>Client quotes (only with their permission).</td></tr>
+        <tr><td><strong>Site settings</strong></td><td>WhatsApp number, emails, Instagram, and the switches for the shop and contact forms.</td></tr>
+        <tr><td><strong>Photos</strong></td><td>Every photo on the website, with descriptions.</td></tr>
+        <tr><td><strong>Photo galleries</strong></td><td>Which photos appear in the scrolling galleries, and in what order.</td></tr>
+        <tr><td><strong>Journal</strong></td><td>Articles: write, save as a draft, publish.</td></tr>
+        <tr><td><strong>Meal plans</strong></td><td>The plan files you send clients, and the sample plan the tracker opens.</td></tr>
+        <tr><td><strong>Publish</strong></td><td>Puts your saved changes on the website, with history and one-tap restore.</td></tr>
+        <tr><td><strong>Account</strong></td><td>Your email, your password, and other admins.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="s3">
+    <h2><span class="n">3</span>Save, Preview, Publish &mdash; the one idea</h2>
+    <p>This is the whole trick, and it means you can never break the website by accident:</p>
+    <ul>
+      <li><strong>Save</strong> keeps your work as a <strong>draft</strong>. The website does not change yet.</li>
+      <li><strong>Preview</strong> opens the real website with your drafts on top &mdash; only you can see it. A small yellow "not published" dot stays until you publish.</li>
+      <li><strong>Publish</strong> puts every saved change live at once, in English and Arabic. It takes a second; visitors may need to refresh.</li>
+      <li>Changed your mind? <strong>Publish → Discard all unpublished changes</strong> throws the drafts away and the website stays exactly as it was.</li>
+      <li><strong>Publish → History</strong> keeps every publish. <strong>Restore</strong> copies an old version back into your drafts (publish again to make it live).</li>
+      <li>Working on two devices? If a change was saved somewhere else, the panel tells you and asks you to reload &mdash; nothing is lost.</li>
+    </ul>
+    <div class="shot">Screenshot to add: <b>the save bar with Preview and Go to Publish</b></div>
+  </section>
+<section id="s4">
+    <h2><span class="n">4</span>Orders</h2>
+    <ol>
+      <li>Open <strong>Orders</strong>; the badge in the menu shows how many are new.</li>
+      <li>Open one to see the items, phone number, address and total. The website works out the total from <em>your</em> prices, never the customer's.</li>
+      <li>Move it along: <strong>New → Confirmed → Out for delivery → Delivered</strong>, or <strong>Cancelled</strong> (cancelling puts the stock back automatically).</li>
+      <li><strong>Paid?</strong> For a Whish or OMT transfer, tick <strong>Paid</strong> and paste the reference.</li>
+      <li><strong>WhatsApp</strong> opens a chat with that customer, the order already written out for you.</li>
+      <li><strong>Export CSV</strong> downloads everything for your records.</li>
+      <li>Notes are private &mdash; only admins ever see them.</li>
+    </ol>
+    <div class="shot">Screenshot to add: <b>one order, open, with the status buttons</b></div>
+  </section>
+
+  <section id="s5">
+    <h2><span class="n">5</span>Messages</h2>
+    <p>Open a message, reply from your own email, then mark it <strong>Handled</strong>. The badge in the menu shows what's new.</p>
+  </section>
+
+  <section id="s6">
+    <h2><span class="n">6</span>Shop &amp; products</h2>
+    <ul>
+      <li><strong>Add a product</strong> with <strong>+ Add</strong>: name, short description, price, sizes or options, and a photo.</li>
+      <li><strong>Stock:</strong> type how many are left per size. At <strong>0</strong> the size (or product) shows as sold out by itself. Leave a box empty to say "not tracked".</li>
+      <li><strong>Reorder</strong> with the ↑ ↓ arrows; <strong>Duplicate</strong> or <strong>Delete</strong> from inside an item.</li>
+      <li>Every English field has its <strong>Arabic twin</strong> beside it. A yellow <strong>"Arabic missing"</strong> flag means the Arabic side is still empty &mdash; fill it before publishing.</li>
+      <li>Delivery <strong>governorates</strong> offered at checkout live here too.</li>
+    </ul>
+  </section>
+
+  <section id="s7">
+    <h2><span class="n">7</span>Runs &amp; events</h2>
+    <ul>
+      <li>Add a run, class or event: date and time (Beirut time), place, details and <strong>places left</strong>.</li>
+      <li>Add <strong>8</strong> places and the site shows "8 places left"; <strong>0</strong> shows "Fully booked".</li>
+      <li>Tick <strong>featured</strong> to push it to the top.</li>
+      <li>Past events <strong>disappear from the site by themselves</strong> once their end time passes &mdash; no need to delete them.</li>
+    </ul>
+  </section>
+
+  <section id="s8">
+    <h2><span class="n">8</span>Services &amp; packages</h2>
+    <p>Change a consultation's price or description, what a package includes, its duration, whether it's in person or online, and the <strong>BackOnTheRun</strong> challenge. The same Save → Publish rule applies.</p>
+  </section>
+
+  <section id="s9">
+    <h2><span class="n">9</span>Testimonials</h2>
+    <p>Add real client quotes and tick the <strong>"permission given"</strong> box before publishing one. (The three quotes already there are marked <em>sample</em> &mdash; replace them with real ones when you can.)</p>
+  </section>
+
+  <section id="s10">
+    <h2><span class="n">10</span>Site settings</h2>
+    <ul>
+      <li><strong>WhatsApp number</strong> &mdash; digits only, full international format (Lebanon starts with <code>961</code>). Every "Order" and "Book" button uses it.</li>
+      <li><strong>Emails</strong> &mdash; which inbox receives each kind of Connect-form message.</li>
+      <li><strong>Instagram / LinkedIn</strong> &mdash; leave a field empty to hide that link.</li>
+      <li><strong>Switches</strong> for taking shop orders and Connect-form messages inside this admin.</li>
+      <li><strong>Address and map</strong> for the Connect page.</li>
+    </ul>
+    <div class="note warn">While the WhatsApp number still reads <code>[[WHATSAPP NUMBER]]</code>, booking buttons fall back to the Connect page. Set the real number here and the WhatsApp buttons come alive.</div>
+  </section>
+<section id="s11">
+    <h2><span class="n">11</span>Photos &amp; galleries</h2>
+    <ol>
+      <li><strong>Photos → Add a photo:</strong> pick the file, write a short description in English and Arabic (it's read aloud to people who can't see it), give it a name, and upload.</li>
+      <li>The server makes the sizes the website needs &mdash; a photo straight from your phone is fine.</li>
+      <li>The <strong>"Choose photo"</strong> pickers in products, events and articles now list it.</li>
+      <li>A photo that's part of the website's own pages can be <strong>described and replaced</strong>, not deleted.</li>
+      <li><strong>Photo galleries</strong> decides which photos appear in the scrolling galleries, and in what order.</li>
+    </ol>
+  </section>
+
+  <section id="s12">
+    <h2><span class="n">12</span>Journal</h2>
+    <ol>
+      <li><strong>Journal → + Add article:</strong> topic, title, date, reading time, summary, cover photo, then write in the box. Headings, lists, quotes and links are in the toolbar.</li>
+      <li>Tick <strong>Keep as a draft</strong> while you're working &mdash; a draft isn't on the website at all.</li>
+      <li>Save, <strong>Preview</strong> to read it, then <strong>Publish</strong>. Publishing also updates the article list, the RSS feed and Google's sitemap for you.</li>
+    </ol>
+  </section>
+
+  <section id="s13">
+    <h2><span class="n">13</span>Meal plans</h2>
+    <ol>
+      <li><strong>Meal plans → Add a plan file:</strong> upload the file you made for a client &mdash; a plan page (<code>.html</code>), a spreadsheet plan (<code>.csv</code>) or a saved copy (<code>.json</code>).</li>
+      <li><strong>Make it the sample</strong> decides what the public <strong>"Try the sample plan"</strong> button opens. That choice goes live with Publish. The spreadsheet template the site hands out can't be deleted.</li>
+      <li>Files here can be opened by anyone who has the web address, so keep private client plans elsewhere, or give them a name only you know.</li>
+    </ol>
+    <div class="shot">Screenshot to add: <b>the Meal plans screen with the sample flag</b></div>
+  </section>
+
+  <section id="s14">
+    <h2><span class="n">14</span>Backups</h2>
+    <ul>
+      <li>Every night a copy of your content, orders and messages is written to a private folder on the server (the newest 14 are kept).</li>
+      <li><strong>Overview → Download backup</strong> gives you the same file on your computer. Keep one somewhere safe now and then.</li>
+    </ul>
+  </section>
+
+  <section id="s15">
+    <h2><span class="n">15</span>If something looks wrong</h2>
+    <ul>
+      <li>Reload the page first.</li>
+      <li>If a change looks wrong on the site, <strong>Publish → History → Restore</strong> the previous version.</li>
+      <li>Contact your developer if the hosting check on <strong>Overview</strong> shows a red <strong>Fix</strong> item, or if signing in or publishing stops working.</li>
+    </ul>
+  </section>
+
+  <section id="check">
+    <h2>Your first five minutes</h2>
+    <p>Try these once, on your own &mdash; after that you know the panel:</p>
+    <ul class="done">
+      <li>Add a product with a photo, give it a price and some stock, then publish.</li>
+      <li>Mark something sold out.</li>
+      <li>Add an event with 8 places, then cancel it.</li>
+      <li>Change a package price.</li>
+      <li>Write and publish a Journal article.</li>
+      <li>Take an order through to Delivered.</li>
+      <li>Upload a meal plan and make it the sample.</li>
+      <li>Roll a publish back to the previous version.</li>
+    </ul>
+    <div class="note"><strong>You can't break it.</strong> If a test change ever looks wrong, <strong>Discard all unpublished changes</strong> puts everything back, or <strong>History → Restore</strong> returns an earlier version. Nothing is ever lost.</div>
+  </section>
+
+  <footer>
+    <p>SheOnTheRun &middot; admin at <code>https://sheontherun.com/admin</code> &middot; questions: [ your name, phone, email ]</p>
+  </footer>
+</div>
+</body>
+</html>

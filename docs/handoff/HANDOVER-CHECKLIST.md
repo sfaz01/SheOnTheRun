@@ -18,13 +18,14 @@ What to do, in order, to put the finished admin in front of Fatima and let her r
 
 > The deploy never deletes anything and never overwrites what the admin published, so re-running it is safe.
 
-## Part 2 — Create Fatima's account (do NOT know her password)
+## Part 2 — Fatima creates the only owner account
 
-- [ ] Sign in as yourself → **Account → Invite an admin** → enter Fatima's email (and yours if you want her, or the owner, to share access).
-- [ ] Copy the **one-time invite code** it shows. It works once.
+- [ ] Do **not** create an admin account for yourself or anyone else.
+- [ ] Put a long, random `setup_token` in the private server configuration (see `docs/hostinger-setup.md`). It exists only for the first owner setup and closes automatically after use.
+- [ ] Give that private setup key to Fatima through a password-manager private share. It is not an invite and it never gives you access to her account.
 - [ ] Decide the preview password to share with her (or ask your developer to set a fresh one).
 
-She will use the invite to choose her own password and set up her phone code — you never see or store her password.
+Fatima creates her own password and phone code. Once she finishes, she is the sole administrator and the first-time setup screen closes permanently.
 
 ## Part 3 — Prepare the pack
 
@@ -35,8 +36,8 @@ She will use the invite to choose her own password and set up her phone code —
 ## Part 4 — The 30-minute hand-over call
 
 - [ ] Send the cover message (guide + video) the day before.
-- [ ] On the call, share the preview password, the URL and the invite code **securely** (password-manager private share, or read them aloud — never plain email/WhatsApp).
-- [ ] Watch her, unaided: sign in → choose a password → scan the QR with her authenticator app → **save the recovery codes** somewhere safe.
+- [ ] Before the call, securely share the preview password, the admin URL and the one-time private setup key (password-manager private share — never plain email/WhatsApp).
+- [ ] Watch her, unaided: create her owner account → choose a password → scan the QR with her authenticator app → **save the recovery codes** somewhere safe.
 - [ ] Walk the "Your first five minutes" checklist in the guide with her.
 - [ ] Leave her with: the PDF, the admin URL, and your contact for anything red.
 
@@ -52,6 +53,6 @@ She will use the invite to choose her own password and set up her phone code —
 
 ## Handling secrets — the rules
 
-- Never email, WhatsApp or paste a password, invite code, recovery code or SSH key into chat.
-- Prefer the **invite** (she sets her own password) over you creating one for her.
+- Never email, WhatsApp or paste a password, setup key, recovery code or SSH key into chat.
+- Never create an account for Fatima. The first-time setup gives her the sole owner account directly.
 - The preview password is low-risk (it only hides a not-yet-public site) but still share it like a secret.

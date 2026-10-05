@@ -35,7 +35,7 @@
 
   /* --------------------------------------------------------------- sign-in */
   function setup() {
-    var v = authCard("Welcome — let’s create your account", "This is the one-time setup. You’ll need the setup key you were given.");
+    var v = authCard("Welcome — create the owner account", "This is the one-time owner setup. You’ll need the private setup key supplied with the site.");
     v.card.appendChild(form([
       field("token", "Setup key", { type: "password", autocomplete: "off", required: true }),
       field("email", "Your email", { type: "email", autocomplete: "username", required: true }),

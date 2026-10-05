@@ -15,6 +15,16 @@ One page for Fatima. Everything here is safe to try: nothing goes on the website
 
 `[picture: the sign-in screen]`
 
+## Creating your owner account (the first time)
+
+You create the website's first and only owner account yourself. Nobody else needs an account or knows your password.
+
+1. Open **https://sheontherun.com/admin**. The first-time owner setup appears automatically.
+2. Enter the private setup key sent to you through a password-manager share, then your email and a strong password.
+3. Scan the QR code with your authenticator app and save the recovery codes somewhere private.
+
+The setup key stops working as soon as your account is made.
+
 ## The five-minute tour
 
 The menu on the left (bottom tabs on a phone) is the whole panel:

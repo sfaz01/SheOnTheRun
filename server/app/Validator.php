@@ -53,9 +53,10 @@ final class Validator
         $arIn = is_array($input['ar'] ?? null) ? $input['ar'] : [];
         $arOut = $arIn; // unknown Arabic keys (e.g. the quiz) pass through
 
-        // Fields are processed in order, but stock depends on the cleaned options — do options first.
+        // Fields are processed in order, but stock and the per-option photos depend on the cleaned options — do options first.
         $order = $fields;
-        usort($order, static fn ($a, $b) => ($a['type'] === 'stock') <=> ($b['type'] === 'stock'));
+        $dependsOnOptions = static fn (array $f): bool => in_array($f['type'], ['stock', 'optionphotos'], true);
+        usort($order, static fn ($a, $b) => $dependsOnOptions($a) <=> $dependsOnOptions($b));
 
         foreach ($order as $f) {
             $key = $f['key'];
@@ -63,7 +64,7 @@ final class Validator
             $present = array_key_exists($key, $input);
             $value = $this->field($f, $input[$key] ?? null, $p, $out);
             $empty = $value === null || $value === '' || $value === [];
-            if ($f['type'] === 'stock') {
+            if ($dependsOnOptions($f)) {
                 if ($empty) {
                     unset($out[$key]);
                 } else {
@@ -136,6 +137,12 @@ final class Validator
 
             case 'stock':
                 return $this->stock($value, $path, $siblings['options'] ?? []);
+
+            case 'photos':
+                return $this->photos($value, $path, (int) ($f['max'] ?? 8));
+
+            case 'optionphotos':
+                return $this->optionPhotos($value, $path, $siblings['options'] ?? [], (int) ($f['max'] ?? 8));
 
             default:
                 return $this->plain($f, $value, $path, !empty($f['required']));
@@ -350,6 +357,56 @@ final class Validator
         return $one($value, $path);
     }
 
+    /** A list of photo names from the library (the main photo of a product is separate). */
+    private function photos(mixed $value, string $path, int $max): array
+    {
+        if ($value === null || $value === '') {
+            return [];
+        }
+        if (!is_array($value) || !array_is_list($value)) {
+            $this->err($path, 'Unexpected data here.');
+            return [];
+        }
+        $out = [];
+        foreach ($value as $name) {
+            $name = is_string($name) ? trim($name) : '';
+            if ($name === '' || in_array($name, $out, true)) {
+                continue; // an empty row or the same photo twice
+            }
+            if (!preg_match('/^[a-z0-9][a-z0-9-]{0,80}$/', $name)) {
+                $this->err($path, 'Choose a photo from the list.');
+                continue;
+            }
+            $out[] = $name;
+        }
+        if (count($out) > $max) {
+            $this->err($path, 'Too many photos (' . $max . ' at most).');
+        }
+        return $out;
+    }
+
+    /**
+     * Photos per size or colour: {"Black": ["photo-a", "photo-b"]}. Only options the product really
+     * has are kept, in the product's own order; an option with no photos is left out. Null when none.
+     */
+    private function optionPhotos(mixed $value, string $path, mixed $options, int $max): mixed
+    {
+        $options = is_array($options) ? array_values(array_filter($options, 'is_string')) : [];
+        if (!$options || !is_array($value) || ($value !== [] && array_is_list($value))) {
+            return null; // the options were removed, so their photos no longer apply
+        }
+        $out = [];
+        foreach ($options as $i => $opt) {
+            if (array_key_exists($opt, $value)) {
+                $list = $this->photos($value[$opt], $path . '.' . $i, $max);
+                if ($list) {
+                    $out[$opt] = $list;
+                }
+            }
+        }
+        return $out ?: null;
+    }
+
     /* ------------------------------------------------------------ area rules */
 
     private function areaRules(string $area, array $doc): void
@@ -363,6 +420,11 @@ final class Validator
                         $this->err("categories.$ci.items.$ii.id", 'A product in another category already uses this reference.');
                     }
                     $seen[$id] = $ci;
+                    // Arabic names for sizes/colours are shown in place of the English ones, matched by position.
+                    $arOptions = $item['ar']['options'] ?? [];
+                    if ($arOptions && count($arOptions) !== count($item['options'] ?? [])) {
+                        $this->err("categories.$ci.items.$ii.ar.options", 'The Arabic names are matched to the English ones in order, so there must be one line for each size or colour. Add the missing line, or empty this box to show the English names.');
+                    }
                 }
             }
             $ar = $doc['ar']['governorates'] ?? [];

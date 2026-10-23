@@ -13,7 +13,7 @@
               "id": "sotr-tee",
               "name": "SheOnTheRun Tee",
               "blurb": "The club tee. Soft cotton, relaxed fit, wears in rather than out.",
-              "price": null,
+              "price": 30,
               "image": "shop-tee",
               "options": [
                 "S",
@@ -28,19 +28,6 @@
               }
             },
             {
-              "id": "sotr-cap",
-              "name": "SheOnTheRun Cap",
-              "blurb": "Light, packable, and good for sunset runs when the light comes in sideways.",
-              "price": null,
-              "image": "shop-cap",
-              "options": [],
-              "soldOut": false,
-              "ar": {
-                "name": "قبّعة SheOnTheRun",
-                "blurb": "خفيفة وسهلة الحمل، ومثالية لجري الغروب حين تأتي الشمس من الجانب."
-              }
-            },
-            {
               "id": "sotr-bag",
               "name": "Run Bag",
               "blurb": "Holds a change of clothes, a water bottle and everything you tell yourself you don't need.",
@@ -48,25 +35,78 @@
               "image": "shop-bag",
               "options": [],
               "soldOut": false,
+              "hidden": true,
               "ar": {
                 "name": "حقيبة الجري",
                 "blurb": "تتّسع لملابس بديلة وقارورة ماء وكل ما تقولين لنفسك إنك لا تحتاجينه."
               }
             },
             {
-              "id": "sotr-socks",
-              "name": "Sports Socks",
-              "blurb": "Cushioned crew socks and grip socks for Pilates — the cheapest upgrade to how a session feels.",
-              "price": null,
-              "image": "shop-socks",
-              "options": [
-                "36–39",
-                "40–43"
+              "id": "socks-grip-white",
+              "name": "White Grip Socks",
+              "blurb": "Ankle-height socks with a grippy sole — the cheapest upgrade to how a Pilates or yoga session feels.",
+              "price": 3,
+              "image": "shop-socks-grip-heel",
+              "gallery": [
+                "shop-socks-grip-sole"
               ],
+              "options": [],
               "soldOut": false,
               "ar": {
-                "name": "جوارب رياضية",
-                "blurb": "جوارب مبطّنة وجوارب مانعة للانزلاق للبيلاتس — أرخص ترقية لشعورك أثناء التمرين."
+                "name": "جوارب بيضاء مانعة للانزلاق",
+                "blurb": "جوارب قصيرة بنعل مانع للانزلاق — أرخص ترقية لشعورك في حصص البيلاتس واليوغا."
+              }
+            },
+            {
+              "id": "socks-striped",
+              "name": "Striped Crew Socks",
+              "blurb": "Classic ribbed crew socks with two navy stripes. Simple, clean, and easy to wear every day.",
+              "price": 3,
+              "image": "shop-socks-striped-flat",
+              "gallery": [
+                "shop-socks-striped-worn",
+                "shop-socks-striped-label",
+                "shop-socks-striped-rib"
+              ],
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "جوارب مخطّطة بساق متوسطة",
+                "blurb": "جوارب كلاسيكية مضلّعة بساق متوسطة وخطّين كحليين. بسيطة وأنيقة وسهلة الارتداء كل يوم."
+              }
+            },
+            {
+              "id": "socks-corgi",
+              "name": "Corgi Grip Socks",
+              "blurb": "Crew socks with a tiny embroidered corgi and a grippy sole for Pilates and yoga days.",
+              "price": 5,
+              "image": "shop-socks-corgi-front",
+              "gallery": [
+                "shop-socks-corgi-detail",
+                "shop-socks-corgi-back",
+                "shop-socks-corgi-sole"
+              ],
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "جوارب الكورجي المانعة للانزلاق",
+                "blurb": "جوارب بساق متوسطة مع كلب كورجي صغير مطرّز ونعل مانع للانزلاق لأيام البيلاتس واليوغا."
+              }
+            },
+            {
+              "id": "socks-cherry",
+              "name": "Cherry Grip Socks",
+              "blurb": "Ruffle-cuff socks with an embroidered cherry and little pink heart grips on the sole.",
+              "price": 5,
+              "image": "shop-socks-cherry-front",
+              "gallery": [
+                "shop-socks-cherry-detail"
+              ],
+              "options": [],
+              "soldOut": false,
+              "ar": {
+                "name": "جوارب الكرز المانعة للانزلاق",
+                "blurb": "جوارب بحافة مكشكشة وتطريز كرز ونقاط وردية صغيرة على شكل قلوب مانعة للانزلاق على النعل."
               }
             }
           ],
@@ -89,6 +129,7 @@
               "image": "shop-scale",
               "options": [],
               "soldOut": false,
+              "hidden": true,
               "ar": {
                 "name": "ميزان طعام رقمي",
                 "blurb": "ليس لوزن كل شيء إلى الأبد — بل لأسبوعين تتعلّم فيهما كيف تبدو الحصة الحقيقية."
@@ -102,6 +143,7 @@
               "image": "shop-cups",
               "options": [],
               "soldOut": false,
+              "hidden": true,
               "ar": {
                 "name": "أكواب وملاعق قياس",
                 "blurb": "للوصفات، وللزيت، وللحظة التي تكتشف فيها كمية الطحينة التي كنت تستعملها."
@@ -115,6 +157,7 @@
               "image": "shop-portion",
               "options": [],
               "soldOut": false,
+              "hidden": true,
               "ar": {
                 "name": "مجموعة دليل الحصص",
                 "blurb": "نظام بصري بسيط لتكوين طبقك من دون عدّ أي شيء."
@@ -128,6 +171,7 @@
               "image": "shop-journal",
               "options": [],
               "soldOut": false,
+              "hidden": true,
               "ar": {
                 "name": "دفتر العادات والطعام",
                 "blurb": "ورقة وقلم، عن قصد. الكتابة تُحدث فرقاً أكبر من أي تطبيق جرّبته."
@@ -147,15 +191,73 @@
           "items": [
             {
               "id": "pick-belt",
-              "name": "Running Belt",
-              "blurb": "Running · Carries a phone and a key without bouncing. That's the whole review.",
-              "price": null,
-              "image": "shop-belt",
-              "options": [],
+              "name": "Running Belt Bag",
+              "blurb": "Running · Wear it across the body or around the waist. Carries a phone and a key without bouncing — that's the whole review.",
+              "price": 12,
+              "image": "shop-belt-burgundy-front",
+              "options": [
+                "Burgundy",
+                "Black",
+                "Navy"
+              ],
+              "optionPhotos": {
+                "Burgundy": [
+                  "shop-belt-burgundy-front",
+                  "shop-belt",
+                  "shop-belt-burgundy-back"
+                ],
+                "Black": [
+                  "shop-belt-black-front",
+                  "shop-belt-black-worn",
+                  "shop-belt-black-back",
+                  "shop-belt-black-zip"
+                ],
+                "Navy": [
+                  "shop-belt-navy-front",
+                  "shop-belt-navy-back"
+                ]
+              },
               "soldOut": false,
               "ar": {
-                "name": "حزام الجري",
-                "blurb": "للجري · يحمل الهاتف والمفتاح من دون أن يرتدّ. هذا كل شيء."
+                "name": "حقيبة حزام للجري",
+                "blurb": "للجري · تُحمل بشكل مائل على الجسم أو حول الخصر. تتّسع للهاتف والمفتاح من دون أن ترتدّ — هذا كل شيء.",
+                "options": [
+                  "عنّابي",
+                  "أسود",
+                  "كحلي"
+                ]
+              }
+            },
+            {
+              "id": "pick-wrist-pouch",
+              "name": "Wrist Pouch",
+              "blurb": "Running · Straps to your wrist so your cards and a few coins stay with you. Hands free, nothing bouncing.",
+              "price": 12,
+              "image": "shop-pouch-cream-front",
+              "options": [
+                "Cream",
+                "Pink"
+              ],
+              "optionPhotos": {
+                "Cream": [
+                  "shop-pouch-cream-front",
+                  "shop-pouch-cream-worn",
+                  "shop-pouch-cream-back"
+                ],
+                "Pink": [
+                  "shop-pouch-pink-front",
+                  "shop-pouch-pink-worn",
+                  "shop-pouch-pink-back"
+                ]
+              },
+              "soldOut": false,
+              "ar": {
+                "name": "جراب معصم للجري",
+                "blurb": "للجري · يُثبَّت على معصمك فتبقى بطاقاتك وبعض القطع النقدية معك. يدان حرّتان ولا شيء يرتدّ.",
+                "options": [
+                  "كريمي",
+                  "وردي"
+                ]
               }
             },
             {
@@ -166,6 +268,7 @@
               "image": "shop-bottle",
               "options": [],
               "soldOut": false,
+              "hidden": true,
               "ar": {
                 "name": "قارورة معزولة",
                 "blurb": "للعافية · الماء البارد في صيف بيروت عادة تغيّر الكثير، لا رفاهية."
@@ -179,6 +282,7 @@
               "image": "shop-shaker",
               "options": [],
               "soldOut": false,
+              "hidden": true,
               "ar": {
                 "name": "مجموعة شيكر ووجبات خفيفة",
                 "blurb": "للتغذية · لتغذية نفسك حول التمرين حين تذهب من العمل مباشرة إلى المضمار."
@@ -1464,11 +1568,120 @@
           "name": "shop-belt",
           "alt": "A burgundy running belt bag worn across the body, with its inside shown",
           "w": [
+            160,
             480,
             628
           ],
           "r": 1,
           "seeded": true
+        },
+        {
+          "name": "shop-belt-black-back",
+          "alt": "Black belt bag, back view with the adjustable belt strap",
+          "w": [
+            160,
+            508
+          ],
+          "r": 1,
+          "seeded": true,
+          "ar": {
+            "alt": "حقيبة حزام سوداء، من الخلف مع الحزام القابل للتعديل"
+          }
+        },
+        {
+          "name": "shop-belt-black-front",
+          "alt": "Black belt bag, front view with a silver zip",
+          "w": [
+            160,
+            508
+          ],
+          "r": 1,
+          "seeded": true,
+          "ar": {
+            "alt": "حقيبة حزام سوداء، من الأمام مع السحّاب الفضّي"
+          }
+        },
+        {
+          "name": "shop-belt-black-worn",
+          "alt": "Black belt bag worn across the body, with its inside pocket shown",
+          "w": [
+            160,
+            508
+          ],
+          "r": 1,
+          "seeded": true,
+          "ar": {
+            "alt": "حقيبة حزام سوداء تُحمل بشكل مائل على الجسم، مع إظهار الجيب الداخلي"
+          }
+        },
+        {
+          "name": "shop-belt-black-zip",
+          "alt": "Close-up of the silver zip on the black belt bag",
+          "w": [
+            160,
+            508
+          ],
+          "r": 1,
+          "seeded": true,
+          "ar": {
+            "alt": "لقطة قريبة للسحّاب الفضّي في الحقيبة السوداء"
+          }
+        },
+        {
+          "name": "shop-belt-burgundy-back",
+          "alt": "Burgundy belt bag, back view with the adjustable belt strap and buckle",
+          "w": [
+            160,
+            480,
+            637
+          ],
+          "r": 1.0274,
+          "seeded": true,
+          "ar": {
+            "alt": "حقيبة حزام عنّابية، من الخلف مع الحزام القابل للتعديل والإبزيم"
+          }
+        },
+        {
+          "name": "shop-belt-burgundy-front",
+          "alt": "Burgundy belt bag, front view with a silver zip",
+          "w": [
+            160,
+            480,
+            637
+          ],
+          "r": 1.0274,
+          "seeded": true,
+          "ar": {
+            "alt": "حقيبة حزام عنّابية، من الأمام مع السحّاب الفضّي"
+          }
+        },
+        {
+          "name": "shop-belt-navy-back",
+          "alt": "Navy belt bag, back view with the belt strap and buckle",
+          "w": [
+            160,
+            480,
+            637
+          ],
+          "r": 1.0208,
+          "seeded": true,
+          "ar": {
+            "alt": "حقيبة حزام كحلية، من الخلف مع الحزام والإبزيم"
+          }
+        },
+        {
+          "name": "shop-belt-navy-front",
+          "alt": "Navy belt bag, front view with a silver zip",
+          "w": [
+            160,
+            480,
+            637
+          ],
+          "r": 1.0208,
+          "seeded": true,
+          "ar": {
+            "alt": "حقيبة حزام كحلية، من الأمام مع السحّاب الفضّي"
+          }
         },
         {
           "name": "shop-bottle",
@@ -1530,6 +1743,84 @@
           "seeded": true
         },
         {
+          "name": "shop-pouch-cream-back",
+          "alt": "Cream wrist pouch, back view with the grey elastic strap",
+          "w": [
+            160,
+            507
+          ],
+          "r": 1,
+          "seeded": true,
+          "ar": {
+            "alt": "جراب المعصم الكريمي من الخلف مع الحزام المطاطي الرمادي"
+          }
+        },
+        {
+          "name": "shop-pouch-cream-front",
+          "alt": "Cream wrist pouch with a zip, front view",
+          "w": [
+            160,
+            507
+          ],
+          "r": 1,
+          "seeded": true,
+          "ar": {
+            "alt": "جراب معصم كريمي بسحّاب، من الأمام"
+          }
+        },
+        {
+          "name": "shop-pouch-cream-worn",
+          "alt": "Cream wrist pouch worn on the wrist, with cards and coins shown inside",
+          "w": [
+            160,
+            507
+          ],
+          "r": 1,
+          "seeded": true,
+          "ar": {
+            "alt": "جراب المعصم الكريمي على المعصم، مع إظهار البطاقات والقطع النقدية في داخله"
+          }
+        },
+        {
+          "name": "shop-pouch-pink-back",
+          "alt": "Pink wrist pouch, back view with the grey elastic strap",
+          "w": [
+            160,
+            507
+          ],
+          "r": 1,
+          "seeded": true,
+          "ar": {
+            "alt": "جراب المعصم الوردي من الخلف مع الحزام المطاطي الرمادي"
+          }
+        },
+        {
+          "name": "shop-pouch-pink-front",
+          "alt": "Pink wrist pouch with a zip, front view",
+          "w": [
+            160,
+            507
+          ],
+          "r": 1,
+          "seeded": true,
+          "ar": {
+            "alt": "جراب معصم وردي بسحّاب، من الأمام"
+          }
+        },
+        {
+          "name": "shop-pouch-pink-worn",
+          "alt": "Pink wrist pouch worn on the wrist, with cards and coins shown inside",
+          "w": [
+            160,
+            507
+          ],
+          "r": 1,
+          "seeded": true,
+          "ar": {
+            "alt": "جراب المعصم الوردي على المعصم، مع إظهار البطاقات والقطع النقدية في داخله"
+          }
+        },
+        {
           "name": "shop-scale",
           "alt": "Minimalist digital kitchen food scale",
           "w": [
@@ -1560,6 +1851,171 @@
           "seeded": true
         },
         {
+          "name": "shop-socks-cherry-detail",
+          "alt": "Close-up of the embroidered cherries on the sock",
+          "w": [
+            160,
+            480,
+            630
+          ],
+          "r": 1.0032,
+          "seeded": true,
+          "ar": {
+            "alt": "لقطة قريبة لتطريز الكرز على الجورب"
+          }
+        },
+        {
+          "name": "shop-socks-cherry-front",
+          "alt": "White sock with a pink ruffled cuff, an embroidered cherry and pink heart grips on the sole",
+          "w": [
+            160,
+            480,
+            1276
+          ],
+          "r": 1.0468,
+          "seeded": true,
+          "ar": {
+            "alt": "جورب أبيض بحافة وردية مكشكشة وتطريز كرز ونقاط قلوب وردية مانعة للانزلاق على النعل"
+          }
+        },
+        {
+          "name": "shop-socks-corgi-back",
+          "alt": "The corgi sock from the back, with its navy cuff and red stripe",
+          "w": [
+            160,
+            480,
+            638
+          ],
+          "r": 1.0127,
+          "seeded": true,
+          "ar": {
+            "alt": "جورب الكورجي من الخلف مع الحافة الكحلية والخطّ الأحمر"
+          }
+        },
+        {
+          "name": "shop-socks-corgi-detail",
+          "alt": "Close-up of the embroidered corgi",
+          "w": [
+            160,
+            480,
+            638
+          ],
+          "r": 1.0208,
+          "seeded": true,
+          "ar": {
+            "alt": "لقطة قريبة لتطريز الكورجي"
+          }
+        },
+        {
+          "name": "shop-socks-corgi-front",
+          "alt": "White crew sock with an embroidered corgi and a navy and red cuff",
+          "w": [
+            160,
+            480,
+            638
+          ],
+          "r": 1.0127,
+          "seeded": true,
+          "ar": {
+            "alt": "جورب أبيض مطرّز بكلب كورجي مع حافة كحلية وخطّ أحمر"
+          }
+        },
+        {
+          "name": "shop-socks-corgi-sole",
+          "alt": "The grippy sole of the corgi sock",
+          "w": [
+            160,
+            480,
+            638
+          ],
+          "r": 1.0208,
+          "seeded": true,
+          "ar": {
+            "alt": "النعل المانع للانزلاق في جورب الكورجي"
+          }
+        },
+        {
+          "name": "shop-socks-grip-heel",
+          "alt": "White ankle socks with a grippy sole",
+          "w": [
+            160,
+            453
+          ],
+          "r": 0.8988,
+          "seeded": true,
+          "ar": {
+            "alt": "جوارب بيضاء قصيرة بنعل مانع للانزلاق"
+          }
+        },
+        {
+          "name": "shop-socks-grip-sole",
+          "alt": "Close-up of the grip dots on the sole of the white socks",
+          "w": [
+            160,
+            479
+          ],
+          "r": 0.8773,
+          "seeded": true,
+          "ar": {
+            "alt": "لقطة قريبة للنقاط المانعة للانزلاق على نعل الجوارب البيضاء"
+          }
+        },
+        {
+          "name": "shop-socks-striped-flat",
+          "alt": "White crew sock with two navy stripes, laid flat",
+          "w": [
+            160,
+            480,
+            638
+          ],
+          "r": 1.0127,
+          "seeded": true,
+          "ar": {
+            "alt": "جورب أبيض بساق متوسطة مع خطّين كحليين، مسطّح"
+          }
+        },
+        {
+          "name": "shop-socks-striped-label",
+          "alt": "White crew socks with two navy stripes and a small label at the top",
+          "w": [
+            160,
+            346
+          ],
+          "r": 0.6654,
+          "seeded": true,
+          "ar": {
+            "alt": "جوارب بيضاء بساق متوسطة مع خطّين كحليين وملصق صغير في الأعلى"
+          }
+        },
+        {
+          "name": "shop-socks-striped-rib",
+          "alt": "Close-up of the ribbed knit of the striped sock",
+          "w": [
+            160,
+            480,
+            638
+          ],
+          "r": 1.0241,
+          "seeded": true,
+          "ar": {
+            "alt": "لقطة قريبة للنسيج المضلّع في الجورب المخطّط"
+          }
+        },
+        {
+          "name": "shop-socks-striped-worn",
+          "alt": "White crew sock with two navy stripes, worn",
+          "w": [
+            160,
+            480,
+            638
+          ],
+          "r": 1.0127,
+          "seeded": true,
+          "ar": {
+            "alt": "جورب أبيض بساق متوسطة مع خطّين كحليين، أثناء ارتدائه"
+          }
+        },
+        {
           "name": "shop-tee",
           "alt": "The SheOnTheRun club tee, back print: She runs the world",
           "w": [
@@ -1567,61 +2023,6 @@
             960
           ],
           "r": 1,
-          "seeded": true
-        },
-        {
-          "name": "sotr-hike",
-          "alt": "SheOnTheRun women walking a mountain trail together, backpacks on",
-          "w": [
-            480,
-            960,
-            1440
-          ],
-          "r": 0.75,
-          "seeded": true
-        },
-        {
-          "name": "sotr-picnic",
-          "alt": "SheOnTheRun women resting on picnic blankets during a mountain hike",
-          "w": [
-            480,
-            960,
-            1440
-          ],
-          "r": 0.75,
-          "seeded": true
-        },
-        {
-          "name": "sotr-selfie-park",
-          "alt": "The SheOnTheRun women gathered close for a group selfie",
-          "w": [
-            480,
-            960,
-            1440
-          ],
-          "r": 1.3333,
-          "seeded": true
-        },
-        {
-          "name": "sotr-selfie-sunset",
-          "alt": "A big SheOnTheRun group at sunset after a run",
-          "w": [
-            480,
-            960,
-            1440
-          ],
-          "r": 1.3333,
-          "seeded": true
-        },
-        {
-          "name": "sotr-startline",
-          "alt": "SheOnTheRun women in club tees lined up at a race start gate",
-          "w": [
-            480,
-            960,
-            1440
-          ],
-          "r": 1.3333,
           "seeded": true
         },
         {
@@ -1658,6 +2059,17 @@
           "seeded": true
         },
         {
+          "name": "sotr-hike",
+          "alt": "SheOnTheRun women walking a mountain trail together, backpacks on",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
           "name": "sotr-jackets",
           "alt": "SheOnTheRun members arm in arm in club jackets",
           "w": [
@@ -1688,6 +2100,17 @@
           "seeded": true
         },
         {
+          "name": "sotr-picnic",
+          "alt": "SheOnTheRun women resting on picnic blankets during a mountain hike",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 0.75,
+          "seeded": true
+        },
+        {
           "name": "sotr-runlikeagirl",
           "alt": "A SheOnTheRun runner holding a sign reading 'Run like a girl'",
           "w": [
@@ -1696,6 +2119,39 @@
             1440
           ],
           "r": 0.8,
+          "seeded": true
+        },
+        {
+          "name": "sotr-selfie-park",
+          "alt": "The SheOnTheRun women gathered close for a group selfie",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.3333,
+          "seeded": true
+        },
+        {
+          "name": "sotr-selfie-sunset",
+          "alt": "A big SheOnTheRun group at sunset after a run",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.3333,
+          "seeded": true
+        },
+        {
+          "name": "sotr-startline",
+          "alt": "SheOnTheRun women in club tees lined up at a race start gate",
+          "w": [
+            480,
+            960,
+            1440
+          ],
+          "r": 1.3333,
           "seeded": true
         },
         {

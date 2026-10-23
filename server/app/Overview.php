@@ -28,7 +28,7 @@ final class Overview
             }
             foreach ($c['items'] ?? [] as $p) {
                 $stock = $p['stock'] ?? null;
-                if ($stock === null) {
+                if ($stock === null || !empty($p['hidden'])) { // hidden products aren't on sale, so no low-stock alert
                     continue;
                 }
                 $entries = is_array($stock) ? $stock : ['' => $stock];

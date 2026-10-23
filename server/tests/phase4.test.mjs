@@ -25,7 +25,7 @@ before(async () => {
   // a priced, tracked product, an upcoming event, then publish
   const shop = (await c.call("GET", "/api/admin/content/shop")).json;
   const sd = structuredClone(shop.doc);
-  Object.assign(sd.categories[0].items.find((p) => p.id === "sotr-cap"), { price: 10, stock: 2 });
+  Object.assign(sd.categories[0].items.find((p) => p.id === "socks-grip-white"), { price: 10, stock: 2 });
   Object.assign(sd.categories[0].items.find((p) => p.id === "sotr-tee"), { price: 25, stock: { S: 9, M: 1, L: 9, XL: 9 } });
   await c.call("PUT", "/api/admin/content/shop", { doc: sd, rev: shop.rev });
   const runs = (await c.call("GET", "/api/admin/content/runs")).json;
@@ -33,7 +33,7 @@ before(async () => {
   rd.events.push({ id: "future-run", kind: "run", title: "Future run", starts: "2031-01-01T18:30", ends: "2031-01-01T19:30", place: "Biel", detail: "", note: "", featured: false, spots: 8 });
   await c.call("PUT", "/api/admin/content/runs", { doc: rd, rev: runs.rev });
   await c.call("POST", "/api/admin/publish", { note: "phase 4 test" });
-  await visit("/api/orders", { name: "Nour Haddad", phone: "+961 70 123 456", governorate: "Beirut", address: "Hamra, Bliss Street 4", payment_method: "cod", items: [{ id: "sotr-cap", option: "", qty: 1 }] });
+  await visit("/api/orders", { name: "Nour Haddad", phone: "+961 70 123 456", governorate: "Beirut", address: "Hamra, Bliss Street 4", payment_method: "cod", items: [{ id: "socks-grip-white", option: "", qty: 1 }] });
   await visit("/api/messages", { name: "Rania Haddad", email: "rania@example.com", about: "general", message: "Hello there, a question." });
 });
 after(() => srv?.stop());
@@ -48,7 +48,7 @@ test("the dashboard numbers: new orders, unread messages, upcoming events, low s
   assert.deepEqual(o.events.map((e) => e.starts), [...o.events.map((e) => e.starts)].sort(), "soonest first");
   assert.equal(o.events.find((e) => e.title === "Future run").spots, 8);
   const low = o.low_stock.map((l) => `${l.name}|${l.option}|${l.left}`);
-  assert.ok(low.includes("SheOnTheRun Cap||1"), low.join());
+  assert.ok(low.includes("White Grip Socks||1"), low.join());
   assert.ok(low.includes("SheOnTheRun Tee|M|1"), low.join());
   assert.ok(!low.some((l) => l.includes("|S|")), "plentiful sizes aren't listed");
   assert.equal(o.recent_orders[0].name, "Nour Haddad");

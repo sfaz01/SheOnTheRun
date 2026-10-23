@@ -41,7 +41,7 @@ test("an existing site gains the new areas on first use, with nothing waiting to
   const st = (await c.call("GET", "/api/admin/status")).json;
   assert.ok(Object.values(st.changed).every((v) => v === false), JSON.stringify(st.changed));
   const photos = (await c.call("GET", "/api/admin/photos")).json.photos;
-  assert.equal(photos.length, 94);
+  assert.equal(photos.length, 120);
   assert.ok(photos.every((p) => p.canDelete === false), "photos built into the pages can't be deleted");
   const posts = (await c.call("GET", "/api/admin/content/posts")).json.doc.items;
   assert.deepEqual(posts.map((p) => p.slug), ["a-month-in-shanghai", "fuelling-your-first-10k"]);
@@ -95,7 +95,7 @@ test("edit the description, replace the file (same name, new widths), then publi
   assert.equal((await c.call("POST", "/api/admin/publish", { note: "photos" })).status, 200);
   const data = liveData("images.js", "SITE_IMAGES");
   assert.deepEqual(data["test-photo"], { w: [480, 960, 1440, 2000], r: 2, alt: "Better description", altAr: "وصف أفضل" });
-  assert.equal(Object.keys(data).length, 96, "94 original + 2 new");
+  assert.equal(Object.keys(data).length, 122, "120 original + 2 new");
   assert.equal(data["about-armchair"].alt.startsWith("Fatima seated"), true, "original photos untouched");
 });
 

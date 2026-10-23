@@ -48,7 +48,7 @@ Fatima creates her own password and phone code. Once she finishes, she is the so
   - [ ] The **WhatsApp number** is still a placeholder (`[[WHATSAPP NUMBER]]`) in Site settings.
   - [ ] The **Arabic text** was written by an assistant — have Fatima or a native reader check it.
   - [ ] The three **testimonials** are marked *sample*.
-  - [ ] **Card payments** are not built — the shop is cash-on-delivery plus a manual Whish/OMT mark-as-paid.
+  - [ ] **Card payments** are not built — checkout is **pay on delivery only** for now. Whish / OMT transfers (with a manual mark-as-paid) are built and switched off; the owner turns them on in Site settings → *Also offer Whish / OMT transfer at checkout*.
   - [ ] When she's ready to go public, delete the `PRIVATE PREVIEW` block in `.htaccess`, commit, and re-run **Deploy to Hostinger**.
 
 ## Handling secrets — the rules

@@ -15,7 +15,7 @@ final class Generator
     /** @param array<string, array> $docs  area => document @return array<string, string> filename => contents */
     public static function files(array $docs): array
     {
-        $shop = $docs['shop'] ?? ['categories' => []];
+        $shop = self::publicShop($docs['shop'] ?? ['categories' => []]);
         $runs = $docs['runs'] ?? ['events' => []];
         $offer = $docs['offer'] ?? [];
         $extras = $docs['extras'] ?? [];
@@ -58,6 +58,20 @@ final class Generator
             'gallery.js'      => self::js('SITE_GALLERY', $publicGallery),
             'plan.js'         => self::js('SITE_PLAN', self::plan($docs['plans'] ?? [])),
         ];
+    }
+
+    /** The shop as visitors may see it: products the owner has hidden stay in the admin and never reach the site. */
+    public static function publicShop(array $shop): array
+    {
+        foreach ($shop['categories'] ?? [] as $ci => $cat) {
+            if (isset($cat['items'])) {
+                $shop['categories'][$ci]['items'] = array_values(array_filter(
+                    $cat['items'],
+                    static fn ($p) => empty($p['hidden'])
+                ));
+            }
+        }
+        return $shop;
     }
 
     /** Which plan page the tracker's sample button opens, and the spreadsheet template it hands out. */

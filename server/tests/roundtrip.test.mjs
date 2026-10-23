@@ -35,6 +35,14 @@ test("every generated data file has exactly today's values", () => {
   const files = ["config.js", "products.js", "runs.js", "packages.js", "testimonials.js", "ar.js", "posts.js", "images.js", "gallery.js"];
   const before = load(join(root, "data"), files);
   const after = load(out, files);
+  // Hidden products stay in the hand-made file (and in the admin) but are never written to the public data.
+  const hidden = new Set();
+  for (const c of before.SITE_SHOP.categories) {
+    for (const p of c.items) if (p.hidden) hidden.add(p.id);
+    c.items = c.items.filter((p) => !p.hidden);
+  }
+  for (const id of hidden) delete before.SITE_AR.shop.items[id];
+  assert.ok(hidden.size >= 7, "the hidden products are in the hand-made file");
   for (const g of ["SITE", "SITE_SHOP", "SITE_RUNS", "SITE_OFFER", "SITE_TESTIMONIALS", "SITE_AR", "SITE_POSTS", "SITE_IMAGES", "SITE_GALLERY"]) {
     assert.deepStrictEqual(after[g], before[g], `${g} differs`);
   }

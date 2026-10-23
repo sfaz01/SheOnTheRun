@@ -140,7 +140,7 @@ test("history: restoring the imported version, then publishing, puts the old pri
   assert.equal((await owner.call("GET", "/api/admin/status")).json.changed.shop, true);
   assert.equal(liveData("products.js", "SITE_SHOP").categories[0].items[0].price, 25, "restore alone doesn't publish");
   await owner.call("POST", "/api/admin/publish", { note: "" });
-  assert.equal(liveData("products.js", "SITE_SHOP").categories[0].items[0].price, null);
+  assert.equal(liveData("products.js", "SITE_SHOP").categories[0].items[0].price, 30);
 });
 
 test("discard throws away saved-but-unpublished changes", async () => {

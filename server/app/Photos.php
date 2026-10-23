@@ -221,7 +221,8 @@ final class Photos
         foreach ($sources as $docs) {
             foreach ($docs['shop']['categories'] ?? [] as $c) {
                 foreach ($c['items'] ?? [] as $p) {
-                    if (($p['image'] ?? '') === $name) {
+                    $photos = array_merge([$p['image'] ?? ''], $p['gallery'] ?? [], ...array_values($p['optionPhotos'] ?? []));
+                    if (in_array($name, $photos, true)) {
                         $used['product “' . ($p['name'] ?? '') . '”'] = true;
                     }
                 }

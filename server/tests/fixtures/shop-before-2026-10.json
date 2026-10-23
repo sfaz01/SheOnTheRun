@@ -1,0 +1,227 @@
+{
+ "note": "The shop area exactly as the live site had it from 2 Oct 2026 (before the October shop update). Used to prove the one-time upgrade.",
+ "shop": {
+  "categories": [
+   {
+    "id": "sheontherun",
+    "name": "SheOnTheRun",
+    "blurb": "Club kit for the women who show up. Worn on the corniche, at Biel, and on the days you nearly didn't come.",
+    "comingSoon": false,
+    "items": [
+     {
+      "id": "sotr-tee",
+      "name": "SheOnTheRun Tee",
+      "blurb": "The club tee. Soft cotton, relaxed fit, wears in rather than out.",
+      "price": null,
+      "image": "shop-tee",
+      "options": [
+       "S",
+       "M",
+       "L",
+       "XL"
+      ],
+      "soldOut": false,
+      "ar": {
+       "name": "قميص SheOnTheRun",
+       "blurb": "قميص النادي. قطن ناعم وقصّة مريحة، يزداد جمالاً مع الاستعمال."
+      }
+     },
+     {
+      "id": "sotr-cap",
+      "name": "SheOnTheRun Cap",
+      "blurb": "Light, packable, and good for sunset runs when the light comes in sideways.",
+      "price": null,
+      "image": "shop-cap",
+      "options": [],
+      "soldOut": false,
+      "ar": {
+       "name": "قبّعة SheOnTheRun",
+       "blurb": "خفيفة وسهلة الحمل، ومثالية لجري الغروب حين تأتي الشمس من الجانب."
+      }
+     },
+     {
+      "id": "sotr-bag",
+      "name": "Run Bag",
+      "blurb": "Holds a change of clothes, a water bottle and everything you tell yourself you don't need.",
+      "price": null,
+      "image": "shop-bag",
+      "options": [],
+      "soldOut": false,
+      "ar": {
+       "name": "حقيبة الجري",
+       "blurb": "تتّسع لملابس بديلة وقارورة ماء وكل ما تقولين لنفسك إنك لا تحتاجينه."
+      }
+     },
+     {
+      "id": "sotr-socks",
+      "name": "Sports Socks",
+      "blurb": "Cushioned crew socks and grip socks for Pilates — the cheapest upgrade to how a session feels.",
+      "price": null,
+      "image": "shop-socks",
+      "options": [
+       "36–39",
+       "40–43"
+      ],
+      "soldOut": false,
+      "ar": {
+       "name": "جوارب رياضية",
+       "blurb": "جوارب مبطّنة وجوارب مانعة للانزلاق للبيلاتس — أرخص ترقية لشعورك أثناء التمرين."
+      }
+     }
+    ],
+    "ar": {
+     "name": "SheOnTheRun",
+     "blurb": "ملابس النادي للنساء اللواتي يحضرن."
+    }
+   },
+   {
+    "id": "wellness-tools",
+    "name": "Wellness Tools",
+    "blurb": "The practical things I actually ask clients to own. Nothing here is a supplement, and nothing here is magic — they just make eating well easier to do.",
+    "comingSoon": false,
+    "items": [
+     {
+      "id": "food-scale",
+      "name": "Digital Food Scale",
+      "blurb": "Not for weighing everything forever — for two weeks of learning what a portion really looks like.",
+      "price": null,
+      "image": "shop-scale",
+      "options": [],
+      "soldOut": false,
+      "ar": {
+       "name": "ميزان طعام رقمي",
+       "blurb": "ليس لوزن كل شيء إلى الأبد — بل لأسبوعين تتعلّم فيهما كيف تبدو الحصة الحقيقية."
+      }
+     },
+     {
+      "id": "measuring-cups",
+      "name": "Measuring Cups & Spoons",
+      "blurb": "For recipes, for oil, and for the moment you realise how much tahini you've been using.",
+      "price": null,
+      "image": "shop-cups",
+      "options": [],
+      "soldOut": false,
+      "ar": {
+       "name": "أكواب وملاعق قياس",
+       "blurb": "للوصفات، وللزيت، وللحظة التي تكتشف فيها كمية الطحينة التي كنت تستعملها."
+      }
+     },
+     {
+      "id": "portion-set",
+      "name": "Portion Guide Set",
+      "blurb": "A simple visual system for building a plate without counting anything.",
+      "price": null,
+      "image": "shop-portion",
+      "options": [],
+      "soldOut": false,
+      "ar": {
+       "name": "مجموعة دليل الحصص",
+       "blurb": "نظام بصري بسيط لتكوين طبقك من دون عدّ أي شيء."
+      }
+     },
+     {
+      "id": "journal",
+      "name": "Habit & Food Journal",
+      "blurb": "Pen and paper, on purpose. Writing it down changes it more than any app I've tried.",
+      "price": null,
+      "image": "shop-journal",
+      "options": [],
+      "soldOut": false,
+      "ar": {
+       "name": "دفتر العادات والطعام",
+       "blurb": "ورقة وقلم، عن قصد. الكتابة تُحدث فرقاً أكبر من أي تطبيق جرّبته."
+      }
+     }
+    ],
+    "ar": {
+     "name": "أدوات العافية",
+     "blurb": "الأدوات العملية التي أطلب فعلاً من عملائي امتلاكها."
+    }
+   },
+   {
+    "id": "my-picks",
+    "name": "My Picks",
+    "blurb": "Things I personally use, like or recommend — across running, nutrition, wellness and learning. If it's here, it's in my own bag or on my own shelf.",
+    "comingSoon": false,
+    "items": [
+     {
+      "id": "pick-belt",
+      "name": "Running Belt",
+      "blurb": "Running · Carries a phone and a key without bouncing. That's the whole review.",
+      "price": null,
+      "image": "shop-belt",
+      "options": [],
+      "soldOut": false,
+      "ar": {
+       "name": "حزام الجري",
+       "blurb": "للجري · يحمل الهاتف والمفتاح من دون أن يرتدّ. هذا كل شيء."
+      }
+     },
+     {
+      "id": "pick-bottle",
+      "name": "Insulated Bottle",
+      "blurb": "Wellness · Cold water in a Beirut summer is a habit-changer, not a luxury.",
+      "price": null,
+      "image": "shop-bottle",
+      "options": [],
+      "soldOut": false,
+      "ar": {
+       "name": "قارورة معزولة",
+       "blurb": "للعافية · الماء البارد في صيف بيروت عادة تغيّر الكثير، لا رفاهية."
+      }
+     },
+     {
+      "id": "pick-shaker",
+      "name": "Shaker & Snack Set",
+      "blurb": "Nutrition · For fuelling around training when you're going straight from work to the track.",
+      "price": null,
+      "image": "shop-shaker",
+      "options": [],
+      "soldOut": false,
+      "ar": {
+       "name": "مجموعة شيكر ووجبات خفيفة",
+       "blurb": "للتغذية · لتغذية نفسك حول التمرين حين تذهب من العمل مباشرة إلى المضمار."
+      }
+     }
+    ],
+    "ar": {
+     "name": "اختياراتي",
+     "blurb": "أشياء أستخدمها بنفسي وأنصح بها."
+    }
+   },
+   {
+    "id": "modest-activewear",
+    "name": "Modest Activewear",
+    "blurb": "Kit designed for women who cover, made for actually moving in — breathable, long-line, and cut for running rather than adapted for it. In development now.",
+    "comingSoon": true,
+    "items": [],
+    "ar": {
+     "name": "ملابس رياضية محتشمة",
+     "blurb": "ملابس مصمّمة للنساء المحجّبات، مصنوعة للحركة الفعلية — تسمح بالتهوية، طويلة، ومفصّلة للجري لا معدّلة له. قيد التطوير الآن."
+    }
+   }
+  ],
+  "governorates": [
+   "Beirut",
+   "Mount Lebanon",
+   "North Lebanon",
+   "Akkar",
+   "Baalbek-Hermel",
+   "Beqaa",
+   "South Lebanon",
+   "Nabatieh"
+  ],
+  "ar": {
+   "governorates": [
+    "بيروت",
+    "جبل لبنان",
+    "الشمال",
+    "عكار",
+    "بعلبك - الهرمل",
+    "البقاع",
+    "الجنوب",
+    "النبطية"
+   ]
+  }
+ }
+}

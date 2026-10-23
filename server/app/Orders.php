@@ -50,6 +50,11 @@ final class Orders
         if (!isset(self::PAYMENT_METHODS[$method])) {
             throw self::bad('payment_method', 'Please choose how you’d like to pay.');
         }
+        // Pay on delivery is always on; Whish / OMT transfer only once the owner has switched it on in Site settings.
+        $settings = (Content::lastSnapshot() ?? [])['settings'] ?? [];
+        if ($method === 'transfer' && empty($settings['payTransfer'])) {
+            throw self::bad('payment_method', 'For now you can pay on delivery. Please choose that to place your order.');
+        }
 
         // ---- lines: merge duplicates, then check each against the live shop
         $raw = $in['items'] ?? null;
@@ -88,10 +93,10 @@ final class Orders
             $options = array_values($p['options'] ?? []);
             if ($options) {
                 if (!in_array($l['option'], $options, true)) {
-                    throw new HttpError(422, 'Please choose a size for “' . $p['name'] . '”.', 'bad_option');
+                    throw new HttpError(422, 'Please choose a size or colour for “' . $p['name'] . '”.', 'bad_option');
                 }
             } elseif ($l['option'] !== '') {
-                throw new HttpError(422, '“' . $p['name'] . '” doesn’t come in sizes.', 'bad_option');
+                throw new HttpError(422, '“' . $p['name'] . '” doesn’t come in sizes or colours.', 'bad_option');
             }
             $price = isset($p['price']) && $p['price'] !== '' && $p['price'] !== null ? (float) $p['price'] : null;
             if ($price === null) {
@@ -327,7 +332,7 @@ final class Orders
             }
             foreach ($cat['items'] ?? [] as $p) {
                 if (($p['id'] ?? '') === $id) {
-                    return $p;
+                    return empty($p['hidden']) ? $p : null; // hidden = off the shop, so it can't be ordered
                 }
             }
         }

@@ -96,6 +96,8 @@
     "Add to cart": "إضافة إلى السلة",
     "Added ✓": "أُضيف ✓",
     "Option for {x}": "خيار {x}",
+    "More photos of {x}": "المزيد من صور {x}",
+    "Show photo {n} of {total}": "عرض الصورة {n} من {total}",
     "Price confirmed with your order": "يُؤكَّد السعر مع طلبك",
     "Hi Fatima! Please let me know when the {x} launches.": "مرحباً فاطمة! أخبريني من فضلك عند إطلاق {x}.",
     "Coming soon": "قريباً",
@@ -198,7 +200,18 @@
     var sh = A.shop || {};
     (SHOP.categories || []).forEach(function (c) {
       over(c, (sh.categories || {})[c.id]);
-      (c.items || []).forEach(function (x) { over(x, (sh.items || {})[x.id]); });
+      (c.items || []).forEach(function (x) {
+        var a = (sh.items || {})[x.id];
+        /* Sizes and colours keep their English value (it is what the order and the stock go by);
+           the Arabic is only the label shown beside it, matched by position. */
+        if (a && Array.isArray(a.options)) {
+          x.optionLabels = a.options;
+          var rest = {};
+          Object.keys(a).forEach(function (k) { if (k !== "options") rest[k] = a[k]; });
+          a = rest;
+        }
+        over(x, a);
+      });
     });
     if ((A.governorates || []).length) SHOP.governorates = A.governorates;
     PUBS.forEach(function (x, i) { over(x, (A.publications || [])[i]); });
@@ -1039,9 +1052,10 @@
     var GOVS = SHOP.governorates || [];
 
     var products = [];
+    function onShop(c) { return (c.items || []).filter(function (p) { return !p.hidden; }); }
     SHOP.categories.forEach(function (c) {
       if (c.comingSoon) return;
-      (c.items || []).forEach(function (p) { products.push({ p: p, cat: c }); });
+      onShop(c).forEach(function (p) { products.push({ p: p, cat: c }); });
     });
 
     function priceText(p) {
@@ -1066,30 +1080,91 @@
       return hit ? hit.qty : 0;
     }
 
+    /* Photos: the main one first, then any extras — or, when a colour is picked, that colour's own set. */
+    var PR_SIZES = "(min-width: 1100px) 22vw, (min-width: 780px) 30vw, 46vw";
+    function photosFor(p, option) {
+      var own = option && p.optionPhotos && p.optionPhotos[option];
+      var list = own && own.length ? own : [p.image].concat(p.gallery || []);
+      return list.filter(function (n, i) { return n && IMAGES[n] && list.indexOf(n) === i; });
+    }
+    function optLabel(p, option) {
+      var i = (p.options || []).indexOf(option);
+      return (AR && i > -1 && p.optionLabels && p.optionLabels[i]) || option;
+    }
+    function thumbsHTML(p, set) {
+      if (set.length < 2) return "";
+      return '<div class="pr-thumbs" role="group" aria-label="' + esc(tr("More photos of {x}", { x: p.name })) + '">' +
+        set.map(function (n, i) {
+          return '<button type="button" class="pr-thumb" data-photo="' + esc(n) + '" aria-pressed="' + (i === 0) +
+            '" aria-label="' + esc(tr("Show photo {n} of {total}", { n: i + 1, total: set.length })) + '">' +
+            pic(n, { alt: "", sizes: "56px" }) + "</button>";
+        }).join("") + "</div>";
+    }
+    /* A tall, thin photo is shown whole; the usual near-square ones fill the frame. */
+    function fitsWhole(name) { return IMAGES[name] && IMAGES[name].r < 0.8; }
+    function showPhoto(article, name) {
+      var fig = $(".pr-stage .fig", article);
+      if (!fig || !IMAGES[name]) return;
+      fig.classList.toggle("contain", !!fitsWhole(name));
+      fig.innerHTML = pic(name, { sizes: PR_SIZES });
+      $$(".pr-thumb", article).forEach(function (t) { t.setAttribute("aria-pressed", String(t.getAttribute("data-photo") === name)); });
+    }
+    function showOption(article, p, option) {
+      article.setAttribute("data-option", option);
+      if (!(p.optionPhotos && p.optionPhotos[option] && p.optionPhotos[option].length)) return; // keep what is showing
+      var set = photosFor(p, option);
+      var old = $(".pr-thumbs", article);
+      if (old) old.remove();
+      var html = thumbsHTML(p, set);
+      if (html) $(".pr-stage", article).insertAdjacentHTML("beforeend", html);
+      if (set.length) showPhoto(article, set[0]);
+    }
+
     function productCard(x) {
       var p = x.p, c = x.cat;
       var hasOptions = p.options && p.options.length;
+      var byColour = hasOptions && p.optionPhotos && Object.keys(p.optionPhotos).length;
       var selId = "opt-" + p.id;
       var price = priceText(p);
       var firstFree = hasOptions ? p.options.filter(function (o) { return stockLeft(p, o) > 0; })[0] : "";
+      var start = hasOptions ? (firstFree != null ? firstFree : p.options[0]) : "";
+      var set = photosFor(p, start);
       var btn = isSoldOut(p)
         ? '<span class="btn ghost sm" aria-disabled="true">' + tr("Sold out") + "</span>"
         : '<button class="btn lilac sm" type="button" data-add="' + esc(p.id) + '">' + tr("Add to cart") + "</button>";
-      return '<article class="product" data-cat-id="' + esc(c.id) + '">' +
-        media(p.image, p.name, "r-11", p.name, "(min-width: 1100px) 22vw, (min-width: 780px) 30vw, 46vw") +
+      var chooser = "";
+      if (hasOptions && byColour) {
+        /* Colours: a pill per colour, with a tiny circle of that colour's photo, and the photos follow the choice. */
+        chooser = '<div class="pr-colors" role="radiogroup" aria-label="' + esc(tr("Option for {x}", { x: p.name })) + '">' +
+          p.options.map(function (o) {
+            var out = stockLeft(p, o) <= 0;
+            var first = (p.optionPhotos[o] || [])[0];
+            var dot = first && IMAGES[first] ? '<span class="pr-dot">' + pic(first, { alt: "", sizes: "24px" }) + "</span>" : "";
+            return '<button type="button" class="pr-color' + (dot ? "" : " plain") + '" role="radio" data-option="' + esc(o) + '"' +
+              ' aria-checked="' + (o === start) + '"' + (out ? " disabled" : "") + ">" + dot + "<span>" +
+              (out ? tr("{x} — sold out", { x: esc(optLabel(p, o)) }) : esc(optLabel(p, o))) + "</span></button>";
+          }).join("") + "</div>";
+      } else if (hasOptions) {
+        chooser = '<label class="vh" for="' + esc(selId) + '">' + tr("Option for {x}", { x: esc(p.name) }) + "</label>" +
+          '<select id="' + esc(selId) + '" data-option-for="' + esc(p.id) + '">' +
+          p.options.map(function (o) {
+            var out = stockLeft(p, o) <= 0;
+            return '<option value="' + esc(o) + '"' + (out ? " disabled" : "") + (o === start ? " selected" : "") + ">" +
+              (out ? tr("{x} — sold out", { x: esc(optLabel(p, o)) }) : esc(optLabel(p, o))) + "</option>";
+          }).join("") +
+          "</select>";
+      }
+      return '<article class="product" data-cat-id="' + esc(c.id) + '" data-id="' + esc(p.id) + '"' + (hasOptions ? ' data-option="' + esc(start) + '"' : "") + ">" +
+        '<div class="pr-stage">' +
+          (set.length
+            ? '<div class="fig r-11' + (fitsWhole(set[0]) ? " contain" : "") + '" data-reveal-img>' + pic(set[0], { sizes: PR_SIZES }) + "</div>"
+            : media("", p.name, "r-11", p.name)) +
+          thumbsHTML(p, set) +
+        "</div>" +
         '<p class="measured pr-cat">' + esc(c.name) + "</p>" +
         "<h3>" + esc(p.name) + "</h3>" +
         '<p class="pr-blurb">' + esc(p.blurb) + "</p>" +
-        (hasOptions
-          ? '<label class="vh" for="' + esc(selId) + '">' + tr("Option for {x}", { x: esc(p.name) }) + "</label>" +
-            '<select id="' + esc(selId) + '" data-option-for="' + esc(p.id) + '">' +
-            p.options.map(function (o) {
-              var out = stockLeft(p, o) <= 0;
-              return '<option value="' + esc(o) + '"' + (out ? " disabled" : "") + (o === firstFree ? " selected" : "") + ">" +
-                (out ? tr("{x} — sold out", { x: esc(o) }) : esc(o)) + "</option>";
-            }).join("") +
-            "</select>"
-          : "") +
+        chooser +
         '<div class="pr-foot">' +
           (price ? '<span class="pr-price">' + esc(price) + "</span>"
                  : '<span class="pr-price ask">' + tr("Price confirmed with your order") + "</span>") +
@@ -1118,7 +1193,7 @@
     }
 
     if (navHost) {
-      var cats = SHOP.categories.filter(function (c) { return !c.comingSoon && (c.items || []).length; });
+      var cats = SHOP.categories.filter(function (c) { return !c.comingSoon && onShop(c).length; });
       navHost.innerHTML = '<button type="button" data-filter="all" aria-pressed="true">' + tr("Everything") + "</button>" +
         cats.map(function (c) {
           return '<button type="button" data-filter="' + esc(c.id) + '" aria-pressed="false">' + esc(c.name) + "</button>";
@@ -1138,6 +1213,11 @@
     var BAG_KEY = "sotr_bag";
     var bag = [];
     try { bag = JSON.parse(localStorage.getItem(BAG_KEY) || "[]") || []; } catch (err) { bag = []; }
+    /* A cart kept from before a product was removed or hidden: leave out what is no longer on the shop. */
+    bag = bag.filter(function (y) {
+      var hit = products.filter(function (z) { return z.p.id === y.id; })[0];
+      return hit && (!(hit.p.options || []).length || hit.p.options.indexOf(y.option) > -1);
+    });
     function saveBag() { try { localStorage.setItem(BAG_KEY, JSON.stringify(bag)); } catch (err) {} }
     var view = "cart";   // cart | checkout | done
 
@@ -1170,6 +1250,7 @@
     }
 
     var ADMIN_ORDERS = !!CFG.adminOrders;
+    var PAY_TRANSFER = ADMIN_ORDERS && !!CFG.payTransfer;   // Whish / OMT is offered only once switched on in Site settings
     var lastOrderNo = "";
     var lastPay = "cod";
     var ORDER_ENDPOINT = [CFG.orderEndpoint, CFG.formEndpoint].filter(function (u) {
@@ -1181,7 +1262,7 @@
       return bag.length
         ? '<ul class="bag-list">' + bag.map(function (x, i) {
             return '<li><div><p class="bag-name">' + esc(x.name) + "</p>" +
-              '<p class="measured">' + esc(x.option || x.cat) +
+              '<p class="measured">' + esc(x.optionLabel || x.option || x.cat) +
               (x.price !== "" && x.price != null ? " · $" + esc(x.price) : "") + "</p></div>" +
               '<div class="bag-qty">' +
                 '<button type="button" data-qty="' + i + '" data-d="-1" aria-label="' + tr("One fewer {x}", { x: esc(x.name) }) + '">−</button>' +
@@ -1191,7 +1272,7 @@
           }).join("") + "</ul>" +
           '<p class="bag-total">' + (t.priced ? tr("Total") + " <b class=\"num\">$" + t.total + "</b>" :
             tr("Prices for some items are confirmed with your order.")) + "</p>" +
-          '<p class="pay-note"><span class="pay-dot" aria-hidden="true"></span><span>' + (ADMIN_ORDERS ? tr("Payment: <b>cash on delivery</b> or a <b>Whish / OMT transfer</b>, anywhere in Lebanon.") : tr("Payment: <b>cash on delivery</b>, anywhere in Lebanon.")) + "</span></p>" +
+          '<p class="pay-note"><span class="pay-dot" aria-hidden="true"></span><span>' + (PAY_TRANSFER ? tr("Payment: <b>cash on delivery</b> or a <b>Whish / OMT transfer</b>, anywhere in Lebanon.") : tr("Payment: <b>cash on delivery</b>, anywhere in Lebanon.")) + "</span></p>" +
           '<button class="btn lilac block lg mt-s" type="button" data-checkout>' + tr("Checkout") + ' <span class="arw" aria-hidden="true">→</span></button>'
         : '<p class="prose mt-s">' + tr("Your cart is empty.") + "</p>";
     }
@@ -1219,7 +1300,7 @@
         '<fieldset class="co-pay"><legend class="field-label">' + tr("Payment") + "</legend>" +
           '<label class="pay-option"><input type="radio" name="payment" value="cod" checked>' +
           '<span><b>' + tr("Pay on delivery") + "</b><small>" + tr("Cash, when your order arrives.") + "</small></span></label>" +
-          (ADMIN_ORDERS ? '<label class="pay-option"><input type="radio" name="payment" value="transfer">' +
+          (PAY_TRANSFER ? '<label class="pay-option"><input type="radio" name="payment" value="transfer">' +
             '<span><b>' + tr("Whish / OMT transfer") + "</b><small>" + tr("I'll send you the payment details when I confirm your order.") + "</small></span></label>" : "") +
           "</fieldset>" +
           (ADMIN_ORDERS ? '<div class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>' : "") +
@@ -1346,13 +1427,24 @@
     }
 
     host.addEventListener("click", function (e) {
+      var thumb = e.target.closest(".pr-thumb");
+      if (thumb) { showPhoto(thumb.closest(".product"), thumb.getAttribute("data-photo")); return; }
+      var pill = e.target.closest(".pr-color");
+      if (pill) {
+        var card = pill.closest(".product");
+        var hit = products.filter(function (y) { return y.p.id === card.getAttribute("data-id"); })[0];
+        $$(".pr-color", card).forEach(function (o) { o.setAttribute("aria-checked", String(o === pill)); });
+        if (hit) showOption(card, hit.p, pill.getAttribute("data-option"));
+        return;
+      }
       var b = e.target.closest("[data-add]");
       if (!b) return;
       var id = b.getAttribute("data-add");
       var x = products.filter(function (y) { return y.p.id === id; })[0];
       if (!x) return;
-      var sel = $("select[data-option-for]", b.closest(".product"));
-      var option = sel ? sel.value : "";
+      var article = b.closest(".product");
+      var sel = $("select[data-option-for]", article);
+      var option = sel ? sel.value : (article.getAttribute("data-option") || "");
       var left = stockLeft(x.p, option);
       if (inBag(id, option) >= left) {
         b.textContent = tr("Only {n} left", { n: left });
@@ -1361,7 +1453,7 @@
       }
       var hit = bag.filter(function (y) { return y.id === id && y.option === option; })[0];
       if (hit) hit.qty += 1;
-      else bag.push({ id: id, name: x.p.name, cat: x.cat.name, option: option,
+      else bag.push({ id: id, name: x.p.name, cat: x.cat.name, option: option, optionLabel: optLabel(x.p, option),
                       price: x.p.price == null ? "" : x.p.price, qty: 1 });
       saveBag(); view = "cart"; renderBag();
       b.textContent = tr("Added ✓");

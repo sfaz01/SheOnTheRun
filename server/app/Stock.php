@@ -97,6 +97,9 @@ final class Stock
                         continue;
                     }
                     $found = true;
+                    if ($sign < 0 && $strict && !empty($p['hidden'])) {
+                        throw new HttpError(409, 'One of the items in your bag isn’t available any more. Please reload the shop.', 'gone');
+                    }
                     $stock = $p['stock'] ?? null;
                     $opt = $line['option'];
                     $qty = $line['qty'];

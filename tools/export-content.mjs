@@ -65,6 +65,7 @@ export function buildSeed(w) {
   const images = {
     items: Object.entries(w.SITE_IMAGES || {}).map(([name, v]) => ({
       name, alt: v.alt || "", w: v.w, r: v.r, seeded: true,
+      ...(v.altAr ? { ar: { alt: v.altAr } } : {}),
     })),
   };
 

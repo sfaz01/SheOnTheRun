@@ -199,6 +199,8 @@
           f.item.map(function (sub) { return renderField(sub, obj[f.key], path); }));
       case "id": return renderId(f, obj, path);
       case "stock": return renderStock(f, obj, path);
+      case "photos": return renderPhotos(f, obj, path);
+      case "optionphotos": return renderOptionPhotos(f, obj, path);
     }
     var wrap = h("div", { class: "field" + (f.ar ? " has-ar" : "") });
     var en = control(f, obj, f.key, path, false);
@@ -433,6 +435,70 @@
   }
   function refreshStock() { stockHosts.forEach(function (p) { p(); }); }
 
+  /* Photos: a short list picked from the Photos library — reorder, remove, add. */
+  function photoList(list, path) {
+    var imgs = (schemaCache && schemaCache.images) || [];
+    var box = h("div", { class: "photo-list" });
+    function swap(i, d) {
+      var t = list[i]; list[i] = list[i + d]; list[i + d] = t;
+      changed(path); paint();
+    }
+    function row(name, i) {
+      var hit = imgs.filter(function (x) { return x.name === name; })[0];
+      var thumb = h("img", { class: "thumb", alt: "", hidden: !hit, src: hit ? "/public/images/" + name + "-" + hit.w[0] + ".jpg" : null });
+      thumb.addEventListener("error", function () { thumb.hidden = true; });
+      var sel = h("select", { "aria-label": "Photo " + (i + 1), onchange: function (e) { list[i] = e.target.value; changed(path); paint(); } },
+        h("option", { value: "" }, "Choose a photo…"),
+        name && !hit ? h("option", { value: name, selected: true }, name + " (photo not uploaded yet)") : null,
+        imgs.map(function (x) { return h("option", { value: x.name, selected: name === x.name }, x.name + (x.alt ? " — " + x.alt.slice(0, 50) : "")); }));
+      return h("li", { class: "photo-row" }, thumb, sel,
+        h("button", { type: "button", class: "icon", "aria-label": "Move photo " + (i + 1) + " up", disabled: i === 0, onclick: function () { swap(i, -1); } }, "↑"),
+        h("button", { type: "button", class: "icon", "aria-label": "Move photo " + (i + 1) + " down", disabled: i === list.length - 1, onclick: function () { swap(i, 1); } }, "↓"),
+        h("button", { type: "button", class: "icon", "aria-label": "Remove photo " + (i + 1), onclick: function () { list.splice(i, 1); changed(path); paint(); } }, "×"));
+    }
+    function paint() {
+      S.put(box,
+        list.length ? h("ul", { class: "photo-rows" }, list.map(row)) : null,
+        h("button", { class: "btn ghost small", type: "button", onclick: function () { list.push(""); changed(path); paint(); } },
+          list.length ? "+ Add another photo" : "+ Add a photo"));
+    }
+    paint();
+    return box;
+  }
+
+  /* "More photos": extra pictures under the main one. */
+  function renderPhotos(f, obj, path) {
+    if (!Array.isArray(obj[f.key])) obj[f.key] = [];
+    return h("fieldset", { class: "photo-field" },
+      h("legend", {}, f.label),
+      photoList(obj[f.key], path),
+      f.hint ? h("p", { class: "hint" }, f.hint) : null,
+      h("div", { "data-err-for": path }, errNodes(path, true)));
+  }
+
+  /* Photos per size or colour: one list under each option, repainted when the options change. */
+  function renderOptionPhotos(f, obj, path) {
+    var host = h("fieldset", { class: "photo-field" });
+    var paint = function () {
+      var opts = (Array.isArray(obj.options) ? obj.options : []).map(function (o) { return String(o).trim(); }).filter(Boolean);
+      host.hidden = !opts.length;
+      if (!opts.length) { S.put(host); return; }
+      if (!obj[f.key] || typeof obj[f.key] !== "object" || Array.isArray(obj[f.key])) obj[f.key] = {};
+      var map = obj[f.key];
+      S.put(host,
+        h("legend", {}, f.label),
+        f.hint ? h("p", { class: "hint" }, f.hint) : null,
+        opts.map(function (o, i) {
+          if (!Array.isArray(map[o])) map[o] = [];
+          return h("div", { class: "option-photos" }, h("h4", {}, o), photoList(map[o], path + "." + i));
+        }),
+        h("div", { "data-err-for": path }, errNodes(path, true)));
+    };
+    paint();
+    stockHosts.push(paint);
+    return host;
+  }
+
   /* ---------------------------------------------------------- collections */
 
   function renderCollection(f, obj, path) {
@@ -486,7 +552,7 @@
         out.push([total + " in stock", "muted"]);
       }
     }
-    if (item.sample) out.push(["Hidden", "muted"]);
+    if (item.sample || item.hidden) out.push(["Hidden", "muted"]);
     if ("draft" in item && item.draft) out.push(["Draft", "warn"]);
     if (item.featured) out.push(["Featured", "info"]);
     if (item.ends && item.ends < S.nowBeirut()) out.push(["Ended", "muted"]);
@@ -497,7 +563,7 @@
   function arMissing(fields, item) {
     var ar = item.ar || {};
     return fields.some(function (x) {
-      if (!x.ar) return false;
+      if (!x.ar || x.arOptional) return false;
       var en = item[x.key], a = ar[x.key];
       var has = Array.isArray(en) ? en.filter(Boolean).length : String(en || "").trim() !== "";
       var hasAr = Array.isArray(a) ? a.filter(Boolean).length : String(a || "").trim() !== "";
@@ -512,7 +578,8 @@
         case "bool": o[f.key] = false; break;
         case "money": o[f.key] = null; break;
         case "int": case "stock": break;
-        case "list": case "collection": o[f.key] = []; break;
+        case "list": case "collection": case "photos": o[f.key] = []; break;
+        case "optionphotos": break;
         case "multi": o[f.key] = f.options.map(function (x) { return x[0]; }); break;
         case "select": o[f.key] = f.required ? f.options[0][0] : ""; break;
         case "group": o[f.key] = defaults(f.item); break;

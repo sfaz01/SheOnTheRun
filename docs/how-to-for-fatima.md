@@ -80,6 +80,10 @@ Open a message, reply from your own email, then mark it **Handled**. The badge i
 - Big lists (**categories, products, events, services…**) work the same way: tap an item to open it, **+ Add** to create one, ↑↓ to reorder, **Duplicate** or **Delete** inside an item.
 - Every English field has its Arabic twin beside it. A yellow **"Arabic missing"** flag means the Arabic side is empty — fill it before publishing.
 - **Stock:** put how many are left per size. At 0 the size (or product) shows as sold out by itself. Empty means "not tracked".
+- **Colours:** list them one per line under **Sizes or colours**, then choose the photos for each under **Photos for each size or colour** — the shop switches the pictures when someone picks a colour. Add the Arabic names beside them, one line each, in the same order.
+- **More photos** adds extra small pictures under the main one.
+- **Hide from the shop** takes a product off the website without deleting it. Switch it off to bring it back.
+- Checkout is **pay on delivery** only for now. To also offer Whish / OMT, switch on **Also offer Whish / OMT transfer at checkout** in Site settings, then Save and Publish.
 - **Events** disappear from the site once their end time passes — no need to delete them.
 
 ## Photos

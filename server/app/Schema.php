@@ -7,7 +7,7 @@ namespace Sotr;
  * What the owner can edit, area by area. One definition drives both the admin forms
  * (sent to the browser as JSON) and the server-side validation, so they can't drift apart.
  *
- * Field keys:  key, type, label, hint, required, ar (has an Arabic twin), max, min, options,
+ * Field keys:  key, type, label, hint, required, ar (has an Arabic twin), arOptional (the twin may stay empty), max, min, options,
  *              from (id: which field the id is made from), item (collection: its fields),
  *              title/subtitle (collection: what the list shows), noun (collection: "product").
  * Keys a field list doesn't mention (e.g. the quiz in "offer") are carried through untouched.
@@ -39,10 +39,13 @@ final class Schema
             $f('name', 'text', 'Product name', ['required' => true, 'ar' => true, 'max' => 80]),
             $f('blurb', 'textarea', 'Short description', ['ar' => true, 'max' => 400]),
             $f('price', 'money', 'Price (USD)', ['hint' => 'Leave empty to show “Price confirmed with your order”.']),
-            $f('image', 'image', 'Photo', ['hint' => 'Leave on “No photo” to show the designed placeholder. Uploading new photos arrives in phase 2.']),
-            $f('options', 'list', 'Sizes or options', ['hint' => 'One per line, e.g. S, M, L, XL. Leave empty for one-size products.', 'max' => 40]),
+            $f('image', 'image', 'Photo', ['hint' => 'The main photo, from the Photos library. Leave on “No photo” to show the designed placeholder.']),
+            $f('gallery', 'photos', 'More photos', ['hint' => 'Optional. Extra photos shown as small pictures under the main one, in this order.', 'max' => 8]),
+            $f('options', 'list', 'Sizes or colours', ['ar' => true, 'arOptional' => true, 'hint' => 'One per line, e.g. S, M, L, XL — or Black, Navy. Leave empty for one-size products. Arabic names are optional (sizes like S and M don’t need them); if you add them, give one line for each, in the same order.', 'max' => 40]),
+            $f('optionPhotos', 'optionphotos', 'Photos for each size or colour', ['hint' => 'Optional. When a customer picks a colour, the photos change to match. A colour with no photos shows the main photos. If you rename a colour, choose its photos again.', 'max' => 8]),
             $f('stock', 'stock', 'Stock', ['hint' => 'How many are left. Leave a box empty to not track that one. At 0 it shows as sold out.']),
             $f('soldOut', 'bool', 'Sold out', ['hint' => 'Switch on to mark the whole product sold out, whatever the stock says.']),
+            $f('hidden', 'bool', 'Hide from the shop', ['hint' => 'Takes this product off the shop without deleting it. Its details and photos stay here, so you can bring it back any time.']),
         ];
 
         $category = [
@@ -206,6 +209,7 @@ final class Schema
                         $email('general', 'General'),
                     ]]),
                     $f('adminOrders', 'bool', 'Take shop orders in this admin', ['hint' => 'On: the checkout sends orders here (you get an email and see them under Orders). Off: orders go to WhatsApp or email as before.']),
+                    $f('payTransfer', 'bool', 'Also offer Whish / OMT transfer at checkout', ['hint' => 'Off: checkout offers pay on delivery only. On: customers can also choose to pay by Whish or OMT transfer, and you mark those orders as paid under Orders.']),
                     $f('adminMessages', 'bool', 'Take Connect-form messages in this admin', ['hint' => 'On: messages arrive under Messages and by email. Off: the form opens the visitor’s email app.']),
                     $f('instagram', 'url', 'Instagram link'),
                     $f('instagramHandle', 'text', 'Instagram handle', ['max' => 40, 'hint' => 'e.g. @sheontherun.lb']),

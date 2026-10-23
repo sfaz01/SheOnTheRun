@@ -18,6 +18,7 @@ final class Content
     {
         if ((int) (Db::one('SELECT COUNT(*) AS n FROM content')['n'] ?? 0) === 0) {
             self::seed(Schema::ALL);
+            ContentUpgrades::apply(); // a brand-new site already has everything: this just records that
             return;
         }
         // An existing site that predates the Journal/gallery/photo areas (phase 2): add them from the
@@ -45,10 +46,12 @@ final class Content
         if (Db::one('SELECT area FROM content WHERE area = ?', ['plans']) === null) {
             Db::run('INSERT INTO content (area, doc, rev, updated_at, updated_by) VALUES (?, ?, 1, ?, NULL)', ['plans', '{}', Db::now()]);
         }
+        // One-time changes to the saved shop and photo list (drafts only; she publishes them herself).
+        ContentUpgrades::apply();
     }
 
     /** @return array<string, array> the website's current content, normalised the way a save would store it */
-    private static function seedAreas(): array
+    public static function seedAreas(): array
     {
         $path = SOTR_ROOT . '/database/seed/content.json';
         $seed = is_file($path) ? json_decode((string) file_get_contents($path), true) : null;

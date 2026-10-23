@@ -34,7 +34,7 @@ after(() => srv?.stop());
 
 test("the first request after upgrading adds the new areas without claiming any unpublished change", async () => {
   const photos = (await c.call("GET", "/api/admin/photos")).json.photos;
-  assert.equal(photos.length, 94, "the photo list is rebuilt with sizes and shapes");
+  assert.equal(photos.length, 120, "the photo list is rebuilt with sizes and shapes");
   assert.deepEqual(photos.find((p) => p.name === "about-armchair").w, [480, 748]);
 
   const st = (await c.call("GET", "/api/admin/status")).json;

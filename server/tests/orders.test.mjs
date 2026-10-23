@@ -50,8 +50,8 @@ before(async () => {
   const doc = structuredClone(shop.doc);
   const items = doc.categories[0].items;
   Object.assign(items.find((p) => p.id === "sotr-tee"), { price: 25, stock: { S: 3, M: 0, L: 2, XL: 5 } });
-  Object.assign(items.find((p) => p.id === "sotr-cap"), { price: 10, stock: 2 });
-  Object.assign(items.find((p) => p.id === "sotr-bag"), { price: null });
+  Object.assign(items.find((p) => p.id === "socks-grip-white"), { price: 10, stock: 2 });
+  Object.assign(items.find((p) => p.id === "socks-striped"), { price: null });
   assert.equal((await owner.call("PUT", "/api/admin/content/shop", { doc, rev: shop.rev })).status, 200);
   const set = (await owner.call("GET", "/api/admin/content/settings")).json;
   const sdoc = { ...set.doc, email: "owner-inbox@example.com", emails: { ...set.doc.emails, nutrition: "diet@example.com", general: "general@example.com", events: "events@example.com", sheontherun: "club@example.com", research: "research@example.com" } };
@@ -61,14 +61,14 @@ before(async () => {
 after(() => { srv?.stop(); smtp?.stop(); });
 
 test("nothing is accepted without a same-origin JSON request", async () => {
-  const ok = [{ id: "sotr-cap", option: "", qty: 1 }];
+  const ok = [{ id: "socks-grip-white", option: "", qty: 1 }];
   assert.equal((await visit(srv.base, "/api/orders", { items: ok }, { origin: "https://evil.example" })).status, 403);
   assert.equal((await visit(srv.base, "/api/orders", { items: ok }, { origin: "" })).status, 403);
   assert.equal((await visit(srv.base, "/api/orders", "name=x", { type: "application/x-www-form-urlencoded" })).status, 415);
 });
 
 test("every field is checked, with a message pointing at the field", async () => {
-  const items = [{ id: "sotr-cap", option: "", qty: 1 }];
+  const items = [{ id: "socks-grip-white", option: "", qty: 1 }];
   const field = async (patch) => { const r = await order(items, patch); return [r.status, r.json.field]; };
   assert.deepEqual(await field({ name: "A" }), [422, "name"]);
   assert.deepEqual(await field({ phone: "abc" }), [422, "phone"]);
@@ -76,12 +76,12 @@ test("every field is checked, with a message pointing at the field", async () =>
   assert.deepEqual(await field({ address: "x" }), [422, "address"]);
   assert.deepEqual(await field({ payment_method: "bitcoin" }), [422, "payment_method"]);
   assert.equal((await order([])).status, 422);
-  assert.equal((await order([{ id: "sotr-cap", option: "", qty: 0 }])).status, 422);
-  assert.equal((await order([{ id: "sotr-cap", option: "", qty: 11 }])).status, 422);
+  assert.equal((await order([{ id: "socks-grip-white", option: "", qty: 0 }])).status, 422);
+  assert.equal((await order([{ id: "socks-grip-white", option: "", qty: 11 }])).status, 422);
   assert.equal((await order([{ id: "does-not-exist", option: "", qty: 1 }])).status, 409);
   assert.equal((await order([{ id: "sotr-tee", option: "XXL", qty: 1 }])).json.code, "bad_option", "an unknown size is refused, never swapped for another");
   assert.equal((await order([{ id: "sotr-tee", option: "", qty: 1 }])).json.code, "bad_option", "a sized product needs a size");
-  assert.equal((await order([{ id: "sotr-cap", option: "S", qty: 1 }])).json.code, "bad_option");
+  assert.equal((await order([{ id: "socks-grip-white", option: "S", qty: 1 }])).json.code, "bad_option");
   assert.equal((await order([{ id: "modest-leggings", option: "", qty: 1 }])).status, 409, "a Coming soon category can't be ordered from");
 });
 
@@ -97,13 +97,13 @@ test("sold-out sizes and over-ordering are refused with a clear message, and not
 });
 
 test("the server decides the price, stock drops live and in the draft, and the owner is emailed", async () => {
-  const placed = await order([{ id: "sotr-tee", option: "S", qty: 2 }, { id: "sotr-cap", option: "", qty: 1 }], { total: 1, price: 0.01, items_total: 0 });
+  const placed = await order([{ id: "sotr-tee", option: "S", qty: 2 }, { id: "socks-grip-white", option: "", qty: 1 }], { total: 1, price: 0.01, items_total: 0 });
   assert.equal(placed.status, 201, JSON.stringify(placed.json));
   assert.match(placed.json.order_number, /^SOTR-[A-Z2-9]{6}$/);
   assert.equal(placed.json.total, 60, "2 × $25 + $10 — whatever the browser claimed");
 
   assert.equal(liveItem("sotr-tee").stock.S, 1, "the live shop shows the new stock");
-  assert.equal(liveItem("sotr-cap").stock, 1);
+  assert.equal(liveItem("socks-grip-white").stock, 1);
   assert.equal((await draftItem("sotr-tee")).stock.S, 1, "and so does the owner's draft");
   const st = (await owner.call("GET", "/api/admin/status")).json;
   assert.equal(st.changed.shop, false, "an order is not an unpublished edit");
@@ -118,7 +118,7 @@ test("the server decides the price, stock drops live and in the draft, and the o
   const stored = (await owner.call("GET", "/api/admin/orders")).json.orders[0];
   assert.equal(stored.total, 60);
   assert.equal(stored.mail_status, "sent");
-  assert.deepEqual(stored.items.map((i) => [i.name, i.option, i.qty, i.price]), [["SheOnTheRun Tee", "S", 2, 25], ["SheOnTheRun Cap", "", 1, 10]]);
+  assert.deepEqual(stored.items.map((i) => [i.name, i.option, i.qty, i.price]), [["SheOnTheRun Tee", "S", 2, 25], ["White Grip Socks", "", 1, 10]]);
 });
 
 test("orders use the PUBLISHED shop, not the owner's unpublished edits", async () => {
@@ -146,7 +146,7 @@ test("the last items can't be sold twice", async () => {
 });
 
 test("an item without a price is ordered 'to confirm' and doesn't break the total", async () => {
-  const r = await order([{ id: "sotr-bag", option: "", qty: 1 }, { id: "sotr-cap", option: "", qty: 1 }]);
+  const r = await order([{ id: "socks-striped", option: "", qty: 1 }, { id: "socks-grip-white", option: "", qty: 1 }]);
   assert.equal(r.status, 201);
   assert.equal(r.json.total, null);
   assert.equal(r.json.unpriced, 1);
@@ -157,7 +157,7 @@ test("an item without a price is ordered 'to confirm' and doesn't break the tota
 
 test("a bot that fills the hidden field gets a fake success and no order", async () => {
   const before = (await owner.call("GET", "/api/admin/orders")).json.total;
-  const r = await order([{ id: "sotr-cap", option: "", qty: 1 }], { website: "http://spam.example" });
+  const r = await order([{ id: "socks-grip-white", option: "", qty: 1 }], { website: "http://spam.example" });
   assert.equal(r.status, 201);
   assert.equal((await owner.call("GET", "/api/admin/orders")).json.total, before);
 });
@@ -222,7 +222,7 @@ test("admin: status workflow, payment and notes; cancelling gives the stock back
 });
 
 test("admin: deleting an order that holds stock returns it; the CSV is complete and formula-safe", async () => {
-  const placed = await order([{ id: "sotr-bag", option: "", qty: 1 }], { name: "=HYPERLINK(\"http://evil\",\"x\")" });
+  const placed = await order([{ id: "socks-striped", option: "", qty: 1 }], { name: "=HYPERLINK(\"http://evil\",\"x\")" });
   assert.equal(placed.status, 201, JSON.stringify(placed.json));
   const o = (await owner.call("GET", "/api/admin/orders?q=" + placed.json.order_number)).json.orders[0];
 
@@ -254,7 +254,7 @@ test("history restore never brings old stock numbers back", async () => {
   const current = liveItem("sotr-tee").stock;
   assert.equal((await owner.call("POST", `/api/admin/history/${oldest.id}/restore`, {})).status, 200);
   assert.deepEqual((await draftItem("sotr-tee")).stock, current, "the restored draft keeps today's stock");
-  assert.equal((await draftItem("sotr-tee")).price, null, "but everything else went back");
+  assert.equal((await draftItem("sotr-tee")).price, 30, "but everything else went back to the imported $30");
   await owner.call("POST", "/api/admin/discard", {});
 });
 

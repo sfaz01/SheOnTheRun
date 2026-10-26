@@ -18,7 +18,7 @@ after(() => srv?.stop());
 test("the sixth checkout attempt in an hour is slowed down — even a failing one counts", async () => {
   const statuses = [];
   for (let i = 0; i < 6; i++) statuses.push((await post("/api/orders", { name: "x" })).status);
-  assert.deepEqual(statuses, [503, 503, 503, 503, 503, 429], "5 allowed (here: refused for lack of a published shop), then 429");
+  assert.deepEqual(statuses, [422, 422, 422, 422, 422, 429], "5 allowed (here: refused as incomplete orders), then 429");
   const slow = await post("/api/orders", { name: "x" });
   assert.equal(slow.json.code, "slow_down");
 });

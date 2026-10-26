@@ -13,7 +13,7 @@ namespace Sotr;
  */
 final class ContentUpgrades
 {
-    /** The October 2026 shop update: separate socks, colours and photos, prices, and hidden products. */
+    /** The October 2026 shop update: separate socks, colours and photos, prices, hidden products, and orders taken in the admin. */
     public const SHOP_2026_10 = 'shop-2026-10';
 
     private const REMOVE = ['sotr-cap'];
@@ -35,13 +35,18 @@ final class ContentUpgrades
             $seed = Content::seedAreas();
             $shop = Content::get('shop');
             $images = Content::get('images');
+            $settings = Content::get('settings');
             $newShop = self::shop($shop['doc'], $seed['shop']);
             $newImages = self::images($images['doc'], $seed['images']);
+            $newSettings = self::settings($settings['doc']);
 
             $problem = null;
             [$cleanShop, $errors] = Validator::run('shop', $newShop);
+            [$cleanSettings, $settingsErrors] = Validator::run('settings', $newSettings);
             if ($errors) {
                 $problem = 'shop: ' . $errors[0]['path'] . ' ' . $errors[0]['message'];
+            } elseif ($settingsErrors) {
+                $problem = 'settings: ' . $settingsErrors[0]['path'] . ' ' . $settingsErrors[0]['message'];
             }
 
             $changed = [];
@@ -53,6 +58,10 @@ final class ContentUpgrades
                 if ($newImages !== $images['doc']) {
                     self::write('images', $newImages, $images['rev']);
                     $changed[] = 'images';
+                }
+                if ($newSettings !== $settings['doc']) {
+                    self::write('settings', $cleanSettings, $settings['rev']);
+                    $changed[] = 'settings';
                 }
             }
             // Recorded either way, so a problem is reported once instead of on every request.
@@ -172,14 +181,25 @@ final class ContentUpgrades
                 $insert($shop, $ci, 0, $want['pick-belt']['item']);
             }
         }
-        if (isset($want['pick-wrist-pouch']) && $find($shop, 'pick-wrist-pouch') === null) {
+        if (isset($want['pick-arm-bag']) && $find($shop, 'pick-arm-bag') === null) {
             if (($at = $find($shop, 'pick-belt')) !== null) {
-                $insert($shop, $at[0], $at[1] + 1, $want['pick-wrist-pouch']['item']);
-            } elseif (($ci = $categoryIndex($shop, $want['pick-wrist-pouch']['category'])) !== null) {
-                $insert($shop, $ci, count($shop['categories'][$ci]['items'] ?? []), $want['pick-wrist-pouch']['item']);
+                $insert($shop, $at[0], $at[1] + 1, $want['pick-arm-bag']['item']);
+            } elseif (($ci = $categoryIndex($shop, $want['pick-arm-bag']['category'])) !== null) {
+                $insert($shop, $ci, count($shop['categories'][$ci]['items'] ?? []), $want['pick-arm-bag']['item']);
             }
         }
         return $shop;
+    }
+
+    /* ------------------------------------------------------------------ the settings */
+
+    /** The checkout takes real orders: they are stored in the admin, stock comes off, and she is emailed. */
+    public static function settings(array $draft): array
+    {
+        if (!array_key_exists('adminOrders', $draft)) {
+            $draft['adminOrders'] = true;
+        }
+        return $draft;
     }
 
     /* ------------------------------------------------------------------ the photos */

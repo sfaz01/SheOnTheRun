@@ -168,7 +168,7 @@ window.SITE_SHOP = {
       items: [
         {
           id: "pick-belt",
-          name: "Running Belt Bag",
+          name: "Running Belt",
           blurb: "Running · Wear it across the body or around the waist. Carries a phone and a key without bouncing — that's the whole review.",
           price: 12,
           image: "shop-belt-burgundy-front",
@@ -181,9 +181,9 @@ window.SITE_SHOP = {
           soldOut: false
         },
         {
-          id: "pick-wrist-pouch",
-          name: "Wrist Pouch",
-          blurb: "Running · Straps to your wrist so your cards and a few coins stay with you. Hands free, nothing bouncing.",
+          id: "pick-arm-bag",
+          name: "Sports Arm Bag",
+          blurb: "Running · Straps to your arm or wrist so your cards and a few coins stay with you. Hands free, nothing bouncing.",
           price: 12,
           image: "shop-pouch-cream-front",
           options: ["Cream", "Pink"],

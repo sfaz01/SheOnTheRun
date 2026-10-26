@@ -63,6 +63,7 @@ try {
         $limits = (array) Config::get('limits', []);
         if ($path === '/orders') {
             RateLimit::throttle('public:orders', $ip, (int) ($limits['orders_per_hour'] ?? 5));
+            Content::ensureSeeded(); // a brand-new site can take its first order before anyone has opened the admin
             Http::json(['ok' => true] + Orders::create(Http::body()), 201);
         }
         RateLimit::throttle('public:messages', $ip, (int) ($limits['messages_per_hour'] ?? 5));

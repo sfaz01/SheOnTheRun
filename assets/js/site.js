@@ -98,6 +98,28 @@
     "Option for {x}": "خيار {x}",
     "More photos of {x}": "المزيد من صور {x}",
     "Show photo {n} of {total}": "عرض الصورة {n} من {total}",
+    "Remove": "إزالة",
+    "Remove {x}": "إزالة {x}",
+    "Items: {n}": "عدد القطع: {n}",
+    "Add something from the shop and it will wait for you here.": "أضيفي شيئاً من المتجر وسيبقى هنا بانتظارك.",
+    "Continue shopping": "متابعة التسوق",
+    "Checkout steps": "خطوات إتمام الطلب",
+    "Your details": "بياناتك",
+    "Done": "تمّ",
+    "Delivery": "التوصيل",
+    "I'll call this number to confirm your order.": "سأتصل بهذا الرقم لتأكيد طلبك.",
+    "Enter your full name.": "أدخلي اسمك الكامل.",
+    "Enter a phone number I can reach you on.": "أدخلي رقم هاتف يمكنني التواصل معك عليه.",
+    "Choose your governorate.": "اختاري محافظتك.",
+    "Enter your full address, with a landmark if it helps.": "أدخلي عنوانك الكامل، مع معلم قريب إن أمكن.",
+    "Order number": "رقم الطلب",
+    "What happens next": "ما الذي سيحدث بعد ذلك",
+    "I call you to confirm your order and delivery.": "أتصل بكِ لتأكيد طلبك والتوصيل.",
+    "Your order is delivered to {x}.": "يُوصَّل طلبك إلى {x}.",
+    "You pay in cash when it arrives.": "تدفعين نقداً عند الاستلام.",
+    "I message you to confirm your order.": "أراسلك لتأكيد طلبك.",
+    "I send you the payment details.": "أرسل لكِ تفاصيل الدفع.",
+    "Back to the shop": "العودة إلى المتجر",
     "Price confirmed with your order": "يُؤكَّد السعر مع طلبك",
     "Hi Fatima! Please let me know when the {x} launches.": "مرحباً فاطمة! أخبريني من فضلك عند إطلاق {x}.",
     "Coming soon": "قريباً",
@@ -1130,8 +1152,8 @@
       var start = hasOptions ? (firstFree != null ? firstFree : p.options[0]) : "";
       var set = photosFor(p, start);
       var btn = isSoldOut(p)
-        ? '<span class="btn ghost sm" aria-disabled="true">' + tr("Sold out") + "</span>"
-        : '<button class="btn lilac sm" type="button" data-add="' + esc(p.id) + '">' + tr("Add to cart") + "</button>";
+        ? '<span class="btn ghost block" aria-disabled="true">' + tr("Sold out") + "</span>"
+        : '<button class="btn lilac block" type="button" data-add="' + esc(p.id) + '">' + tr("Add to cart") + "</button>";
       var chooser = "";
       if (hasOptions && byColour) {
         /* Colours: a pill per colour, with a tiny circle of that colour's photo, and the photos follow the choice. */
@@ -1161,15 +1183,12 @@
             : media("", p.name, "r-11", p.name)) +
           thumbsHTML(p, set) +
         "</div>" +
-        '<p class="measured pr-cat">' + esc(c.name) + "</p>" +
-        "<h3>" + esc(p.name) + "</h3>" +
+        '<div class="pr-head"><h3>' + esc(p.name) + "</h3>" +
+          (price ? '<span class="pr-price num">' + esc(price) + "</span>"
+                 : '<span class="pr-price ask">' + tr("Price confirmed with your order") + "</span>") + "</div>" +
         '<p class="pr-blurb">' + esc(p.blurb) + "</p>" +
         chooser +
-        '<div class="pr-foot">' +
-          (price ? '<span class="pr-price">' + esc(price) + "</span>"
-                 : '<span class="pr-price ask">' + tr("Price confirmed with your order") + "</span>") +
-          btn +
-        "</div>" +
+        '<div class="pr-foot">' + btn + "</div>" +
       "</article>";
     }
 
@@ -1257,55 +1276,100 @@
       return /^https:\/\//.test(String(u || ""));
     })[0] || "";
 
+    function money(n) {
+      var r = Math.round(n * 100) / 100;
+      return "$" + (r % 1 === 0 ? r : r.toFixed(2));
+    }
+    function lineTotal(x) { return x.price === "" || x.price == null ? null : x.qty * +x.price; }
+    /* Names and colours follow the page's language, even for a line added before the visitor switched. */
+    function productOf(x) { var hit = products.filter(function (y) { return y.p.id === x.id; })[0]; return hit ? hit.p : null; }
+    function nameOf(x) { var p = productOf(x); return p ? p.name : x.name; }
+    function optionText(x) { var p = productOf(x); return p ? optLabel(p, x.option) : (x.optionLabel || x.option || ""); }
+    function thumb(x) {
+      return x.img && IMAGES[x.img]
+        ? '<span class="cl-img">' + pic(x.img, { alt: "", sizes: "72px" }) + "</span>"
+        : '<span class="cl-img empty" aria-hidden="true"></span>';
+    }
+    function steps() {
+      var at = view === "cart" ? 0 : view === "checkout" ? 1 : 2;
+      return '<ol class="bag-steps" aria-label="' + esc(tr("Checkout steps")) + '">' +
+        [tr("Cart"), tr("Your details"), tr("Done")].map(function (label, i) {
+          return "<li" + (i === at ? ' aria-current="step"' : "") + (i < at ? ' class="past"' : "") + '><span class="num">' + (i + 1) + "</span>" + esc(label) + "</li>";
+        }).join("") + "</ol>";
+    }
+    function totalHTML(t) {
+      return '<div class="sum-total"><span>' + tr("Total") + '</span><b class="num">' + (t.priced ? money(t.total) : "—") + "</b></div>" +
+        (t.priced ? "" : '<p class="sum-note">' + tr("Prices for some items are confirmed with your order.") + "</p>");
+    }
+    function payNote() {
+      return '<p class="pay-note"><span class="pay-dot" aria-hidden="true"></span><span>' + (PAY_TRANSFER
+        ? tr("Payment: <b>cash on delivery</b> or a <b>Whish / OMT transfer</b>, anywhere in Lebanon.")
+        : tr("Payment: <b>cash on delivery</b>, anywhere in Lebanon.")) + "</span></p>";
+    }
+
+    var lastReceipt = null;
+
     function cartHTML() {
+      if (!bag.length) {
+        return '<div class="cart-empty"><p class="ce-t">' + tr("Your cart is empty.") + "</p>" +
+          "<p>" + tr("Add something from the shop and it will wait for you here.") + "</p>" +
+          '<button class="btn lilac" type="button" data-close>' + tr("Continue shopping") + "</button></div>";
+      }
       var t = totals();
-      return bag.length
-        ? '<ul class="bag-list">' + bag.map(function (x, i) {
-            return '<li><div><p class="bag-name">' + esc(x.name) + "</p>" +
-              '<p class="measured">' + esc(x.optionLabel || x.option || x.cat) +
-              (x.price !== "" && x.price != null ? " · $" + esc(x.price) : "") + "</p></div>" +
-              '<div class="bag-qty">' +
-                '<button type="button" data-qty="' + i + '" data-d="-1" aria-label="' + tr("One fewer {x}", { x: esc(x.name) }) + '">−</button>' +
-                '<span class="num">' + x.qty + "</span>" +
-                '<button type="button" data-qty="' + i + '" data-d="1" aria-label="' + tr("One more {x}", { x: esc(x.name) }) + '">+</button>' +
-              "</div></li>";
-          }).join("") + "</ul>" +
-          '<p class="bag-total">' + (t.priced ? tr("Total") + " <b class=\"num\">$" + t.total + "</b>" :
-            tr("Prices for some items are confirmed with your order.")) + "</p>" +
-          '<p class="pay-note"><span class="pay-dot" aria-hidden="true"></span><span>' + (PAY_TRANSFER ? tr("Payment: <b>cash on delivery</b> or a <b>Whish / OMT transfer</b>, anywhere in Lebanon.") : tr("Payment: <b>cash on delivery</b>, anywhere in Lebanon.")) + "</span></p>" +
-          '<button class="btn lilac block lg mt-s" type="button" data-checkout>' + tr("Checkout") + ' <span class="arw" aria-hidden="true">→</span></button>'
-        : '<p class="prose mt-s">' + tr("Your cart is empty.") + "</p>";
+      return '<ul class="cart-lines">' + bag.map(function (x, i) {
+        var lt = lineTotal(x), opt = optionText(x);
+        return '<li class="cart-line">' + thumb(x) +
+          '<div class="cl-body"><p class="cl-name">' + esc(nameOf(x)) + "</p>" +
+          (opt ? '<p class="cl-opt">' + esc(opt) + "</p>" : "") +
+          '<div class="cl-row"><div class="bag-qty">' +
+            '<button type="button" data-qty="' + i + '" data-d="-1" aria-label="' + tr("One fewer {x}", { x: esc(nameOf(x)) }) + '">−</button>' +
+            '<span class="num">' + x.qty + "</span>" +
+            '<button type="button" data-qty="' + i + '" data-d="1" aria-label="' + tr("One more {x}", { x: esc(nameOf(x)) }) + '">+</button>' +
+          '</div><button type="button" class="cl-remove" data-remove="' + i + '" aria-label="' + tr("Remove {x}", { x: esc(nameOf(x)) }) + '">' + tr("Remove") + "</button></div></div>" +
+          '<p class="cl-price num">' + (lt == null ? "" : money(lt)) + (lt != null && x.qty > 1 ? "<small>" + money(+x.price) + "</small>" : "") + "</p></li>";
+      }).join("") + "</ul>" +
+        '<div class="cart-sum">' + totalHTML(t) + payNote() +
+          '<button class="btn lilac block lg" type="button" data-checkout>' + tr("Checkout") + ' <span class="arw" aria-hidden="true">→</span></button>' +
+          '<button class="tlink cart-more" type="button" data-close>' + tr("Continue shopping") + "</button>" +
+        "</div>";
+    }
+
+    function fld(name, label, control, hint) {
+      return '<div class="co-field"><label for="co-' + name + '">' + label + "</label>" + control +
+        (hint ? '<p class="co-hint">' + hint + "</p>" : "") +
+        '<p class="co-err" id="co-' + name + '-e" role="alert" hidden></p></div>';
     }
 
     function checkoutHTML() {
       var t = totals();
-      return '<form class="checkout form" data-order novalidate>' +
+      var pay = PAY_TRANSFER
+        ? '<label class="pay-option"><input type="radio" name="payment" value="cod" checked>' +
+            "<span><b>" + tr("Pay on delivery") + "</b><small>" + tr("Cash, when your order arrives.") + "</small></span></label>" +
+          '<label class="pay-option"><input type="radio" name="payment" value="transfer">' +
+            "<span><b>" + tr("Whish / OMT transfer") + "</b><small>" + tr("I'll send you the payment details when I confirm your order.") + "</small></span></label>"
+        : '<div class="pay-option on"><input type="hidden" name="payment" value="cod">' +
+            '<span class="pay-tick" aria-hidden="true">✓</span>' +
+            "<span><b>" + tr("Pay on delivery") + "</b><small>" + tr("Cash, when your order arrives.") + "</small></span></div>";
+      return '<form class="checkout" data-order novalidate>' +
         '<button type="button" class="tlink bag-back" data-back-cart><span class="arw" aria-hidden="true">←</span> ' + tr("Back to cart") + "</button>" +
-        '<div class="co-summary"><p class="measured">' + tr("Your order") + '</p><p class="co-lines">' +
-          esc(lines()).replace(/\n/g, "<br>") + "</p>" +
-          (t.priced ? '<p class="co-total">' + tr("Total") + ' <b class="num">$' + t.total + "</b></p>" : "") + "</div>" +
-        '<div><label class="field-label" for="co-name">' + tr("Full name") + "</label>" +
-          '<input class="input" id="co-name" name="name" autocomplete="name" required></div>' +
-        '<div><label class="field-label" for="co-phone">' + tr("Phone number") + "</label>" +
-          '<input class="input" id="co-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required ' +
-          'minlength="7" placeholder="+961 70 123 456"></div>' +
-        '<div><label class="field-label" for="co-gov">' + tr("Governorate") + "</label>" +
-          '<select class="input select" id="co-gov" name="governorate" required>' +
-            '<option value="">' + tr("Choose your governorate") + "</option>" +
-            GOVS.map(function (g) { return '<option value="' + esc(g) + '">' + esc(g) + "</option>"; }).join("") +
-          "</select></div>" +
-        '<div><label class="field-label" for="co-address">' + tr("Detailed address") + "</label>" +
-          '<textarea class="textarea" id="co-address" name="address" required rows="3" ' +
-          'placeholder="' + tr("Area, street, building, floor — and a landmark if it helps") + '"></textarea></div>' +
-        '<fieldset class="co-pay"><legend class="field-label">' + tr("Payment") + "</legend>" +
-          '<label class="pay-option"><input type="radio" name="payment" value="cod" checked>' +
-          '<span><b>' + tr("Pay on delivery") + "</b><small>" + tr("Cash, when your order arrives.") + "</small></span></label>" +
-          (PAY_TRANSFER ? '<label class="pay-option"><input type="radio" name="payment" value="transfer">' +
-            '<span><b>' + tr("Whish / OMT transfer") + "</b><small>" + tr("I'll send you the payment details when I confirm your order.") + "</small></span></label>" : "") +
-          "</fieldset>" +
-          (ADMIN_ORDERS ? '<div class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>' : "") +
-        '<button class="btn lilac block lg" type="submit">' + tr("Place order") + ' <span class="arw" aria-hidden="true">→</span></button>' +
-        '<p class="form-note co-note">' + (ORDER_ENDPOINT
+        '<section class="co-block"><h3>' + tr("Your order") + '</h3><ul class="co-lines">' + bag.map(function (x) {
+          var lt = lineTotal(x), opt = optionText(x);
+          return "<li>" + thumb(x) + '<span class="co-n">' + esc(nameOf(x)) + "<small>" + (opt ? esc(opt) + " · " : "") + "× " + x.qty + "</small></span>" +
+            '<span class="num">' + (lt == null ? "" : money(lt)) + "</span></li>";
+        }).join("") + "</ul>" + totalHTML(t) + "</section>" +
+        '<section class="co-block"><h3>' + tr("Your details") + "</h3>" +
+          fld("name", tr("Full name"), '<input class="co-input" id="co-name" name="name" autocomplete="name" required>') +
+          fld("phone", tr("Phone number"), '<input class="co-input" id="co-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="+961 70 123 456">', tr("I'll call this number to confirm your order.")) +
+        "</section>" +
+        '<section class="co-block"><h3>' + tr("Delivery") + "</h3>" +
+          fld("governorate", tr("Governorate"), '<select class="co-input select" id="co-governorate" name="governorate" required><option value="">' + tr("Choose your governorate") + "</option>" +
+            GOVS.map(function (g) { return '<option value="' + esc(g) + '">' + esc(g) + "</option>"; }).join("") + "</select>") +
+          fld("address", tr("Detailed address"), '<textarea class="co-input" id="co-address" name="address" required rows="3" placeholder="' + tr("Area, street, building, floor — and a landmark if it helps") + '"></textarea>') +
+        "</section>" +
+        '<section class="co-block"><h3>' + tr("Payment") + '</h3><div class="co-pay">' + pay + "</div></section>" +
+        (ADMIN_ORDERS ? '<div class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>' : "") +
+        '<button class="btn lilac block lg" type="submit">' + tr("Place order") + (t.priced ? " · " + money(t.total) : "") + "</button>" +
+        '<p class="form-note co-note" role="status">' + (ADMIN_ORDERS || ORDER_ENDPOINT
           ? tr("I'll call you to confirm before it's sent.")
           : WA_READY ? tr("Your order opens in WhatsApp, ready to send. I'll confirm before it's sent.")
                      : tr("Your order opens in your email app, ready to send. I'll confirm before it's sent.")) + "</p>" +
@@ -1313,25 +1377,64 @@
     }
 
     function doneHTML(name) {
-      return '<div class="form-done" role="status" tabindex="-1">' +
-        '<span class="measured">' + tr("Order received") + "</span>" +
-        (lastOrderNo ? '<p class="measured mt-s">' + tr("Your order number: {x}", { x: "<b>" + esc(lastOrderNo) + "</b>" }) + "</p>" : "") +
-        '<p class="pull mt-s">' + (name ? tr("Thank you, {x}.", { x: esc(name.split(" ")[0]) }) : tr("Thank you") + ".") + "</p>" +
-        '<p class="prose mt-s">' + (lastPay === "transfer"
-          ? tr("I'll message you to confirm your order and send the payment details.")
-          : tr("I'll call you to confirm your order and delivery. You pay in cash when it arrives.")) + "</p></div>";
+      var r = lastReceipt || { lines: [], total: null, gov: "" };
+      var next = lastPay === "transfer"
+        ? [tr("I message you to confirm your order."), tr("I send you the payment details."), tr("Your order is delivered to {x}.", { x: esc(r.gov) })]
+        : [tr("I call you to confirm your order and delivery."), tr("Your order is delivered to {x}.", { x: esc(r.gov) }), tr("You pay in cash when it arrives.")];
+      return '<div class="co-done" role="status" tabindex="-1">' +
+        '<span class="done-mark" aria-hidden="true">✓</span>' +
+        "<h3>" + (name ? tr("Thank you, {x}.", { x: esc(name.split(" ")[0]) }) : tr("Thank you") + ".") + "</h3>" +
+        (lastOrderNo ? '<p class="done-no"><span>' + tr("Order number") + '</span><b class="num">' + esc(lastOrderNo) + "</b></p>" : "") +
+        '<section class="co-block"><h3>' + tr("Your order") + '</h3><ul class="co-lines">' + r.lines.map(function (x) {
+          var lt = lineTotal(x), opt = optionText(x);
+          return "<li>" + thumb(x) + '<span class="co-n">' + esc(nameOf(x)) + "<small>" + (opt ? esc(opt) + " · " : "") + "× " + x.qty + "</small></span>" +
+            '<span class="num">' + (lt == null ? "" : money(lt)) + "</span></li>";
+        }).join("") + "</ul>" + (r.total ? totalHTML(r.total) : "") + "</section>" +
+        '<section class="co-block"><h3>' + tr("What happens next") + '</h3><ol class="next-steps">' +
+          next.map(function (line) { return "<li>" + line + "</li>"; }).join("") + "</ol></section>" +
+        '<button class="btn lilac block" type="button" data-close>' + tr("Back to the shop") + "</button></div>";
     }
 
     function renderBag(name) {
       var n = bagCount();
       fab.hidden = n === 0 && view !== "done";
       fab.innerHTML = tr("Cart") + ' <span class="bag-n num">' + n + "</span>";
+      var title = view === "checkout" ? tr("Checkout") : view === "done" ? tr("Order received") : tr("Your cart");
       panel.innerHTML =
         '<div class="bag-card">' +
-          '<div class="bag-head"><h2>' + (view === "checkout" ? tr("Checkout") : view === "done" ? tr("Thank you") : tr("Your cart")) + "</h2>" +
+          '<div class="bag-head"><div><h2>' + title + "</h2>" +
+            (view === "cart" && n ? '<p class="bag-count">' + tr("Items: {n}", { n: n }) + "</p>" : "") + "</div>" +
           '<button type="button" class="bag-close" aria-label="' + tr("Close") + '">&times;</button></div>' +
+          (n || view === "done" ? steps() : "") +
           (view === "checkout" ? checkoutHTML() : view === "done" ? doneHTML(name) : cartHTML()) +
         "</div>";
+    }
+
+    /* The same checks the server makes, so a mistake is explained beside its field before anything is sent. */
+    function showFieldError(form, name, message) {
+      var box = $("#co-" + name + "-e", form), input = $("#co-" + name, form);
+      if (!box) return false;
+      box.textContent = message;
+      box.hidden = false;
+      if (input) { input.setAttribute("aria-invalid", "true"); input.setAttribute("aria-describedby", box.id); }
+      return true;
+    }
+    function clearFieldErrors(form) {
+      $$(".co-err", form).forEach(function (b) { b.hidden = true; b.textContent = ""; });
+      $$("[aria-invalid]", form).forEach(function (i) { i.removeAttribute("aria-invalid"); i.removeAttribute("aria-describedby"); });
+    }
+    function validateOrder(form) {
+      clearFieldErrors(form);
+      var v = function (n) { return (form.elements[n] || {}).value || ""; };
+      var digits = v("phone").replace(/\D/g, "");
+      var bad = [];
+      if (v("name").trim().length < 2) bad.push(["name", tr("Enter your full name.")]);
+      if (!/^[+0-9 ()\-]{7,25}$/.test(v("phone").trim()) || digits.length < 7 || digits.length > 15) bad.push(["phone", tr("Enter a phone number I can reach you on.")]);
+      if (!v("governorate")) bad.push(["governorate", tr("Choose your governorate.")]);
+      if (v("address").trim().length < 5) bad.push(["address", tr("Enter your full address, with a landmark if it helps.")]);
+      bad.forEach(function (b) { showFieldError(form, b[0], b[1]); });
+      if (bad.length) { var first = $("#co-" + bad[0][0], form); if (first) first.focus(); return false; }
+      return true;
     }
 
     function openBag(open) {
@@ -1345,7 +1448,7 @@
     }
 
     function submitOrder(form) {
-      if (!form.reportValidity()) return;
+      if (!validateOrder(form)) return;
       var f = function (n) { return (form.elements[n] || {}).value || ""; };
       var t = totals();
       var body = tr("New order from the website") + "\n\n" + lines() +
@@ -1357,6 +1460,7 @@
 
       function finish() {
         var name = f("name");
+        lastReceipt = { lines: bag.map(function (x) { return Object.assign({}, x); }), total: t, gov: f("governorate") };
         bag = []; saveBag(); view = "done"; renderBag(name);
         var d = $(".form-done", panel); if (d) d.focus();
       }
@@ -1383,7 +1487,9 @@
           if (res.r.status >= 400 && res.r.status < 500) {
             /* The shop says no (sold out, a field to fix, slow down): show why, keep the bag. */
             reset();
-            if (anote) anote.textContent = res.d.error || tr("That didn't go through.");
+            var shown = res.d.field && showFieldError(form, res.d.field, res.d.error || "");
+            if (shown) { var bad = $("#co-" + res.d.field, form); if (bad) bad.focus(); }
+            else if (anote) anote.textContent = res.d.error || tr("That didn't go through.");
             return;
           }
           throw new Error("status " + res.r.status);
@@ -1454,7 +1560,7 @@
       var hit = bag.filter(function (y) { return y.id === id && y.option === option; })[0];
       if (hit) hit.qty += 1;
       else bag.push({ id: id, name: x.p.name, cat: x.cat.name, option: option, optionLabel: optLabel(x.p, option),
-                      price: x.p.price == null ? "" : x.p.price, qty: 1 });
+                      img: photosFor(x.p, option)[0] || "", price: x.p.price == null ? "" : x.p.price, qty: 1 });
       saveBag(); view = "cart"; renderBag();
       b.textContent = tr("Added ✓");
       setTimeout(function () { b.textContent = tr("Add to cart"); }, 1400);
@@ -1464,6 +1570,9 @@
     fab.addEventListener("click", function () { if (view === "done") view = "cart"; renderBag(); openBag(true); });
     panel.addEventListener("click", function (e) {
       if (e.target === panel || e.target.closest(".bag-close")) { openBag(false); return; }
+      if (e.target.closest("[data-close]")) { openBag(false); return; }
+      var rm = e.target.closest("[data-remove]");
+      if (rm) { bag.splice(+rm.getAttribute("data-remove"), 1); saveBag(); renderBag(); return; }
       if (e.target.closest("[data-checkout]")) { view = "checkout"; renderBag(); var n = $("#co-name", panel); if (n) n.focus(); return; }
       if (e.target.closest("[data-back-cart]")) { view = "cart"; renderBag(); return; }
       var q = e.target.closest("[data-qty]");
@@ -1476,6 +1585,14 @@
       if (bag[i].qty <= 0) bag.splice(i, 1);
       saveBag(); renderBag();
       if (!bag.length) openBag(false);
+    });
+    panel.addEventListener("input", function (e) {
+      var el = e.target;
+      if (el.getAttribute && el.getAttribute("aria-invalid")) {
+        var box = $("#" + el.id + "-e", panel);
+        if (box) { box.hidden = true; box.textContent = ""; }
+        el.removeAttribute("aria-invalid"); el.removeAttribute("aria-describedby");
+      }
     });
     panel.addEventListener("submit", function (e) {
       var form = e.target.closest("[data-order]");

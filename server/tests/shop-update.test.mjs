@@ -55,10 +55,14 @@ before(async () => {
   const extras = JSON.parse(db.prepare("SELECT doc FROM content WHERE area='extras'").get().doc);
   delete extras.upgrades;
   put("extras", extras);
+  const oldSettings = JSON.parse(db.prepare("SELECT doc FROM content WHERE area='settings'").get().doc);
+  delete oldSettings.adminOrders; // the live site started without order-taking switched on
+  put("settings", oldSettings);
   const snap = JSON.parse(db.prepare("SELECT snapshot FROM publishes ORDER BY id DESC LIMIT 1").get().snapshot);
   snap.shop = oldShop;
   snap.images = oldImages;
   snap.extras = extras;
+  snap.settings = oldSettings;
   db.prepare("UPDATE publishes SET snapshot = ? WHERE id = (SELECT MAX(id) FROM publishes)").run(JSON.stringify(snap));
   db.close();
 });
@@ -66,20 +70,21 @@ after(() => srv?.stop());
 
 test("the seed a brand-new site starts from already has the new shop", () => {
   const ids = items(seed.shop).map((p) => p.id);
-  assert.ok(ids.includes("pick-wrist-pouch") && !ids.includes("sotr-cap") && !ids.includes("sotr-socks"));
+  assert.ok(ids.includes("pick-arm-bag") && !ids.includes("sotr-cap") && !ids.includes("sotr-socks"));
 });
 
 test("the first request after the deploy puts the changes in the DRAFTS only", async () => {
   const st = (await owner.call("GET", "/api/admin/status")).json;
   assert.equal(st.changed.shop, true, "she sees the shop has unpublished changes");
   assert.equal(st.changed.images, true, "and so does the photo library");
-  for (const area of ["runs", "offer", "testimonials", "settings", "posts", "gallery"]) assert.equal(st.changed[area], false, area);
+  assert.equal(st.changed.settings, true, "and the switch that makes the checkout take real orders");
+  for (const area of ["runs", "offer", "testimonials", "posts", "gallery"]) assert.equal(st.changed[area], false, area);
 
   const ids = items((await draftShop()).doc).map((p) => p.id);
   assert.deepEqual(ids, [
     "sotr-tee", "sotr-bag", "socks-grip-white", "socks-striped", "socks-corgi", "socks-cherry",
     "food-scale", "measuring-cups", "portion-set", "journal",
-    "pick-belt", "pick-wrist-pouch", "pick-bottle", "pick-shaker",
+    "pick-belt", "pick-arm-bag", "pick-bottle", "pick-shaker",
   ]);
 
   // The live site is untouched until she publishes.
@@ -91,7 +96,7 @@ test("the first request after the deploy puts the changes in the DRAFTS only", a
   assert.ok(items(snap.shop).some((p) => p.id === "sotr-cap"));
   assert.equal(audit.length, 1);
   assert.equal(audit[0].action, "content.upgraded");
-  assert.match(audit[0].detail, /shop-2026-10 \(shop, images\)/);
+  assert.match(audit[0].detail, /shop-2026-10 \(shop, images, settings\)/);
 });
 
 test("the draft shop is what she asked for", async () => {
@@ -102,8 +107,8 @@ test("the draft shop is what she asked for", async () => {
   assert.equal(byId["pick-belt"].price, 12);
   assert.deepEqual(byId["pick-belt"].options, ["Burgundy", "Black", "Navy"]);
   assert.deepEqual(Object.keys(byId["pick-belt"].optionPhotos), ["Burgundy", "Black", "Navy"]);
-  assert.equal(byId["pick-wrist-pouch"].price, 12);
-  assert.deepEqual(byId["pick-wrist-pouch"].options, ["Cream", "Pink"]);
+  assert.equal(byId["pick-arm-bag"].price, 12);
+  assert.deepEqual(byId["pick-arm-bag"].options, ["Cream", "Pink"]);
 });
 
 test("the photo library gains the 26 new photos, each marked as used by its product", async () => {
@@ -112,7 +117,7 @@ test("the photo library gains the 26 new photos, each marked as used by its prod
   assert.equal(photos.filter((p) => NEW_PHOTO.test(p.name)).length, 26);
   assert.deepEqual(photos.find((p) => p.name === "shop-belt").w, [160, 480, 628]);
   const worn = photos.find((p) => p.name === "shop-belt-black-worn");
-  assert.deepEqual(worn.used, ["product “Running Belt Bag”"], "a colour photo counts as in use, so it can't be deleted from under the product");
+  assert.deepEqual(worn.used, ["product “Running Belt”"], "a colour photo counts as in use, so it can't be deleted from under the product");
   assert.deepEqual(photos.find((p) => p.name === "shop-socks-cherry-detail").used, ["product “Cherry Grip Socks”"], "so does an extra photo");
 });
 
@@ -153,7 +158,7 @@ test("Publish puts it live: hidden products never reach the public files", async
   assert.equal(pub.status, 200, JSON.stringify(pub.json));
   const shop = live("products.js", "SITE_SHOP");
   const ids = items(shop).map((p) => p.id);
-  assert.deepEqual(ids, ["sotr-tee", "socks-grip-white", "socks-striped", "socks-corgi", "socks-cherry", "pick-belt", "pick-wrist-pouch"]);
+  assert.deepEqual(ids, ["sotr-tee", "socks-grip-white", "socks-striped", "socks-corgi", "socks-cherry", "pick-belt", "pick-arm-bag"]);
   const text = readFileSync(join(srv.site, "data", "products.js"), "utf8");
   assert.ok(!/food-scale|sotr-bag|pick-bottle|"hidden"/.test(text), "hidden products leave no trace in the public file");
   const belt = items(shop).find((p) => p.id === "pick-belt");
@@ -191,6 +196,7 @@ test("checkout is pay on delivery only, until Whish / OMT is switched on", async
   assert.equal((await order(lines, { payment_method: "cod" })).status, 201);
 
   const set = (await owner.call("GET", "/api/admin/content/settings")).json;
+  assert.equal(set.doc.adminOrders, true, "the upgrade switched order-taking on");
   assert.equal(set.doc.payTransfer, undefined, "off unless she turns it on");
   assert.equal((await owner.call("PUT", "/api/admin/content/settings", { doc: { ...set.doc, payTransfer: true }, rev: set.rev })).status, 200);
   assert.equal((await order(lines, { payment_method: "transfer" })).status, 422, "saved as a draft: not live yet");

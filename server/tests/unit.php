@@ -144,7 +144,7 @@ $belt = $byId($up, 'pick-belt');
 check('upgrade: the belt bag is one product in three colours at $12', $belt['price'] === 12 && $belt['options'] === ['Burgundy', 'Black', 'Navy'] && array_keys($belt['optionPhotos']) === ['Burgundy', 'Black', 'Navy']);
 check('upgrade: the belt bag has its Arabic colours', $belt['ar']['options'] === ['عنّابي', 'أسود', 'كحلي']);
 $myPicks = array_values(array_filter($up['categories'], static fn ($c) => $c['id'] === 'my-picks'))[0]['items'];
-check('upgrade: the wrist pouch is new, right after the belt, at $12 in two colours', $myPicks[1]['id'] === 'pick-wrist-pouch' && $myPicks[1]['price'] === 12 && $myPicks[1]['options'] === ['Cream', 'Pink']);
+check('upgrade: the sports arm bag is new, right after the belt, at $12 in two colours', $myPicks[1]['id'] === 'pick-arm-bag' && $myPicks[1]['price'] === 12 && $myPicks[1]['options'] === ['Cream', 'Pink']);
 check('upgrade: running it again changes nothing', $U::shop($up, $seedAreas['shop']) === $up);
 
 $edited = $oldShop;
@@ -169,6 +169,8 @@ $newPhotos = $U::images($oldPhotos, $seedAreas['images']);
 check('upgrade: all 26 new shop photos are added to the library', count($newPhotos['items']) === count($oldPhotos['items']) + 26 && count($newPhotos['items']) === count($seedAreas['images']['items']));
 check('upgrade: the burgundy photo gains its small size', array_values(array_filter($newPhotos['items'], static fn ($i) => $i['name'] === 'shop-belt'))[0]['w'] === [160, 480, 628]);
 check('upgrade: the new photos carry Arabic descriptions', !empty(array_values(array_filter($newPhotos['items'], static fn ($i) => $i['name'] === 'shop-pouch-pink-worn'))[0]['ar']['alt']));
+check('upgrade: order-taking is switched on when the setting was never there', $U::settings(['email' => 'a@b.co'])['adminOrders'] === true);
+check('upgrade: an order-taking setting that is already there is left alone', $U::settings(['adminOrders' => false])['adminOrders'] === false);
 check('upgrade: adding photos twice changes nothing', $U::images($newPhotos, $seedAreas['images']) === $newPhotos);
 $everyProductPhoto = true;
 foreach ($seedAreas['shop']['categories'] as $c) {

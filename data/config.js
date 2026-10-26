@@ -65,6 +65,12 @@ window.SITE = {
      the same one as formEndpoint) and orders arrive straight in your inbox.
      Left "", the order opens in WhatsApp once the number above is set — or,
      until then, in the customer's email app addressed to you. */
-  orderEndpoint: ""
+  orderEndpoint: "",
+
+  /* Take shop orders in the admin. Every order is stored under Orders (with stock
+     taken off automatically) and emailed to you, and the customer sees a confirmation
+     with an order number. Switch it off in the admin (Site settings) to send orders to
+     WhatsApp or email instead. */
+  adminOrders: true
 
 };

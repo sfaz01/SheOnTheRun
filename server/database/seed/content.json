@@ -191,7 +191,7 @@
           "items": [
             {
               "id": "pick-belt",
-              "name": "Running Belt Bag",
+              "name": "Running Belt",
               "blurb": "Running · Wear it across the body or around the waist. Carries a phone and a key without bouncing — that's the whole review.",
               "price": 12,
               "image": "shop-belt-burgundy-front",
@@ -219,7 +219,7 @@
               },
               "soldOut": false,
               "ar": {
-                "name": "حقيبة حزام للجري",
+                "name": "حزام الجري",
                 "blurb": "للجري · تُحمل بشكل مائل على الجسم أو حول الخصر. تتّسع للهاتف والمفتاح من دون أن ترتدّ — هذا كل شيء.",
                 "options": [
                   "عنّابي",
@@ -229,9 +229,9 @@
               }
             },
             {
-              "id": "pick-wrist-pouch",
-              "name": "Wrist Pouch",
-              "blurb": "Running · Straps to your wrist so your cards and a few coins stay with you. Hands free, nothing bouncing.",
+              "id": "pick-arm-bag",
+              "name": "Sports Arm Bag",
+              "blurb": "Running · Straps to your arm or wrist so your cards and a few coins stay with you. Hands free, nothing bouncing.",
               "price": 12,
               "image": "shop-pouch-cream-front",
               "options": [
@@ -252,8 +252,8 @@
               },
               "soldOut": false,
               "ar": {
-                "name": "جراب معصم للجري",
-                "blurb": "للجري · يُثبَّت على معصمك فتبقى بطاقاتك وبعض القطع النقدية معك. يدان حرّتان ولا شيء يرتدّ.",
+                "name": "حقيبة ذراع رياضية",
+                "blurb": "للجري · تُثبَّت على ذراعك أو معصمك فتبقى بطاقاتك وبعض القطع النقدية معك. يدان حرّتان ولا شيء يرتدّ.",
                 "options": [
                   "كريمي",
                   "وردي"
@@ -893,7 +893,8 @@
       "newsletterEndpoint": "",
       "plausibleDomain": "",
       "cloudflareToken": "",
-      "orderEndpoint": ""
+      "orderEndpoint": "",
+      "adminOrders": true
     },
     "extras": {
       "ar": {
@@ -1744,7 +1745,7 @@
         },
         {
           "name": "shop-pouch-cream-back",
-          "alt": "Cream wrist pouch, back view with the grey elastic strap",
+          "alt": "Cream sports arm bag, back view with the grey elastic strap",
           "w": [
             160,
             507
@@ -1752,12 +1753,12 @@
           "r": 1,
           "seeded": true,
           "ar": {
-            "alt": "جراب المعصم الكريمي من الخلف مع الحزام المطاطي الرمادي"
+            "alt": "حقيبة الذراع الرياضية الكريمية من الخلف مع الحزام المطاطي الرمادي"
           }
         },
         {
           "name": "shop-pouch-cream-front",
-          "alt": "Cream wrist pouch with a zip, front view",
+          "alt": "Cream sports arm bag with a zip, front view",
           "w": [
             160,
             507
@@ -1765,12 +1766,12 @@
           "r": 1,
           "seeded": true,
           "ar": {
-            "alt": "جراب معصم كريمي بسحّاب، من الأمام"
+            "alt": "حقيبة ذراع رياضية كريمية بسحّاب، من الأمام"
           }
         },
         {
           "name": "shop-pouch-cream-worn",
-          "alt": "Cream wrist pouch worn on the wrist, with cards and coins shown inside",
+          "alt": "Cream sports arm bag worn on the wrist, with cards and coins shown inside",
           "w": [
             160,
             507
@@ -1778,12 +1779,12 @@
           "r": 1,
           "seeded": true,
           "ar": {
-            "alt": "جراب المعصم الكريمي على المعصم، مع إظهار البطاقات والقطع النقدية في داخله"
+            "alt": "حقيبة الذراع الرياضية الكريمية على المعصم، مع إظهار البطاقات والقطع النقدية في داخلها"
           }
         },
         {
           "name": "shop-pouch-pink-back",
-          "alt": "Pink wrist pouch, back view with the grey elastic strap",
+          "alt": "Pink sports arm bag, back view with the grey elastic strap",
           "w": [
             160,
             507
@@ -1791,12 +1792,12 @@
           "r": 1,
           "seeded": true,
           "ar": {
-            "alt": "جراب المعصم الوردي من الخلف مع الحزام المطاطي الرمادي"
+            "alt": "حقيبة الذراع الرياضية الوردية من الخلف مع الحزام المطاطي الرمادي"
           }
         },
         {
           "name": "shop-pouch-pink-front",
-          "alt": "Pink wrist pouch with a zip, front view",
+          "alt": "Pink sports arm bag with a zip, front view",
           "w": [
             160,
             507
@@ -1804,12 +1805,12 @@
           "r": 1,
           "seeded": true,
           "ar": {
-            "alt": "جراب معصم وردي بسحّاب، من الأمام"
+            "alt": "حقيبة ذراع رياضية وردية بسحّاب، من الأمام"
           }
         },
         {
           "name": "shop-pouch-pink-worn",
-          "alt": "Pink wrist pouch worn on the wrist, with cards and coins shown inside",
+          "alt": "Pink sports arm bag worn on the wrist, with cards and coins shown inside",
           "w": [
             160,
             507
@@ -1817,7 +1818,7 @@
           "r": 1,
           "seeded": true,
           "ar": {
-            "alt": "جراب المعصم الوردي على المعصم، مع إظهار البطاقات والقطع النقدية في داخله"
+            "alt": "حقيبة الذراع الرياضية الوردية على المعصم، مع إظهار البطاقات والقطع النقدية في داخلها"
           }
         },
         {

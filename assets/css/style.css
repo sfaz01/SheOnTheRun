@@ -2507,7 +2507,9 @@ textarea.co-input { min-height: 5.5rem; resize: vertical; }
 }
 .product .pr-head { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; margin-top: .9rem; }
 .product .pr-head h3 { margin: 0; font-size: 1.1rem; line-height: 1.25; }
+.product .pr-head { flex-wrap: wrap; }
 .product .pr-head .pr-price { white-space: nowrap; }
+.product .pr-head .pr-price.ask { flex-basis: 100%; white-space: normal; }
 .product .pr-foot { display: block; margin-top: .9rem; }
 .product .pr-foot .btn { margin-top: 0; }
 [dir="rtl"] .cl-price { text-align: left; }

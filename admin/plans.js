@@ -85,9 +85,12 @@
 
       var MESSAGE = "I'm a dietitian. I'm attaching a client's meal plan as a PDF, and my website's meal-plan template (meal-plan-template.csv). " +
         "Please turn the PDF into a .csv file in exactly the template's format: the title, target_kcal, protein_min, protein_max and note lines at the top, " +
-        "a blank line, then the columns meal,guide,option,kcal,carbs,protein,fat,ingredients with one row per choice. " +
-        "Keep my wording. Put the ingredients in one cell separated by semicolons. If a number isn't in the PDF, estimate it and tell me which ones you estimated. " +
-        "Give me the finished file to download.";
+        "a blank line, then the columns meal,guide,option,kcal,carbs,protein,fat,ingredients. " +
+        "Use one row per choice. The meal's name goes in 'meal' (the same wording on every row of that meal; if the PDF is in Arabic, keep it in Arabic). " +
+        "Its time or aim goes in 'guide' on the meal's first row. Each numbered option, with its portions and any '+' combination, is one row in 'option', in my own wording. " +
+        "Put the ingredients in one cell separated by semicolons. " +
+        "Work out kcal, carbs, protein and fat for each option from its portions; if the PDF doesn't give a number, estimate it, and list every estimated option at the end so I can check it. " +
+        "Save the file as UTF-8 so Arabic opens correctly, and give it to me to download.";
       var copyBtn = h("button", { type: "button", class: "btn small", onclick: function () {
         (navigator.clipboard ? navigator.clipboard.writeText(MESSAGE) : Promise.reject()).then(
           function () { copyBtn.textContent = "Copied"; setTimeout(function () { copyBtn.textContent = "Copy the message"; }, 1800); },

@@ -12,6 +12,7 @@ namespace Sotr;
  *   extra        one-off days with their own times (a Saturday clinic, an evening online)
  *   horizonDays  how far ahead clients can book
  *   noticeHours  how soon before a time it stops being offered
+ *   autoConfirm  true: picking a time books it straight away; false: it is a request she confirms
  *   note         a line shown beside the calendar
  *
  * What clients are offered is that pattern minus anything already requested or booked, in Beirut time.
@@ -33,6 +34,7 @@ final class Availability
             'extra' => [],
             'horizonDays' => 28,
             'noticeHours' => 12,
+            'autoConfirm' => true,
             'note' => '',
         ];
     }
@@ -164,6 +166,7 @@ final class Availability
         } else {
             $out['noticeHours'] = (int) $n;
         }
+        $out['autoConfirm'] = (bool) ($in['autoConfirm'] ?? true);
         $note = is_string($in['note'] ?? '') ? preg_replace('/[\x00-\x1F\x7F]/u', ' ', (string) ($in['note'] ?? '')) ?? '' : '';
         $note = trim($note);
         if (mb_strlen($note) > 300) {
@@ -269,6 +272,7 @@ final class Availability
             'places' => self::PLACES,
             'note' => $doc['note'],
             'horizonDays' => $doc['horizonDays'],
+            'autoConfirm' => (bool) $doc['autoConfirm'],
             'today' => self::now()->format('Y-m-d'),
             'days' => (object) $open['days'],
         ];

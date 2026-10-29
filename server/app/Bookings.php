@@ -4,9 +4,10 @@ declare(strict_types=1);
 namespace Sotr;
 
 /**
- * Consultation requests. A client picks one of the times Fatima offers (see Availability) and sends a
- * request; it holds that time at once so nobody else can ask for it, and it becomes a booking when she
- * confirms. Cancelling frees the time. The browser says WHAT was picked; the server checks it is still open.
+ * Consultation bookings. A client picks one of the times Fatima offers (see Availability). By default
+ * the time is booked straight away; if she has switched automatic confirmation off it is a request that
+ * holds the time until she confirms it. Either way nobody else can take it, and cancelling frees it.
+ * The browser says WHAT was picked; the server checks it is still open.
  */
 final class Bookings
 {
@@ -15,12 +16,12 @@ final class Bookings
 
     /* ------------------------------------------------------------------ public */
 
-    /** @return array{ok: true, booking_number: string, when: string, place: string} */
+    /** @return array{ok: true, booking_number: string, status: string, when: string, place: string} */
     public static function create(array $in): array
     {
         if (!empty($in['website']) || !empty($in['_trap'])) {
             // A hidden field only bots fill in. Pretend it worked so they learn nothing.
-            return ['ok' => true, 'booking_number' => 'BK-' . strtoupper(bin2hex(random_bytes(3))), 'when' => '', 'place' => ''];
+            return ['ok' => true, 'booking_number' => 'BK-' . strtoupper(bin2hex(random_bytes(3))), 'status' => 'confirmed', 'when' => '', 'place' => ''];
         }
         $name = self::text($in['name'] ?? '', 80);
         if (mb_strlen($name) < 2) {
@@ -48,13 +49,14 @@ final class Bookings
         }
         $service = self::serviceName((string) ($in['service'] ?? ''));
 
+        $status = Availability::get()['autoConfirm'] ? 'confirmed' : 'new';
         $number = self::newNumber();
         $now = Db::now();
         try {
             $id = Db::insert(
                 'INSERT INTO bookings (booking_number, slot_date, slot_time, place, slot_key, service, name, phone, email, note, status, created_at, updated_at) '
-                . "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?)",
-                [$number, $date, $time, $place, "$date $time", $service, $name, $phone, $email !== '' ? $email : null, $note !== '' ? $note : null, $now, $now]
+                . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [$number, $date, $time, $place, "$date $time", $service, $name, $phone, $email !== '' ? $email : null, $note !== '' ? $note : null, $status, $now, $now]
             );
         } catch (\PDOException $e) {
             if (self::isDuplicate($e)) {
@@ -67,15 +69,15 @@ final class Bookings
         $when = self::when($date, $time);
         $settings = (Content::lastSnapshot() ?? [])['settings'] ?? [];
         $to = (string) (($settings['emails'] ?? [])['nutrition'] ?? $settings['email'] ?? '');
-        $body = "New consultation request from the website\n\n"
+        $body = ($status === 'confirmed' ? "New booking from the website (confirmed automatically)\n\n" : "New consultation request from the website\n\n")
             . "When:    $when (Beirut time)\nWhere:   " . Availability::PLACES[$place] . "\nFor:     $service\n\n"
             . "Name:    $name\nPhone:   $phone\nEmail:   " . ($email !== '' ? $email : '—') . "\n"
             . ($note !== '' ? "\nNote from the client:\n$note\n" : '')
-            . "\nThe time is held for them until you confirm or cancel it.\nOpen it in the admin: " . rtrim((string) Config::get('app_url'), '/') . "/admin/#bookings\n";
-        $mail = Mailer::send($to, 'Booking request — ' . $when . ' — ' . Mailer::line($name), $body, $email !== '' ? $email : null);
+            . ($status === 'confirmed' ? "\nThe time is booked for them. You can cancel it in the admin and message them if it doesn’t work.\nOpen it in the admin: " : "\nThe time is held for them until you confirm or cancel it.\nOpen it in the admin: ") . rtrim((string) Config::get('app_url'), '/') . "/admin/#bookings\n";
+        $mail = Mailer::send($to, ($status === 'confirmed' ? 'New booking — ' : 'Booking request — ') . $when . ' — ' . Mailer::line($name), $body, $email !== '' ? $email : null);
         Db::run('UPDATE bookings SET mail_status = ? WHERE id = ?', [$mail, $id]);
 
-        return ['ok' => true, 'booking_number' => $number, 'when' => $when, 'place' => Availability::PLACES[$place]];
+        return ['ok' => true, 'booking_number' => $number, 'status' => $status, 'when' => $when, 'place' => Availability::PLACES[$place]];
     }
 
     /* ------------------------------------------------------------------- admin */

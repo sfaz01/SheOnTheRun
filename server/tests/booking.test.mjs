@@ -65,7 +65,7 @@ test("a mistake in her times is explained beside the exact row", async () => {
 });
 
 test("she saves her week; clients see the open times, in order, without any personal data", async () => {
-  const r = await save({ weekly: week([WEEKLY[2], WEEKLY[0], WEEKLY[1]]), daysOff: [], extra: [], horizonDays: 21, noticeHours: 0, note: "Sessions are 45 minutes." });
+  const r = await save({ weekly: week([WEEKLY[2], WEEKLY[0], WEEKLY[1]]), daysOff: [], extra: [], horizonDays: 21, noticeHours: 0, autoConfirm: false, note: "Sessions are 45 minutes." });
   assert.equal(r.status, 200, JSON.stringify(r.json));
   assert.deepEqual(r.json.doc.weekly.mon.map((s) => s.time), ["10:00", "11:30", "17:00"], "sorted");
   const a = await open();
@@ -206,4 +206,28 @@ test("the nightly backup includes bookings and her availability, and no password
   assert.ok(Array.isArray(data.bookings));
   assert.equal(data.availability.horizonDays, 21);
   assert.ok(!/password|totp|secret/i.test(JSON.stringify({ ...data, about: undefined, content: undefined, publish_history: undefined })));
+});
+
+test("by default a pick is booked straight away; switched off, it is a request she confirms", async () => {
+  const doc = (await owner.call("GET", "/api/admin/availability")).json.doc;
+  assert.equal(doc.autoConfirm, false, "the earlier tests ran in request mode");
+  const on = await save({ ...doc, autoConfirm: true });
+  assert.equal(on.json.doc.autoConfirm, true);
+  assert.equal((await open()).autoConfirm, true, "the calendar is told, so it can say “booked”");
+
+  const slot = firstSlot((await open()).days, "online");
+  const r = await ask(slot, { name: "Auto Client", phone: "03 555 666" });
+  assert.equal(r.status, 201, JSON.stringify(r.json));
+  assert.equal(r.json.status, "confirmed");
+  const all = (await owner.call("GET", "/api/admin/bookings")).json;
+  assert.equal(all.bookings.find((b) => b.name === "Auto Client").status, "confirmed");
+  assert.equal((await ask(slot, { name: "Late Client", phone: "03 111 999" })).json.code, "slot_taken", "booked means taken");
+
+  const without = { ...on.json.doc };
+  delete without.autoConfirm;
+  assert.equal((await save(without)).json.doc.autoConfirm, true, "a saved week that never had the switch means on");
+
+  await save({ ...on.json.doc, autoConfirm: false });
+  const slot2 = firstSlot((await open()).days, "online");
+  assert.equal((await ask(slot2, { name: "Request Client", phone: "03 777 888" })).json.status, "new");
 });

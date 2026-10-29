@@ -259,29 +259,25 @@
   <div class="wrap"><div class="lanes lanes-rule" aria-hidden="true"></div></div>
 
   <!-- ══════════════════════ CHOOSE HOW WE WORK TOGETHER ══════════════════ -->
-  <section class="band-tight" id="services">
+  <section class="band-tight choose" id="services">
     <div class="wrap">
-      <div class="lane">
-        <div class="lane-mark"><span class="measured">04 — اعمل معي</span></div>
-        <div class="head mb-m">
-          <h2 data-split>اختر طريقة عملنا معاً</h2>
-        </div>
+      <div class="choose-head">
+        <span class="measured">04 — اعمل معي</span>
+        <h2 data-split>اختر طريقة عملنا معاً</h2>
+        <p class="lede">اختاري كيف تحبّين اللقاء، وسأعرض لكِ الخدمات والباقات المناسبة.</p>
       </div>
-    </div>
-
-    <div class="wrap">
-      <div class="switch-bar mb-m">
+      <div class="switch-bar">
         <div class="switch" data-switch role="group" aria-label="اختر حضورياً أو أونلاين">
           <span class="thumb" aria-hidden="true"></span>
-          <button type="button" data-mode="in-person" aria-pressed="true"><b>حضورياً</b><small>الجمّيزة وحارة حريك</small></button>
-          <button type="button" data-mode="online" aria-pressed="false"><b>أونلاين</b><small>مكالمة فيديو من أي مكان</small></button>
+          <button type="button" data-mode="in-person" aria-pressed="false"><span class="sw-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><b>حضورياً</b><small>الجمّيزة وحارة حريك</small></button>
+          <button type="button" data-mode="online" aria-pressed="false"><span class="sw-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="M16 10.5l5-3v9l-5-3"/></svg></span><b>أونلاين</b><small>مكالمة فيديو من أي مكان</small></button>
         </div>
         <p class="switch-note" data-mode-note></p>
-        <a class="btn lilac" href="#book" data-book-link hidden>شاهدي المواعيد المتاحة <span class="arw" aria-hidden="true">←</span></a>
+        <a class="btn lilac" href="#book" data-book-link data-gated hidden>شاهدي المواعيد المتاحة <span class="arw" aria-hidden="true">←</span></a>
       </div>
     </div>
 
-    <div class="wrap">
+    <div class="wrap" data-gated>
       <p class="measured mb-m">الخدمات الأساسية</p>
       <div class="services" data-services></div>
       <div data-services-note class="mt-s"></div>
@@ -306,7 +302,7 @@
   </section>
 
   <!-- ══════════════════════════════════ PACKAGES ═════════════════════════ -->
-  <section class="band-tight" id="packages">
+  <section class="band-tight" id="packages" data-gated>
     <div class="wrap">
       <div class="head mb-l">
         <span class="measured">أو اذهب أبعد</span>
@@ -318,11 +314,11 @@
   </section>
 
   <!-- ══════════════════════════════ BACKONTHERUN ═════════════════════════ -->
-  <section class="band-tight" id="book" hidden>
+  <section class="band-tight" id="book" data-gated hidden>
     <div class="wrap">
       <div class="head mb-l">
         <h2 data-split>احجزي موعداً</h2>
-        <p class="lede reveal">اختاري كيف تحبّين اللقاء، ثم اليوم والوقت، وأرسلي طلبك. سأؤكّد عبر واتساب أو الهاتف — ويبقى الموعد محجوزاً لكِ إلى أن أفعل.</p>
+        <p class="lede reveal">اختاري يوماً ووقتاً يناسبك من مواعيدي المتاحة فعلاً. يُحجز الموعد فوراً.</p>
       </div>
       <div class="bk" data-booking></div>
     </div>

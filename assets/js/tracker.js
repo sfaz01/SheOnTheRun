@@ -72,7 +72,8 @@
       .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
   function num(v) { var n = parseFloat(String(v == null ? "" : v).replace(",", ".")); return isFinite(n) ? n : 0; }
-  function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "meal"; }
+  /* A meal's internal id. Letters in any language count (Arabic included), so two meals named in Arabic stay two meals. */
+  function slug(s) { return String(s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "meal"; }
 
   /* ---------------------------------------------------------- state ----- */
   var state = null;   // { plan, picks: { Mon: { slotId: optionIndex } }, have: { item: true } }

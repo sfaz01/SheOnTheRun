@@ -128,6 +128,11 @@
             h("div", { class: "field" }, h("label", { for: "av-notice" }, "Closest a time can be to now"),
               h("select", { id: "av-notice", onchange: function (e) { doc.noticeHours = +e.target.value; touch(); } }, pick(NOTICE, doc.noticeHours)),
               h("p", { class: "hint" }, "A time stops being offered this long before it starts.")),
+            h("div", { class: "field wide" },
+              h("label", { class: "toggle", for: "av-auto" },
+                h("input", { type: "checkbox", id: "av-auto", checked: doc.autoConfirm !== false, onchange: function (e) { doc.autoConfirm = e.target.checked; touch(); } }),
+                h("span", {}, "Confirm bookings automatically")),
+              h("p", { class: "hint" }, "On: a client who picks a time is booked straight away and you get an email. Off: it’s a request that holds the time until you confirm it under Bookings. Either way, you can cancel any booking and message the client.")),
             h("div", { class: "field wide" }, h("label", { for: "av-note" }, "A line shown beside the calendar (optional)"),
               h("input", { type: "text", id: "av-note", maxlength: 300, value: doc.note || "", placeholder: "e.g. Sessions are 45 minutes. Online sessions are on Zoom.", oninput: function (e) { doc.note = e.target.value; touch(); } }),
               h("p", { class: "hint" }, "Times are always shown in Beirut time."))));

@@ -34,6 +34,7 @@
     "Video call": "مكالمة فيديو",
     "Beirut clinic": "العيادة في بيروت",
     "Gemmayze or Haret Hreik": "الجمّيزة أو حارة حريك",
+    "Choose one to see the services and packages that fit.": "اختاري واحداً لعرض الخدمات والباقات المناسبة.",
     "{x} is available in person only — it needs the analyser in the clinic.": "{x} متوفّر حضورياً فقط — يحتاج إلى جهاز التحليل في العيادة.",
     "Book {x}": "حجز {x}",
     "Where would you like to meet?": "أين تفضّل أن نلتقي؟",
@@ -525,7 +526,7 @@
      ====================================================================== */
 
   /* ----------------------------------------------------- 1. THE SWITCH -- */
-  var mode = "in-person";
+  var mode = "";          // nothing is shown until a way of meeting is chosen: "in-person" or "online"
   var switchEl = $("[data-switch]");
 
   function positionThumb() {
@@ -539,6 +540,8 @@
 
   function setMode(next) {
     mode = next;
+    /* The services, packages and booking calendar stay hidden until a choice is made. */
+    document.documentElement.classList.toggle("mode-chosen", !!next);
     if (switchEl) {
       $$("button", switchEl).forEach(function (b) {
         b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === next));
@@ -548,8 +551,11 @@
     $$("[data-mode-note]").forEach(function (el) {
       el.textContent = next === "online"
         ? tr("For those who prefer the flexibility of working together from wherever they are.")
-        : tr("For those who prefer face-to-face support and a more hands-on consultation experience.");
+        : next === "in-person"
+          ? tr("For those who prefer face-to-face support and a more hands-on consultation experience.")
+          : tr("Choose one to see the services and packages that fit.");
     });
+    if (!next) return;
     renderServices();
     renderPackages();
     /* Remember the choice in the address — unless the address points somewhere
@@ -562,10 +568,19 @@
   if (switchEl) {
     switchEl.addEventListener("click", function (e) {
       var b = e.target.closest("button[data-mode]");
-      if (b) setMode(b.getAttribute("data-mode"));
+      if (!b) return;
+      var first = !mode;
+      setMode(b.getAttribute("data-mode"));
+      /* The first choice opens everything below it: bring it into view. */
+      if (first) {
+        var opened = $("[data-gated]");
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (opened) setTimeout(function () { opened.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); }, 140);
+      }
     });
     window.addEventListener("resize", positionThumb);
     if (location.hash === "#online") mode = "online";
+    else if (location.hash === "#in-person" || location.hash === "#book") mode = "in-person";
   }
 
   /* ---------------------------------------------------- 2. CORE SERVICES -- */
@@ -638,7 +653,7 @@
         '<p class="p-line">' + esc(p.line) + "</p>" +
         '<p class="p-price"><sup>$</sup>' + esc(p.price) + "</p>" +
         '<ul class="p-inc">' + inc.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + "</ul>" +
-        '<a class="btn' + (p.featured ? "" : " ghost") + ' block" href="' + esc(bookLink(msg, "nutrition")) + '"' + bookAttrs() + ' data-book="package:' + esc(p.id) + '">' +
+        '<a class="btn' + (p.featured ? " lilac" : " ghost") + ' block" href="' + esc(bookLink(msg, "nutrition")) + '"' + bookAttrs() + ' data-book="package:' + esc(p.id) + '">' +
           tr("Book {x}", { x: esc(p.name) }) + ' <span class="arw" aria-hidden="true">→</span></a>' +
       "</article>";
     }).join("");
@@ -2101,7 +2116,7 @@
 
   /* ------------------------------------------------------------- 16. BOOT */
   if (switchEl) { setMode(mode); requestAnimationFrame(positionThumb); }
-  else { renderServices(); renderPackages(); }
+  else { mode = "in-person"; renderServices(); renderPackages(); }
   observeReveals();
 
   document.fonts && document.fonts.ready.then(function () {

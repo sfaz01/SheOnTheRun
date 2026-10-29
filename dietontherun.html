@@ -258,29 +258,25 @@
   <div class="wrap"><div class="lanes lanes-rule" aria-hidden="true"></div></div>
 
   <!-- ══════════════════════ CHOOSE HOW WE WORK TOGETHER ══════════════════ -->
-  <section class="band-tight" id="services">
+  <section class="band-tight choose" id="services">
     <div class="wrap">
-      <div class="lane">
-        <div class="lane-mark"><span class="measured">04 — Work with me</span></div>
-        <div class="head mb-m">
-          <h2 data-split>Choose how we work together</h2>
-        </div>
+      <div class="choose-head">
+        <span class="measured">04 — Work with me</span>
+        <h2 data-split>Choose how we work together</h2>
+        <p class="lede">Pick how you'd like to meet and I'll show you the services and packages that fit.</p>
       </div>
-    </div>
-
-    <div class="wrap">
-      <div class="switch-bar mb-m">
+      <div class="switch-bar">
         <div class="switch" data-switch role="group" aria-label="Choose in person or online">
           <span class="thumb" aria-hidden="true"></span>
-          <button type="button" data-mode="in-person" aria-pressed="true"><b>In person</b><small>Gemmayze &amp; Haret Hreik</small></button>
-          <button type="button" data-mode="online" aria-pressed="false"><b>Online</b><small>Video call, from anywhere</small></button>
+          <button type="button" data-mode="in-person" aria-pressed="false"><span class="sw-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><b>In person</b><small>Gemmayze &amp; Haret Hreik</small></button>
+          <button type="button" data-mode="online" aria-pressed="false"><span class="sw-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="M16 10.5l5-3v9l-5-3"/></svg></span><b>Online</b><small>Video call, from anywhere</small></button>
         </div>
         <p class="switch-note" data-mode-note></p>
-        <a class="btn lilac" href="#book" data-book-link hidden>See open times <span class="arw" aria-hidden="true">→</span></a>
+        <a class="btn lilac" href="#book" data-book-link data-gated hidden>See open times <span class="arw" aria-hidden="true">→</span></a>
       </div>
     </div>
 
-    <div class="wrap">
+    <div class="wrap" data-gated>
       <p class="measured mb-m">Core services</p>
       <div class="services" data-services></div>
       <div data-services-note class="mt-s"></div>
@@ -305,7 +301,7 @@
   </section>
 
   <!-- ══════════════════════════════════ PACKAGES ═════════════════════════ -->
-  <section class="band-tight" id="packages">
+  <section class="band-tight" id="packages" data-gated>
     <div class="wrap">
       <div class="head mb-l">
         <span class="measured">Or go further</span>
@@ -319,11 +315,11 @@
   <!-- ══════════════════════════════════ BOOK A TIME ══════════════════════ -->
   <!-- Filled in by assets/js/booking.js from the times set on the admin's Availability page.
        Hidden until she has set some, so until then the Book buttons keep opening WhatsApp. -->
-  <section class="band-tight" id="book" hidden>
+  <section class="band-tight" id="book" data-gated hidden>
     <div class="wrap">
       <div class="head mb-l">
         <h2 data-split>Book a time</h2>
-        <p class="lede reveal">Pick how you'd like to meet, choose a day and a time, and send your request. I'll confirm by WhatsApp or phone — your time is held for you until I do.</p>
+        <p class="lede reveal">Choose a day and a time that suits you from my real availability. It's booked straight away.</p>
       </div>
       <div class="bk" data-booking></div>
     </div>

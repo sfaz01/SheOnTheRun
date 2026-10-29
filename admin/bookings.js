@@ -28,7 +28,7 @@
     var box = h("div", {});
     S.put(page,
       h("h1", {}, "Bookings"),
-      h("p", { class: "muted" }, "Consultation requests from your website calendar. A new request holds its time until you confirm or cancel it — and it’s also emailed to you. Set the times you offer under Availability."),
+      h("p", { class: "muted" }, "What clients book from your website calendar. Each one is also emailed to you. If you’ve switched off automatic confirmation under Availability, a new request holds its time until you confirm or cancel it here. Cancelling gives the time back to the calendar."),
       box);
 
     function load() {

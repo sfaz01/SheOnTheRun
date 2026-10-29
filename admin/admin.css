@@ -215,6 +215,26 @@ fieldset.group legend { font-family: var(--display); font-weight: 600; font-size
 .stock-cell { display: grid; gap: .2rem; width: 5.5rem; font-weight: 600; font-size: .85rem; margin: 0; }
 .stock-cell input { text-align: center; }
 .stock-one { max-width: 10rem; }
+/* Availability */
+.avail-week { display: grid; gap: .75rem; }
+@media (min-width: 900px) { .avail-week { grid-template-columns: 1fr 1fr; } }
+.avail-day { border: 1px solid var(--line); border-radius: var(--radius); padding: .8rem .9rem; background: var(--paper); }
+.avail-day.extra { background: #fff; margin-bottom: .75rem; }
+.avail-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: .5rem; flex-wrap: wrap; }
+.avail-head h3 { margin: 0; font-family: var(--sans); font-size: 1rem; }
+.slot-list { display: grid; gap: .45rem; }
+.slot-row { display: flex; align-items: center; gap: .5rem; }
+.slot-row input[type="time"] { width: 8.5rem; }
+.slot-row select { flex: 1; min-width: 0; }
+.slot-none { margin: 0; }
+.slot-list > .btn { justify-self: start; }
+.add-day { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; margin-bottom: .75rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.chip { display: inline-flex; align-items: center; gap: .35rem; background: var(--paper-2); border: 1px solid var(--line); border-radius: 99px; padding: .2rem .35rem .2rem .75rem; font-size: .88rem; }
+.chip button { width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 0; background: transparent; cursor: pointer; font-size: 1rem; line-height: 1; color: var(--ink-2); }
+.chip button:hover { background: var(--line); }
+.rules { display: grid; gap: 1rem; }
+@media (min-width: 760px) { .rules { grid-template-columns: 1fr 1fr; } .rules .wide { grid-column: 1 / -1; } }
 .photo-field { border: 0; padding: 0; margin: 0 0 1rem; min-width: 0; }
 .photo-field legend { font-weight: 600; padding: 0; margin-bottom: .3rem; }
 .photo-rows { list-style: none; margin: 0 0 .5rem; padding: 0; display: grid; gap: .5rem; }
@@ -384,3 +404,5 @@ table.items tfoot td { font-weight: 700; }
 .log-what { font-weight: 500; }
 .ml-sm { margin-left: .75rem; }
 @media (max-width: 760px) { .dash-stats { grid-template-columns: repeat(2, 1fr); } }
+.steps { margin: .25rem 0 .75rem; padding-left: 1.25rem; display: grid; gap: .3rem; }
+.prompt { white-space: pre-wrap; background: var(--paper-2); border: 1px solid var(--line); border-radius: 8px; padding: .8rem .9rem; font-family: inherit; font-size: .9rem; line-height: 1.5; margin: .25rem 0; }

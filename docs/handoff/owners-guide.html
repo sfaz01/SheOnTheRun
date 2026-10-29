@@ -85,6 +85,7 @@
     <p><a href="#s13">13. Meal plans</a></p>
     <p><a href="#s14">14. Backups</a></p>
     <p><a href="#s15">15. If something looks wrong</a></p>
+    <p><a href="#s16">16. Booking: your availability and requests</a></p>
     <p><a href="#check">Your first five minutes</a></p>
   </nav>
 <section id="s1">
@@ -117,6 +118,8 @@
         <tr><td><strong>Overview</strong></td><td>New orders, unread messages, upcoming runs, low stock, the last publish, a hosting check and the activity log.</td></tr>
         <tr><td><strong>Orders</strong></td><td>Every shop order: who, what, where and the total.</td></tr>
         <tr><td><strong>Messages</strong></td><td>Everything sent through the Connect form.</td></tr>
+        <tr><td><strong>Bookings</strong></td><td>Consultation requests from the website calendar: confirm, cancel, message the client.</td></tr>
+        <tr><td><strong>Availability</strong></td><td>The days and times clients can pick, and where you are for each one.</td></tr>
         <tr><td><strong>Shop &amp; products</strong></td><td>Products, prices, sizes, stock and delivery governorates.</td></tr>
         <tr><td><strong>Runs &amp; events</strong></td><td>The SheOnTheRun calendar and the weekly runs.</td></tr>
         <tr><td><strong>Services &amp; packages</strong></td><td>Consultations, packages and the BackOnTheRun challenge.</td></tr>
@@ -234,6 +237,7 @@
       <li><strong>Meal plans → Add a plan file:</strong> upload the file you made for a client &mdash; a plan page (<code>.html</code>), a spreadsheet plan (<code>.csv</code>) or a saved copy (<code>.json</code>).</li>
       <li><strong>Make it the sample</strong> decides what the public <strong>"Try the sample plan"</strong> button opens. That choice goes live with Publish. The spreadsheet template the site hands out can't be deleted.</li>
       <li>Files here can be opened by anyone who has the web address, so keep private client plans elsewhere, or give them a name only you know.</li>
+      <li><strong>Have a PDF?</strong> The tracker can&rsquo;t read a PDF &mdash; it needs every meal as a separate choice with calories and protein. Open <strong>Meal plans &rarr; Have a PDF?</strong>, download the template, and give Claude your PDF, the template and the message shown there. Claude returns a <code>.csv</code> you can upload (or send straight to your client).</li>
     </ol>
   </section>
 
@@ -252,6 +256,19 @@
       <li>If a change looks wrong on the site, <strong>Publish → History → Restore</strong> the previous version.</li>
       <li>Contact your developer if the hosting check on <strong>Overview</strong> shows a red <strong>Fix</strong> item, or if signing in or publishing stops working.</li>
     </ul>
+  </section>
+
+  <section id="s16">
+    <h2><span class="n">16</span>Booking: your availability and requests</h2>
+    <p>On the DietOnTheRun page, a client picks <strong>In person</strong> or <strong>Online</strong>, sees a calendar of the days and times you offer, chooses one and sends a request. You confirm it &mdash; the time is held for them until you do.</p>
+    <ol>
+      <li><strong>Availability</strong> &mdash; set your usual week: add the start times for each day and where you are for each (Gemmayze clinic, Ohana Fitness in Haret Hreik, or Online). <strong>Copy to every weekday</strong> saves repeating them.</li>
+      <li><strong>Days off</strong> hide every time that day. <strong>One-off days</strong> add a single day with its own times. <strong>Rules</strong> set how far ahead clients can book and how close to now a time stops being offered.</li>
+      <li><strong>Save availability</strong> &mdash; saved times are live straight away. There is no Publish step for this page, so you can change it every week.</li>
+      <li><strong>Bookings</strong> &mdash; a new request is emailed to you and appears here. Open it to see the client&rsquo;s details, then <strong>Confirmed</strong> or <strong>Cancelled</strong> (cancelling gives the time back to the calendar). The <strong>WhatsApp them</strong> buttons open a message already written for you.</li>
+      <li>Until you save at least one time, the calendar stays hidden and the <strong>Book</strong> buttons keep opening WhatsApp, as before.</li>
+    </ol>
+    <div class="note">Times are always Beirut time. A request is not a confirmed booking until you confirm it, and the client is told so.</div>
   </section>
 
   <section id="check">

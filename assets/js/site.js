@@ -33,6 +33,7 @@
     "Format": "الشكل",
     "Video call": "مكالمة فيديو",
     "Beirut clinic": "العيادة في بيروت",
+    "Gemmayze or Haret Hreik": "الجمّيزة أو حارة حريك",
     "{x} is available in person only — it needs the analyser in the clinic.": "{x} متوفّر حضورياً فقط — يحتاج إلى جهاز التحليل في العيادة.",
     "Book {x}": "حجز {x}",
     "Where would you like to meet?": "أين تفضّل أن نلتقي؟",
@@ -591,10 +592,10 @@
         }).join("") + "</ul>" +
         '<dl class="s-meta">' +
           '<div class="s-row"><dt>' + tr("Duration") + '</dt><dd>' + esc(s.duration) + "</dd></div>" +
-          '<div class="s-row"><dt>' + tr("Format") + '</dt><dd>' + (mode === "online" ? tr("Video call") : tr("Beirut clinic")) + "</dd></div>" +
+          '<div class="s-row"><dt>' + tr("Format") + '</dt><dd>' + (mode === "online" ? tr("Video call") : tr("Gemmayze or Haret Hreik")) + "</dd></div>" +
         "</dl>" +
         '<span class="price"><sup>$</sup>' + esc(s.price) + "</span>" +
-        '<a class="btn block" href="' + esc(bookLink(msg, "nutrition")) + '"' + bookAttrs() + ">" +
+        '<a class="btn block" href="' + esc(bookLink(msg, "nutrition")) + '"' + bookAttrs() + ' data-book="service:' + esc(s.id) + '">' +
           esc(s.cta) + ' <span class="arw" aria-hidden="true">→</span></a>' +
       "</article>";
     }).join("");
@@ -637,7 +638,7 @@
         '<p class="p-line">' + esc(p.line) + "</p>" +
         '<p class="p-price"><sup>$</sup>' + esc(p.price) + "</p>" +
         '<ul class="p-inc">' + inc.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + "</ul>" +
-        '<a class="btn' + (p.featured ? "" : " ghost") + ' block" href="' + esc(bookLink(msg, "nutrition")) + '"' + bookAttrs() + ">" +
+        '<a class="btn' + (p.featured ? "" : " ghost") + ' block" href="' + esc(bookLink(msg, "nutrition")) + '"' + bookAttrs() + ' data-book="package:' + esc(p.id) + '">' +
           tr("Book {x}", { x: esc(p.name) }) + ' <span class="arw" aria-hidden="true">→</span></a>' +
       "</article>";
     }).join("");
@@ -751,7 +752,7 @@
           "</dl>" +
           '<ul class="fit-inc">' + inc.slice(0, 5).map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") + "</ul>" +
           '<div class="row mt-m">' +
-            '<a class="btn lg" href="' + esc(href) + '"' + attrs + ">" +
+            '<a class="btn lg" href="' + esc(href) + '"' + attrs + (found.kind === "challenge" ? "" : ' data-book="' + found.kind + ":" + esc(found.item.id) + '"') + ">" +
               (found.kind === "challenge" ? tr("Join {x}", { x: esc(name) }) : tr("Book {x}", { x: esc(name) })) + ' <span class="arw" aria-hidden="true">→</span></a>' +
             '<a class="btn ghost lg" href="' + esc(BOOK_URL || waLink(tr("Hi Fatima! I'd like to book the free 15-minute discovery call."), "nutrition")) + '"' + bookAttrs() + ">" + tr("Talk it through first — free") + "</a>" +
           "</div>" +
@@ -2082,6 +2083,20 @@
       s.setAttribute("data-cf-beacon", JSON.stringify({ token: CFG.cloudflareToken }));
     } else return;
     document.head.appendChild(s);
+  })();
+
+  /* ------------------------------------------------- 15b. CLINIC LOCATIONS */
+  /* Connect page: each place has a "Show on map" button that moves the map to it. */
+  (function () {
+    var frame = $("iframe[data-map]");
+    if (!frame) return;
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-map-src]");
+      if (!b) return;
+      frame.src = b.getAttribute("data-map-src");
+      frame.title = b.getAttribute("data-map-title") || frame.title;
+      $$(".place").forEach(function (li) { li.classList.toggle("on", li.contains(b)); });
+    });
   })();
 
   /* ------------------------------------------------------------- 16. BOOT */

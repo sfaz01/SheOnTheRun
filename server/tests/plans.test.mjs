@@ -92,3 +92,12 @@ test("the activity log explains plan changes in plain words", async () => {
   assert.ok(lines.includes("Changed the sample plan: plan-b.html"), lines.join(" | "));
   assert.ok(lines.includes("Deleted a plan file: plan-a.html"), lines.join(" | "));
 });
+
+test("a PDF is explained, not just refused: it says what to do instead", async () => {
+  const r = await up({}, file("client-plan.pdf", Buffer.from("%PDF-1.4 fake"), "application/pdf"));
+  assert.equal(r.status, 422);
+  assert.equal(r.json.code, "bad_type");
+  assert.match(r.json.error, /PDF/);
+  assert.match(r.json.error, /\.csv/);
+  assert.ok(!existsSync(inLibrary("client-plan.pdf")), "nothing was stored");
+});

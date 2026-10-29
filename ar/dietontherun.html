@@ -273,10 +273,11 @@
       <div class="switch-bar mb-m">
         <div class="switch" data-switch role="group" aria-label="اختر حضورياً أو أونلاين">
           <span class="thumb" aria-hidden="true"></span>
-          <button type="button" data-mode="in-person" aria-pressed="true">حضورياً</button>
-          <button type="button" data-mode="online" aria-pressed="false">أونلاين</button>
+          <button type="button" data-mode="in-person" aria-pressed="true"><b>حضورياً</b><small>الجمّيزة وحارة حريك</small></button>
+          <button type="button" data-mode="online" aria-pressed="false"><b>أونلاين</b><small>مكالمة فيديو من أي مكان</small></button>
         </div>
         <p class="switch-note" data-mode-note></p>
+        <a class="btn lilac" href="#book" data-book-link hidden>شاهدي المواعيد المتاحة <span class="arw" aria-hidden="true">←</span></a>
       </div>
     </div>
 
@@ -317,6 +318,16 @@
   </section>
 
   <!-- ══════════════════════════════ BACKONTHERUN ═════════════════════════ -->
+  <section class="band-tight" id="book" hidden>
+    <div class="wrap">
+      <div class="head mb-l">
+        <h2 data-split>احجزي موعداً</h2>
+        <p class="lede reveal">اختاري كيف تحبّين اللقاء، ثم اليوم والوقت، وأرسلي طلبك. سأؤكّد عبر واتساب أو الهاتف — ويبقى الموعد محجوزاً لكِ إلى أن أفعل.</p>
+      </div>
+      <div class="bk" data-booking></div>
+    </div>
+  </section>
+
   <section class="band-tight" id="backontherun">
     <div class="wrap">
       <div class="challenge reveal" data-challenge></div>
@@ -529,6 +540,7 @@
 <script src="../data/sample-plan.js"></script>
 <script src="../data/ar.js"></script>
 <script src="../assets/js/site.js" defer></script>
+<script src="../assets/js/booking.js" defer></script>
 <script src="../assets/js/tracker.js" defer></script>
 <script src="../assets/js/motion.js" defer></script>
 </body>

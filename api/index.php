@@ -6,7 +6,9 @@ declare(strict_types=1);
 
 use Sotr\Accounts;
 use Sotr\Auth;
+use Sotr\Availability;
 use Sotr\Backup;
+use Sotr\Bookings;
 use Sotr\Content;
 use Sotr\Config;
 use Sotr\Db;
@@ -56,8 +58,13 @@ try {
         Http::json(Auth::state());
     }
 
+    // The times a client can pick: nothing but what is open, no names and no existing bookings.
+    if ($method === 'GET' && $path === '/availability') {
+        Http::json(Availability::publicView());
+    }
+
     /* Public forms (no sign-in): JSON + same-origin + honeypot + rate limits. */
-    if ($method === 'POST' && ($path === '/orders' || $path === '/messages')) {
+    if ($method === 'POST' && ($path === '/orders' || $path === '/messages' || $path === '/bookings')) {
         Http::guardPublic();
         $ip = Http::ip();
         $limits = (array) Config::get('limits', []);
@@ -65,6 +72,11 @@ try {
             RateLimit::throttle('public:orders', $ip, (int) ($limits['orders_per_hour'] ?? 5));
             Content::ensureSeeded(); // a brand-new site can take its first order before anyone has opened the admin
             Http::json(['ok' => true] + Orders::create(Http::body()), 201);
+        }
+        if ($path === '/bookings') {
+            RateLimit::throttle('public:bookings', $ip, (int) ($limits['bookings_per_hour'] ?? 6));
+            Content::ensureSeeded();
+            Http::json(Bookings::create(Http::body()), 201);
         }
         RateLimit::throttle('public:messages', $ip, (int) ($limits['messages_per_hour'] ?? 5));
         Http::json(Messages::create(Http::body()), 201);
@@ -187,7 +199,23 @@ try {
 
         case 'GET /admin/counts':
             Auth::requireUser();
-            Http::json(['orders_new' => Orders::counts()['new'], 'messages_unread' => Messages::counts()['unread']]);
+            Http::json(['orders_new' => Orders::counts()['new'], 'messages_unread' => Messages::counts()['unread'], 'bookings_new' => Bookings::counts()['new']]);
+
+        case 'GET /admin/availability':
+            Auth::requireUser();
+            Http::json(['doc' => Availability::get(), 'places' => Availability::PLACES, 'updated_at' => Availability::updatedAt(), 'today' => Availability::now()->format('Y-m-d')]);
+
+        case 'PUT /admin/availability':
+            $user = Auth::requireUser();
+            [$clean, $errors] = Availability::validate(Http::body()['doc'] ?? null);
+            if ($errors) {
+                throw new HttpError(422, 'Some times need fixing.', 'invalid', ['errors' => $errors]);
+            }
+            Http::json(['doc' => Availability::save($clean, (int) $user['id']), 'places' => Availability::PLACES, 'updated_at' => Availability::updatedAt()]);
+
+        case 'GET /admin/bookings':
+            Auth::requireUser();
+            Http::json(Bookings::list((string) ($_GET['status'] ?? ''), (string) ($_GET['scope'] ?? 'upcoming'), (int) ($_GET['page'] ?? 1)));
 
         case 'GET /admin/orders':
             Auth::requireUser();
@@ -296,6 +324,21 @@ try {
         }
         if ($part === 'notes' && $method === 'PUT') {
             Http::json(Orders::setNotes($id, Http::raw('notes', 2000), (int) $user['id']));
+        }
+    }
+    if (preg_match('#^/admin/bookings/(\d+)(?:/(status|notes))?$#', $path, $m)) {
+        $user = Auth::requireUser();
+        $id = (int) $m[1];
+        $part = $m[2] ?? '';
+        if ($part === '' && $method === 'DELETE') {
+            Bookings::delete($id, (int) $user['id']);
+            Http::json(['ok' => true]);
+        }
+        if ($part === 'status' && $method === 'PUT') {
+            Http::json(Bookings::setStatus($id, Http::str('status', 30), (int) $user['id']));
+        }
+        if ($part === 'notes' && $method === 'PUT') {
+            Http::json(Bookings::setNotes($id, Http::raw('notes', 2000), (int) $user['id']));
         }
     }
     if (preg_match('#^/admin/messages/(\d+)(?:/(status|notes))?$#', $path, $m)) {

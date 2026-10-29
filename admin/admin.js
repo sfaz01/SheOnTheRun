@@ -164,6 +164,8 @@
     ["overview", "Overview"],
     ["orders", "Orders", null, "orders_new"],
     ["messages", "Messages", null, "messages_unread"],
+    ["bookings", "Bookings", null, "bookings_new"],
+    ["availability", "Availability"],
     ["edit/shop", "Shop & products", "shop"],
     ["edit/runs", "Runs & events", "runs"],
     ["edit/offer", "Services & packages", "offer"],
@@ -179,7 +181,7 @@
   var SOON = [];
 
   var status = { changed: {}, last_publish: null };
-  var counts = { orders_new: 0, messages_unread: 0 };
+  var counts = { orders_new: 0, messages_unread: 0, bookings_new: 0 };
   S.refreshCounts = function () {
     return api("GET", "/admin/counts").then(function (c) { counts = c; S.refreshNav(); }).catch(function () {});
   };
@@ -231,6 +233,13 @@
   function onHash() {
     if (S.session.stage !== "full") return;
     var next = location.hash;
+    if (S.pageDirty && S.pageDirty()) {
+      if (!window.confirm("You have unsaved changes to your availability. Leave without saving?")) {
+        history.replaceState(null, "", lastHash || "#");
+        return;
+      }
+    }
+    S.pageDirty = null;
     var leavingArea = S.editorDirty() && !new RegExp("^#edit/" + S.editorArea() + "(/|$)").test(next);
     if (leavingArea) {
       if (!window.confirm("You have unsaved changes in " + areaLabel(S.editorArea()) + ". Leave without saving?")) {
@@ -257,6 +266,8 @@
     var p = m ? S.editor(main, m[1], m[2] || "")
       : hash === "orders" ? S.ordersView(main)
       : hash === "messages" ? S.messagesView(main)
+      : hash === "bookings" ? S.bookingsView(main)
+      : hash === "availability" ? S.availabilityView(main)
       : hash === "photos" ? S.photosView(main)
       : hash === "plans" ? S.plansView(main)
       : hash === "publish" ? publishView(main)
@@ -287,12 +298,14 @@
       }
       var ordN = (ov.orders && ov.orders.new) || 0;
       var msgN = (ov.messages && ov.messages.unread) || 0;
+      var bkN = (ov.bookings && ov.bookings.new) || 0;
       var evtN = ov.events ? ov.events.length : 0;
       var stockN = ov.low_stock ? ov.low_stock.length : 0;
 
       var stats = h("div", { class: "dash-stats" },
         stat(ordN, ordN === 1 ? "new order" : "new orders", "hot", "#orders"),
         stat(msgN, msgN === 1 ? "unread message" : "unread messages", "hot", "#messages"),
+        stat(bkN, bkN === 1 ? "new booking request" : "new booking requests", "hot", "#bookings"),
         stat(evtN, evtN === 1 ? "upcoming event" : "upcoming events", "info", "#edit/runs"),
         stat(stockN, stockN === 1 ? "low stock item" : "low stock items", stockN > 0 ? "hot" : "info", "#edit/shop"));
 
@@ -346,6 +359,19 @@
           h("p", { class: "muted small" }, h("a", { href: "#orders" }, "All orders")));
       }
 
+      /* ---- upcoming appointments ---- */
+      var bookingsPanel = null;
+      if (ov.upcoming_bookings && ov.upcoming_bookings.length) {
+        bookingsPanel = h("section", { class: "panel" },
+          h("h2", {}, "Next appointments"),
+          h("ul", { class: "dash-list" }, ov.upcoming_bookings.map(function (b) {
+            return h("li", {},
+              h("div", {}, h("strong", {}, b.when), h("span", { class: "row-flags" }, h("span", { class: "flag " + (b.status === "new" ? "info" : "ok") }, b.status === "new" ? "New request" : "Confirmed")),
+                h("div", { class: "muted small" }, b.name + " · " + b.service + " · " + b.place_label)));
+          })),
+          h("p", { class: "muted small" }, h("a", { href: "#bookings" }, "All bookings"), " · ", h("a", { href: "#availability" }, "Edit availability")));
+      }
+
       /* ---- website status ---- */
       var websitePanel = h("section", { class: "panel" },
         h("h2", {}, "Website", changed.length ? h("span", { class: "pill warn" }, changed.length + " section" + (changed.length > 1 ? "s" : "") + " not published") : h("span", { class: "pill ok" }, "Up to date")),
@@ -360,7 +386,7 @@
           : h("span", { class: "muted" }, "No automatic backup yet.")),
         h("p", {},
           h("a", { class: "btn ghost small", href: "/api/admin/backup", download: true }, "Download backup"),
-          h("span", { class: "muted small ml-sm" }, "Content, orders and messages — keep it private.")));
+          h("span", { class: "muted small ml-sm" }, "Content, orders, bookings and messages — keep it private.")));
 
       /* ---- quick links ---- */
       var quickPanel = h("section", { class: "panel" },
@@ -427,6 +453,7 @@
         h("h1", {}, "Overview"),
         stats,
         websitePanel,
+        bookingsPanel,
         eventsPanel,
         stockPanel,
         recentPanel,

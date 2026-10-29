@@ -21,7 +21,71 @@ final class ContentUpgrades
     /** The price she gave the tee, and the two values it can still have from before (nothing yet, or the old placeholder). */
     private const TEE = ['id' => 'sotr-tee', 'was' => [null, 25]];
 
+    /** The November 2026 booking update: The Start is highlighted beside The Reset. */
+    public const PACKAGES_2026_11 = 'packages-2026-11';
+
     public static function apply(): void
+    {
+        self::applyShop();
+        self::applyPackages();
+    }
+
+    /** Package highlighting: drafts only, once, and only the one switch. */
+    private static function applyPackages(): void
+    {
+        $extras = Content::get('extras');
+        $done = $extras['doc']['upgrades'] ?? [];
+        if (in_array(self::PACKAGES_2026_11, $done, true)) {
+            return;
+        }
+        $pdo = Db::pdo();
+        $pdo->beginTransaction();
+        try {
+            $seed = Content::seedAreas();
+            $offer = Content::get('offer');
+            $new = self::offer($offer['doc'], $seed['offer']);
+            [$clean, $errors] = Validator::run('offer', $new);
+            $changed = false;
+            if (!$errors && $new !== $offer['doc']) {
+                self::write('offer', $clean, $offer['rev']);
+                $changed = true;
+            }
+            $doc = $extras['doc'];
+            $doc['upgrades'] = array_merge($done, [self::PACKAGES_2026_11]);
+            self::write('extras', $doc, $extras['rev']);
+            $pdo->commit();
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log('[sotr] content upgrade ' . self::PACKAGES_2026_11 . ' did not apply: ' . $e->getMessage());
+            return;
+        }
+        if ($changed) {
+            Audit::log(null, 'content.upgraded', self::PACKAGES_2026_11 . ' (offer)');
+        }
+    }
+
+    /** The Start gets the highlight The Reset already has (the owner can switch either off in the admin). */
+    public static function offer(array $draft, array $seed): array
+    {
+        $want = false;
+        foreach ($seed['packages'] ?? [] as $p) {
+            if (($p['id'] ?? '') === 'the-start' && !empty($p['featured'])) {
+                $want = true;
+            }
+        }
+        if ($want) {
+            foreach ($draft['packages'] ?? [] as $i => $p) {
+                if (($p['id'] ?? '') === 'the-start' && empty($p['featured'])) {
+                    $draft['packages'][$i]['featured'] = true;
+                }
+            }
+        }
+        return $draft;
+    }
+
+    private static function applyShop(): void
     {
         $extras = Content::get('extras');
         $done = $extras['doc']['upgrades'] ?? [];

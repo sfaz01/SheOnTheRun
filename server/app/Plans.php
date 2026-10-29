@@ -81,7 +81,9 @@ final class Plans
         $original = (string) ($file['name'] ?? '');
         $ext = strtolower(pathinfo($original, PATHINFO_EXTENSION));
         if (!in_array($ext, ['html', 'csv', 'json'], true)) {
-            throw new HttpError(422, 'Plan files are .html (a plan page), .csv (a spreadsheet plan) or .json (a saved copy).', 'bad_type');
+            throw new HttpError(422, $ext === 'pdf'
+                ? 'A PDF can’t be used as a tracker — the tracker needs each meal as a separate choice with its calories and protein. Turn it into a .csv (or an .html plan page) first: see “Have a PDF?” on this page.'
+                : 'Plan files are .html (a plan page), .csv (a spreadsheet plan) or .json (a saved copy).', 'bad_type');
         }
         $size = (int) ($file['size'] ?? 0);
         if ($size <= 0 || $size > self::MAX_BYTES) {

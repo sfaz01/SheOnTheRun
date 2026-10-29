@@ -563,7 +563,7 @@
             "Personalised nutrition assessment"
           ],
           "price": 50,
-          "featured": false,
+          "featured": true,
           "ar": {
             "length": "شهر واحد / 4 أسابيع",
             "line": "حين تكون مستعداً للبداية.",

@@ -272,10 +272,11 @@
       <div class="switch-bar mb-m">
         <div class="switch" data-switch role="group" aria-label="Choose in person or online">
           <span class="thumb" aria-hidden="true"></span>
-          <button type="button" data-mode="in-person" aria-pressed="true">In person</button>
-          <button type="button" data-mode="online" aria-pressed="false">Online</button>
+          <button type="button" data-mode="in-person" aria-pressed="true"><b>In person</b><small>Gemmayze &amp; Haret Hreik</small></button>
+          <button type="button" data-mode="online" aria-pressed="false"><b>Online</b><small>Video call, from anywhere</small></button>
         </div>
         <p class="switch-note" data-mode-note></p>
+        <a class="btn lilac" href="#book" data-book-link hidden>See open times <span class="arw" aria-hidden="true">→</span></a>
       </div>
     </div>
 
@@ -312,6 +313,19 @@
         <p class="lede reveal">Structured support over weeks rather than a single appointment — because habits are built in the space between sessions.</p>
       </div>
       <div class="packs" data-packages></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ BOOK A TIME ══════════════════════ -->
+  <!-- Filled in by assets/js/booking.js from the times set on the admin's Availability page.
+       Hidden until she has set some, so until then the Book buttons keep opening WhatsApp. -->
+  <section class="band-tight" id="book" hidden>
+    <div class="wrap">
+      <div class="head mb-l">
+        <h2 data-split>Book a time</h2>
+        <p class="lede reveal">Pick how you'd like to meet, choose a day and a time, and send your request. I'll confirm by WhatsApp or phone — your time is held for you until I do.</p>
+      </div>
+      <div class="bk" data-booking></div>
     </div>
   </section>
 
@@ -527,6 +541,7 @@
 <script src="data/plan.js"></script>
 <script src="data/sample-plan.js"></script>
 <script src="assets/js/site.js" defer></script>
+<script src="assets/js/booking.js" defer></script>
 <script src="assets/js/tracker.js" defer></script>
 <script src="assets/js/motion.js" defer></script>
 </body>

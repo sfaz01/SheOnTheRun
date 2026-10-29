@@ -23,12 +23,14 @@ final class Backup
             $history[] = ['id' => (int) $r['id'], 'note' => $r['note'], 'created_at' => $r['created_at'], 'snapshot' => json_decode($r['snapshot'], true)];
         }
         return [
-            'about' => 'SheOnTheRun admin backup. Contains content, orders and messages — keep it private. Contains no passwords.',
+            'about' => 'SheOnTheRun admin backup. Contains content, orders, bookings and messages — keep it private. Contains no passwords.',
             'created_at' => gmdate('c'),
             'content' => $content,
             'publish_history' => $history,
             'orders' => Db::all('SELECT * FROM orders ORDER BY id'),
             'messages' => Db::all('SELECT * FROM messages ORDER BY id'),
+            'bookings' => Db::all('SELECT * FROM bookings ORDER BY id'),
+            'availability' => Availability::get(),
             'admins' => array_map(static fn ($u) => ['email' => $u['email'], 'created_at' => $u['created_at']], Db::all('SELECT email, created_at FROM users ORDER BY id')),
         ];
     }

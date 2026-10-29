@@ -104,8 +104,19 @@ Open a message, reply from your own email, then mark it **Handled**. The badge i
 1. **Meal plans → Add a plan file**: upload the file you made for a client — a plan page (`.html`), a spreadsheet plan (`.csv`) or a saved copy (`.json`).
 2. **Make it the sample** decides what the public **"Try the sample plan"** button opens. That choice goes live with Publish. The spreadsheet template the site hands out can't be deleted.
 3. Files in this library can be opened by anyone who has the web address, so keep private client plans elsewhere, or give them a name only you know.
+4. **Have a PDF?** The tracker can't read a PDF — it needs every meal as a separate choice with calories and protein. Open **Meal plans → Have a PDF?**, download the template, and give Claude your PDF, the template and the message shown there. Claude gives you back a `.csv` to upload (or send to your client).
 
 `[picture: the Meal plans screen with the sample flag]`
+
+## Booking: your availability and requests
+
+On the DietOnTheRun page a client picks **In person** or **Online**, sees a calendar of the times you offer, chooses one and sends a request. You confirm it — the time is held for them until you do.
+
+1. **Availability**: add the start times for each weekday and where you are for each one (Gemmayze clinic, Ohana Fitness in Haret Hreik, or Online). **Copy to every weekday** saves repeating them.
+2. **Days off** hide a whole day. **One-off days** add a single day with its own times. **Rules** set how far ahead clients can book and how close to now a time stops being offered.
+3. **Save availability** — it's live straight away; there's no Publish step for this page.
+4. **Bookings**: a new request is emailed to you and appears here. Open it, then mark it **Confirmed** or **Cancelled** (cancelling gives the time back). The **WhatsApp them** buttons open a message already written for you.
+5. Until you save at least one time, the calendar stays hidden and the Book buttons keep opening WhatsApp.
 
 ## Backups
 

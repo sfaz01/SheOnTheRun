@@ -171,6 +171,11 @@ check('upgrade: the burgundy photo gains its small size', array_values(array_fil
 check('upgrade: the new photos carry Arabic descriptions', !empty(array_values(array_filter($newPhotos['items'], static fn ($i) => $i['name'] === 'shop-pouch-pink-worn'))[0]['ar']['alt']));
 check('upgrade: order-taking is switched on when the setting was never there', $U::settings(['email' => 'a@b.co'])['adminOrders'] === true);
 check('upgrade: an order-taking setting that is already there is left alone', $U::settings(['adminOrders' => false])['adminOrders'] === false);
+$offerNow = ['packages' => [['id' => 'the-start', 'featured' => false], ['id' => 'the-reset', 'featured' => true], ['id' => 'the-journey', 'featured' => false]]];
+$offerUp = $U::offer($offerNow, $seedAreas['offer']);
+check('upgrade: The Start is highlighted like The Reset, The Journey is not', $offerUp['packages'][0]['featured'] === true && $offerUp['packages'][1]['featured'] === true && $offerUp['packages'][2]['featured'] === false);
+check('upgrade: highlighting packages twice changes nothing', $U::offer($offerUp, $seedAreas['offer']) === $offerUp);
+check('upgrade: a highlight the owner removed from The Reset is left alone', $U::offer(['packages' => [['id' => 'the-reset', 'featured' => false]]], $seedAreas['offer'])['packages'][0]['featured'] === false);
 check('upgrade: adding photos twice changes nothing', $U::images($newPhotos, $seedAreas['images']) === $newPhotos);
 $everyProductPhoto = true;
 foreach ($seedAreas['shop']['categories'] as $c) {

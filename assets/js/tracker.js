@@ -35,6 +35,7 @@
     "I couldn't find the header row. It should start with: meal, guide, option, kcal …": "لم أجد سطر العناوين. يجب أن يبدأ بـ: meal, guide, option, kcal …",
     "The file has a header row but no meals under it.": "في الملف سطر عناوين لكن لا وجبات تحته.",
     "This file isn't a meal plan I can read.": "هذا الملف ليس خطة غذائية يمكنني قراءتها.",
+    "A PDF can't be opened here. Ask me for the .csv or .html version of your plan.": "لا يمكن فتح ملف PDF هنا. اطلبي مني نسخة الخطة بصيغة .csv أو .html.",
     "That file couldn't be read.": "تعذّرت قراءة هذا الملف.",
     "That file is too large to open here.": "هذا الملف أكبر من أن يُفتح هنا.",
     "That doesn't look like a plan page. Try the file exactly as I sent it.": "لا يبدو هذا ملف خطة. جرّب الملف كما أرسلته لك تماماً.",
@@ -194,6 +195,10 @@
   function readFile(file) {
     var msg = $("[data-tr-msg]");
     if (!file) return;
+    if (/\.pdf$/i.test(file.name) || file.type === "application/pdf") {
+      if (msg) msg.textContent = tr("A PDF can't be opened here. Ask me for the .csv or .html version of your plan.");
+      return;
+    }
     var reader = new FileReader();
     reader.onload = function () {
       try {

@@ -97,7 +97,7 @@ window.SITE_OFFER = {
         "Personalised nutrition assessment"
       ],
       price: 50,
-      featured: false
+      featured: true
     },
     {
       id: "the-reset",

@@ -53,6 +53,8 @@ final class Overview
         return [
             'orders' => Orders::counts(),
             'messages' => Messages::counts(),
+            'bookings' => Bookings::counts(),
+            'upcoming_bookings' => Bookings::upcoming(5),
             'events' => $events,
             'low_stock' => array_slice($low, 0, 8),
             'recent_orders' => $recent,
